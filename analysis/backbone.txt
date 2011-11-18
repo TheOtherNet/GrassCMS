@@ -1,4 +1,4 @@
-The main objects are "page" and "piece", please see the schemas located on analysis/shemas/object[objects_name].jpg
+The main objects are "page" and "widget", please see the schemas located on analysis/shemas/object[objects_name].jpg
 
 Definitions:
 
@@ -6,27 +6,27 @@ Definitions:
 
         The "page" object is, once executed, a web page.
 
-        Call the "piece"s objects, so they are printed based on their properties, as a "page" property must be the "piece" ids to know which "piece"s call.
+        Call the "widget"s objects, so they are printed based on their properties, as a "page" property must be the "widget" ids to know which "widget"s call.
 
         Print the "background" object, is a bunch of html statements which form the background of the html generated page, must be modifiable (we're using ajax for that) and the modified status must be saved in the server (mysql).
 
         Link the general css, IMPORTANT, the css must be editable also, so it should be also an object, an example of css edition could be "right click + change font color when you are passing upon a text field".
 
-        A button or something similar must call the function "add new piece".
+        A button or something similar must call the function "add new widget".
 
         We could have more functionalities here, as "clone this page", "hide to public", "require authentication" ... For the future, if came. 
 	
 
     Piece:
 
-        The "piece" object is what shows the final content, a piece of text, an image, a link, etc. that's a piece.
+        The "widget" object is what shows the final content, a widget of text, an image, a link, etc. that's a widget.
 
-        The "piece" object prints itself, its contents.
+        The "widget" object prints itself, its contents.
 
-        The position of the piece is a property of itself and must be editable using drag and drop in the navigator, the final position must be stored in the server (mysql).
+        The position of the widget is a property of itself and must be editable using drag and drop in the navigator, the final position must be stored in the server (mysql).
 
         We can also edit the text clicking on the printed text and save it automatically to the server (mysql), we are editing directly in the final text print, so there is no need of "preview, save, update or whatever" buttons.
 
-        We can also attach an image to the "piece" object, would be great to do it just dropping the image in the navigator, and the ajax resized it and positioned it inside the "piece", if this is not possible we need to add an "image properties" button with a form or something similar.
+        We can also attach an image to the "widget" object, would be great to do it just dropping the image in the navigator, and the ajax resized it and positioned it inside the "widget", if this is not possible we need to add an "image properties" button with a form or something similar.
 
-        The css and html of the "piece" are edited dynamically by moving lines, text-boxes and decorations by drag and drop. Of course any modification must be auto-saved on the server.
+        The css and html of the "widget" are edited dynamically by moving lines, text-boxes and decorations by drag and drop. Of course any modification must be auto-saved on the server.
