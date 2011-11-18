@@ -17,7 +17,7 @@ Definitions:
         We could have more functionalities here, as "clone this page", "hide to public", "require authentication" ... For the future, if came. 
 	
 
-    Piece:
+    widget:
 
         The "widget" object is what shows the final content, a widget of text, an image, a link, etc. that's a widget.
 
