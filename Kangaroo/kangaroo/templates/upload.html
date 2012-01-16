@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+<form action="/upload/" method="POST" enctype="multipart/form-data">
+    {{ form.errors }} {{ form.hidden_tag() }}
+    <ul style="list-style:none"> 
+        <li>{{ filedata }}</li> 
+        <li> <label for="filename">{{ form.filename.label }}</label> {{ form.filename }} </li>
+        <li> <label for="type_">{{ form.type_.label }}</label> {{ form.type_ }} </li>
+        <li> <input type="submit" /> </li>
+    </ul>
+</form>
+{% endblock %}

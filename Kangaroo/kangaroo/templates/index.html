@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+<div>
+    <h1>Like a sir, please</h1>
+    {% if imgs %}
+    {% for img in imgs %} <img style="left:{{img.x}}; top:{{img.y}}" src='/static/uploads/{{ img.filename }}' /> {%endfor%}
+    {% else %}
+        <p> User has not yet uploaded anything </p>
+    {% endif %}
+</div>
+
+{% endblock %}
