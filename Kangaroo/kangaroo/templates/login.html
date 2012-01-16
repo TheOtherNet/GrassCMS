@@ -2,7 +2,7 @@
 {% block title %}Sign in{% endblock %}
 {% block body %}
   <h2>Sign in</h2>
-  <form action="" method=post>
+  <form action="/login" method=post>
     {% if error %}<p class=error><strong>Error:</strong> {{ error }}</p>{% endif %}
     <p>
       OpenID:
@@ -10,4 +10,11 @@
       <input type=submit value="Sign in">
       <input type=hidden name=next value="{{ next }}">
   </form>
+  <p> Or </p>
+  <form action="/login" method="post">
+    <input type="hidden" name=openid value="https://www.google.com/accounts/o8/id" />
+    <input type="hidden" name=next value="{{ next }}" />
+    <button type=submit > Login with google </button>
+  </form>
+    
 {% endblock %}

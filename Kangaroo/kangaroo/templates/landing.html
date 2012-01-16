@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block head %}
+<script type="text/javascript">
+    function go_to(){
+       var value = document.getElementById('page').value;
+       document.location = "/" + value;
+    }
+</script>
+{% endblock %}
+{% block body %}
+<form  onsubmit="go_to(); return false" action="">
+<div style="margin-left:auto; margin-right:auto;width:30%; margin-top:130px;">
+<ul style="list-style:none; width:100%">
+    <li style="text-align:center; width:100%"><label for="page"><h2> Enter user page</h2> </label></li>
+    <li><input type="text" name="page" placeholder="SiteFoobar" style="width:30em" id="page"></li>
+    <li><button style="width:30em" type=submit>Go</button></li>
+    <input type="submit" style="display:none;">
+</div>
+
+{% endblock %}

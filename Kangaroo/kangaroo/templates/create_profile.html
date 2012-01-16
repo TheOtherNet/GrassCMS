@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Create Profile{% endblock %}
 {% block body %}
+<div class="body" style="width:50%; margin-top:130px">
   <h2>Create Profile</h2>
   <p>
     Hey!  This is the first time you signed in on this website.  In
@@ -21,4 +22,5 @@
   <p>
     If you don't want to proceed, you can <a href="{{ url_for('logout')
     }}">sign out</a> again.
+</div>
 {% endblock %}

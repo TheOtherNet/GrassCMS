@@ -1,44 +1,28 @@
 <!doctype html>
+<html>
 <head>
     <title>Kangaroo!</title>
-
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='blueprint/screen.css') }}" />
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}" />
-    <script src="{{ url_for('static', filename='prototype.js') }}" type="text/javascript"></script>
-    <script src="{{ url_for('static', filename='scriptaculous.js') }}" type="text/javascript"></script>
-    <script src="
-{{ url_for('static', filename='blueprint/screen.css') }}
-" type="text/javascript"></script>
-    {%block head %} {%endblock%}
-</head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='blueprint/style.css') }}" />
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='modalbox.css') }}" />
+    <script src="{{ url_for('static', filename='js/prototype.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/scriptaculous.js') }}" type="text/javascript"></script>{%block head %} {%endblock%}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/modalbox.js') }}"></script>
 
-<body>
-    <div style="position:fixed; top:0px; right:0px;">
+</head>
+<body class="body">
+
+    <div style="height:4.2em;"> </div>
+    <div style="position:fixed; top:0px; right:0px; ">
         <ul style="list-style:none;" class="navigation">
             {% if g.user %}
-
-                <li>
-                    <img src="{{ g.user.email | gravatar(size=32) }}" style="vertical-align:top" />
-                </li>
-                <li> {{ g.user.name }}</li>
-                <li>
-                    <a href="{{ url_for('edit_profile') }}"> Profile </a>
-                </li>
+                <li> <img src="{{ g.user.email | gravatar(size=32) }}" style="vertical-align:top" /> </li>
+                {%if page %} <li> <a href="/{{page.name}}"> {{ g.user.name }}</a></li>  {%else%} <li>{{g.user.name}}</li> {%endif%}
+                <li> <a href="{{ url_for('edit_profile') }}"> Profile </a> </li>
                 <li> <a href="/upload/"> Add content </a> </li>
                 <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
-
-            {% else %}
-                <li>
-                    <a href="{{ url_for('login') }}"> Sign in </a>
-                </li>
-            {% endif %}
-
+            {% else %}<li> <a onclick="Modalbox.show('{{url_for('login')}}', {title: 'Login', width: 500}); return false;" href="/login"> Sign in </a> </li> {% endif %}
         </ul>
-    </div>
-        {% for message in get_flashed_messages() %}
-            <p class="message">
-                {{ message }}
-            </p>
-        {% endfor %}
-
-        {% block body %}{% endblock %}
+    </div>{% for message in get_flashed_messages() %} <div class="error"> {{ message }} </div> {% endfor %} {% block body %}{% endblock %}
+</body>
+</html>

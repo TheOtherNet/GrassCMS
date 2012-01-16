@@ -1,12 +1,25 @@
 {% extends "layout.html" %}
 {% block body %}
+{% if form.errors %} {{ form.errors }}  {%endif%}
+{%if filedata %}<h3>Uploaded {{ filedata }}</h3> {%endif%}
+
+<div class="body" style="width:50%; margin-top:130px">
+<h2> Upload an image </h2>
 <form action="/upload/" method="POST" enctype="multipart/form-data">
-    {{ form.errors }} {{ form.hidden_tag() }}
+    {{ form.hidden_tag() }}
     <ul style="list-style:none"> 
-        <li>{{ filedata }}</li> 
-        <li> <label for="filename">{{ form.filename.label }}</label> {{ form.filename }} </li>
-        <li> <label for="type_">{{ form.type_.label }}</label> {{ form.type_ }} </li>
+        <li> {{ form.filename }} </li>
+        <input type="hidden" name="type_" value="img" />
         <li> <input type="submit" /> </li>
     </ul>
 </form>
+<h2> Add a text field </h2>
+<form action="/upload/" method="POST" enctype="multipart/form-data">
+    <ul style="list-style:none"> 
+        <textarea name="text"></textarea>
+        <input type="hidden" name="type_" value="text" />
+        <li> <input type="submit" /> </li>
+    </ul>
+</form>
+</div>
 {% endblock %}

@@ -29,9 +29,9 @@ document.observe('dom:loaded', function() {
 
 {% block body %}
 <div>
-    <h1>Like a sir, please</h1>
+    <h1>{{title}}</h1>
     {% if imgs %}
-        {% for img in imgs %} <img class="dragable" id="{{ img.id_ }}" src='/static/uploads/{{ img.filename }}' />{%endfor%}
+        {% for img in imgs %} <img class="dragable" id="{{ img.id_ }}" src='/static/uploads/{{ img.content }}' />{%endfor%}
     {% else %}
         <a href="/upload/"> Upload some imgs!</a>
     {% endif %}

@@ -1,7 +1,0 @@
-.navigation a { color:black; font-weight:bold;  }
-ul { list-style:none; }
-.navigation li { display:inline; margin-left:10px; }
-.dragable{ position:fixed; cursor:move; }
-a { color: #f0f0f0; }
-input[name="openid"] { background: url(openid.png) 4px no-repeat; padding-left: 24px; }
-h1, h2 {font-weight: normal;}
