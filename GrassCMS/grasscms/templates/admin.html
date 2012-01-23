@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block menu %}
+    <li>
+        <a href="/upload/" title="#" onclick="jQuery('.container').toggle(200); return false;"> Add content </a>
+    </li>
+{%endblock%}
+
+{% block head %}
+    <style>
+    #resizable { width: 150px; height: 150px; padding: 0.5em; }
+    #resizable h3 { text-align: center; margin: 0; }
+
+    </style>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" />
+    <link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/bootstrap-image-gallery.min.css">
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
+    <!--[if lt IE 7]><link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/bootstrap-ie6.min.css"><![endif]-->
+    <link rel="stylesheet" href="/static/jquery.fileupload-ui.css">
+
+    <script type="text/javascript">
+        function get_pos(obj, ui) { return $(obj).children('img').attr('id') + "?x=" + ui.position.top + "&y=" + ui.position.left; }
+        $(function(){
+            $.each($('.img'), function(it){
+                var img=$(this);
+                img.parent().css('top',  '100px');
+                img.parent().css('left', '100px');
+                $.getJSON('/get/' + img.attr('id'), function(where){
+                    console.debug(where);
+                    img.parent().css('top',  where[0] + "px");
+                    img.parent().css('left', where[1] + "px"); 
+                }); 
+            });
+
+            $('.img').resizable().parent().draggable({ stop: function(ev, ui){ $.ajax({ url: '/set/' + get_pos(this, ui)});}});
+        });
+    </script>
+
+
+{%endblock%}
+    
+{% block body %}
+    <div onBlur="jQuery(this).hide()" class="container" style="overflow:hidden; height:150px; z-index:9999;display:none; background:rgba(0,0,0,0.7); position:absolute; top:0px; padding:0px; margin:0px; left:0px; width:100%; " id="container">
+        <form id="fileupload" action="/upload/" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div style="margin-top:60px;margin-left:40px;" class="span16 fileupload-buttonbar">
+                    <div class="progressbar fileupload-progressbar fade"><div style="width:0%;"></div></div>
+                    <span class="btn success fileinput-button">
+                            <span>Click here to upload a file</span>
+                    <input type="file" onchange="jQuery('#fileupload').submit()"; name="files" >
+                    </span>
+                </div>
+            </div>
+            <br>
+            <div style="display:none" class="row">
+                <div class="span16">
+                    <table class="zebra-striped"><tbody class="files"></tbody></table>
+                </div>
+            </div>
+            </form>
+<script>
+var fileUploadErrors = {
+    maxFileSize: 'File is too big',
+    minFileSize: 'File is too small',
+    acceptFileTypes: 'Filetype not allowed',
+    maxNumberOfFiles: 'Max number of files exceeded',
+    uploadedBytes: 'Uploaded bytes exceed file size',
+    emptyResult: 'Empty file upload result'
+};
+</script>
+
+    <div style="text-align:center; background:rgba(0,0,0,0.9); position:relative; bottom:20px;" onclick="jQuery('#container').hide(200);"> <span style="font-size:xx-big">^</span> </div>
+    </div>
+    
+    <div id="filedrag">
+        <h1>{{title}}</h1>
+        {% if imgs %} {% for img in imgs %}
+
+
+<img class="img" style="width:100px; height:100px" id="{{ img.id_ }}"  src='/static/uploads/{{ img.content }}' />
+{%endfor%} {%endif%}
+        {% if txts %} {% for txt in txts %} <div class="dragable" style="background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt[1] }}"><textarea style="padding-top:10px; min-width:4em; min-height:1em;" class="rst">{{ txt[0] }}</textarea></div> {%endfor%}{%endif%}
+    </div>
+
+    <script src="/static/js/jquery.ui.widget.js"></script>
+    <script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
+    <script src="http://twitter.github.com/bootstrap/1.4.0/bootstrap-modal.min.js"></script>
+    <script src="http://blueimp.github.com/Bootstrap-Image-Gallery/bootstrap-image-gallery.min.js"></script>
+    <script src="/static/js/jquery.iframe-transport.js"></script>
+    <script src="/static/js/jquery.fileupload.js"></script>
+    <script src="/static/js/jquery.fileupload-ui.js"></script>
+    <script src="/static/js/application.js"></script>
+    <!--[if gte IE 8]><script src="cors/jquery.xdr-transport.js"></script><![endif]-->
+{% endblock %}

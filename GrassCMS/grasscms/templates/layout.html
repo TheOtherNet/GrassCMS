@@ -1,0 +1,31 @@
+<!doctype html>
+<html id="html">
+<head>
+    <title>GrassCMS</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='blueprint/screen.css') }}" />
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='blueprint/style.css') }}" />
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" ></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+{%block head %} {%endblock%}
+</head>
+<body class="body">
+    <div style="height:4.2em;"> </div>
+
+
+    </div>
+    <div style="position:fixed; top:0px; right:0px; ">
+        <ul style="list-style:none;" class="navigation">
+            {% if g.user %}
+                <li> <img src="{{ g.user.email | gravatar(size=32) }}" style="vertical-align:top" /> </li>
+                {%if page %} <li> <a href="/{{page.name}}"> {{ g.user.name }}</a></li>  {%else%} <li>{{g.user.name}}</li> {%endif%}
+                <li> <a href="{{ url_for('edit_profile') }}"> Profile </a> </li>
+                {%block menu%}{%endblock%}
+                <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
+            {% else %}<li> <a onclick="open_login(this); return false;" title="Sign in" href="{{ url_for('login') }}"> Sign in </a> </li> {% endif %}
+        </ul>
+    </div>{% for message in get_flashed_messages() %} <div class="error"> {{ message }} </div> {% endfor %} {% block body %}{% endblock %}
+
+</body>
+</html>
