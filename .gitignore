@@ -1,5 +1,2 @@
-bin/*
-include/*
-lib/*
-.*.sw[pow]
-*.py[co]
+*.pyc
+build/*
