@@ -1,31 +1,41 @@
 <!doctype html>
-<html id="html">
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html id="html" class="no-js" lang="en">
+<!--<![endif]-->
 <head>
     <title>GrassCMS</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="author" content="David Francos Cuartero. Dario Ferrer Ferruz. Francisco Sanz Garcia">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{{url_for ('static', 'css/style.css')}}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='blueprint/screen.css') }}" />
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='blueprint/style.css') }}" />
-
+    <script src="{{ url_for('static', 'js/libs/modernizr-2.0.6.min.js')}}"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" ></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-
-{%block head %} {%endblock%}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    {%block head %} {%endblock%}
 </head>
 <body class="body">
-    <div style="height:4.2em;"> </div>
+    <header>
+        <div style="height:4.2em;"> </div>
+        <div style="position:fixed; top:0px; right:0px; ">
+            <ul style="list-style:none;" class="navigation">
+                {% if g.user %}
+                    <li> <img src="{{ g.user.email | gravatar(size=32) }}" style="vertical-align:top" /> </li>
+                    {%if page %} <li> <a href="/{{blog.name}}/{{page.name}}"> {{ g.user.name }}</a></li>  {%else%} <li>{{g.user.name}}</li> {%endif%}
+                    <li> <a href="{{ url_for('edit_profile') }}"> Profile </a> </li>
+                    {%block menu%}{%endblock%}
+                    <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
+                {% else %}<li> <a onclick="open_login(this); return false;" title="Sign in" href="{{ url_for('login') }}"> Sign in </a> </li> {% endif %}
+            </ul>
+        </div>{% for message in get_flashed_messages() %} <div class="error"> {{ message }} </div> {% endfor %}
+    </header>
 
-
-    </div>
-    <div style="position:fixed; top:0px; right:0px; ">
-        <ul style="list-style:none;" class="navigation">
-            {% if g.user %}
-                <li> <img src="{{ g.user.email | gravatar(size=32) }}" style="vertical-align:top" /> </li>
-                {%if page %} <li> <a href="/{{page.name}}"> {{ g.user.name }}</a></li>  {%else%} <li>{{g.user.name}}</li> {%endif%}
-                <li> <a href="{{ url_for('edit_profile') }}"> Profile </a> </li>
-                {%block menu%}{%endblock%}
-                <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
-            {% else %}<li> <a onclick="open_login(this); return false;" title="Sign in" href="{{ url_for('login') }}"> Sign in </a> </li> {% endif %}
-        </ul>
-    </div>{% for message in get_flashed_messages() %} <div class="error"> {{ message }} </div> {% endfor %} {% block body %}{% endblock %}
-
+    {% block body %}{% endblock %}
 </body>
 </html>
