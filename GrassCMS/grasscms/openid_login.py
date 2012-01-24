@@ -5,11 +5,12 @@ from flaskext.openid import OpenID
 oid = OpenID(app)
 
 def check_form(name, email, page_name):
+    possible_blog = Blog.query.filter_by(name=page_name).first()
     if not name:
         flash(u'Error: you have to provide a name')
     elif '@' not in email: # TODO: Do this with wtf forms.
         flash(u'Error: you have to enter a valid email address')
-    elif Blog.query.filter_by(name=page_name).first() is not None:
+    elif possible_blog is not None and g.user.blog != possible_blog.id:
         flash(u'Error: That page name is already taken')
     else:
         return True
@@ -98,9 +99,10 @@ def edit_profile():
     if g.user is None:
         abort(401)
     else:
-        user_page = Page.query.filter_by(id=g.user.page).first()
+        user_blog = Blog.query.filter_by(id=g.user.blog).first()
+        user_index = Page.query.filter_by(blog=user_blog.id).first()
 
-    form = dict(name=g.user.name, email=g.user.email, page=user_page.name)
+    form = dict(name=g.user.name, email=g.user.email, page=user_blog.name)
 
     if request.method == 'POST':
         if 'delete' in request.form:
@@ -118,11 +120,11 @@ def edit_profile():
             flash(u'Profile successfully updated')
             g.user.name = form['name']
             g.user.email = form['email']
-            user_page.name = form['page']
+            user_blog.name = form['page']
             db_session.commit()
             return redirect(url_for('edit_profile'))
 
-    return render_template('edit_profile.html', form=form, page=user_page)
+    return render_template('edit_profile.html', form=form, blog=user_blog, page=user_index)
 
 @app.route('/logout')
 def logout():

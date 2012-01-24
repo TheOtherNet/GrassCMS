@@ -92,7 +92,7 @@ def upload_(page):
         db_session.commit()
         return redirect(blog.name + "/" + page.name)
 
-    return render_template("upload.html", filedata="", page=page)
+    return render_template("upload.html", filedata="", page=page, blog=blog)
 
 @app.route('/new_page/<name>')
 def new_page(name):
@@ -169,7 +169,7 @@ def index(blog_name=False, page="index"):
         flash(u'There\'s no such page')
 
     if not blog_name or not page:
-        return render_template('landing.html', page=user_page)
+        return render_template('landing.html', page=user_page, blog=user_blog)
 
     txts = [ (read_file(file_.content), file_.id_) for file_ in\
         File.query.filter_by(page = page.id, type_="rst")\
