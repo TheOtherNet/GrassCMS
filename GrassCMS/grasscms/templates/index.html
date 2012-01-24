@@ -3,6 +3,6 @@
     <div>
         <h1>{{title}}</h1>
         <div class="warn">{{ messages }}</div>
-        <div class="imgs">{% if imgs %}{% for img in imgs %} <img style="position:fixed; left:{{img.y}}px; top:{{img.x}}px" class="dragable" src='/static/uploads/{{ img.content }}' /> {%endfor%}
+        <div class="imgs">{% if imgs %}{% for img in imgs %} <img style="position:fixed; left:{{img.y}}px; top:{{img.x}}px; width:{{img.width}}; height: {{img.height}}" class="dragable" src='/static/uploads/{{ img.content }}' /> {%endfor%}
         {% else %} <p> User has not yet uploaded anything </p> {% endif %}</div>
     </div>{% endblock %}

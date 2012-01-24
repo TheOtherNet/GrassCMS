@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from grasscms.main import *
-from grasscms.models import Page, User
+from grasscms.models import Page, User, Blog
 from flaskext.openid import OpenID
 oid = OpenID(app)
 
@@ -9,7 +9,7 @@ def check_form(name, email, page_name):
         flash(u'Error: you have to provide a name')
     elif '@' not in email: # TODO: Do this with wtf forms.
         flash(u'Error: you have to enter a valid email address')
-    elif Page.query.filter_by(name=page_name).first() is not None:
+    elif Blog.query.filter_by(name=page_name).first() is not None:
         flash(u'Error: That page name is already taken')
     else:
         return True
@@ -34,9 +34,7 @@ def login():
         Does the login via OpenID.  Has to call into `oid.try_login`
         to start the OpenID machinery.
     """
-    app.logger.info("Ok")
     if g.user is not None:
-        app.logger.info("REED")
         return redirect(oid.get_next_url())
         
     if request.method == 'POST':
@@ -79,13 +77,18 @@ def create_profile():
         form['page_name'] = request.form['page']
         if check_form(form['name'], form['email'], form['page_name']):
             flash(u'Profile successfully created')
-            db_session.add(Page(form['page_name']))
+            blog = Blog(form['page_name'])
+            db_session.add(blog) # Create a blog with that name
             db_session.commit()
-            db_session.add(User(form['name'], form['email'], session['openid'], Page.query.filter_by(name=form['page_name']).first().id))
+
+            page=Page(blog.id, 'index') # Add the page to the blog
+            db_session.add(page)
+            db_session.commit()
+
+            db_session.add(User(form['name'], form['email'], session['openid'], blog.id, page.id)) # Add a user with that blog referenced
             db_session.commit()
             return redirect(oid.get_next_url())
     return render_template('create_profile.html', next_url=oid.get_next_url())
-
 
 @app.route('/profile', methods=['GET', 'POST'])
 def edit_profile():
