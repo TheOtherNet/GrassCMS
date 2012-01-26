@@ -7,7 +7,6 @@ import os
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
-scripts = ['grasscms_server.py']
 data_files = []
 
 for dirpath, dirnames, filenames in os.walk('grasscms'):
@@ -29,13 +28,15 @@ setup(name='GrassCMS',
       ],
       long_description="GrassCMS, easy-to-use content management system",
       packages=['grasscms'],
-      scripts=scripts,
-      options=opts,
       data_files=data_files,
       package_data={
         'grasscms' : [
             'static/'
             'templates/'
             ]
-      }
+      },
+      entry_points="""
+        [console_scripts]
+        grasscms = grasscms.server:server
+      """
      )

@@ -10,10 +10,19 @@ import json, os, mimetypes
 from grasscms.odt2rst import odt2rst, Options
 #from odt2txt import OpenDocumentTextFile # Markdown is disabled right now
 
+# Initialize some stuff
 odt_mimetypes = [ 'vnd.oasis.opendocument.text' ]
 docx_mimetypes = [
     'vnd.openxmlformats-officedocument.wordprocessingml.document' 
 ] 
+
+Base.metadata.create_all(bind=engine) # Create database if not done.
+gravatar = Gravatar(app, # Gravatar module, 100px wide.
+                size=100,
+                rating='g',
+                default='retro',
+                force_default=False,
+                force_lower=False)
 
 """
     TODO LIST:
@@ -216,12 +225,6 @@ def set_dimensions(type_, id_):
     db_session.commit()
     return json.dumps([element.x, element.y])
 
-if __name__ == '__main__':
-    Base.metadata.create_all(bind=engine) # Create database if not done.
-    gravatar = Gravatar(app, # Gravatar module, 100px wide.
-                    size=100,
-                    rating='g',
-                    default='retro',
-                    force_default=False,
-                    force_lower=False)
+def server():
+    """ Main server, will allow us to make it wsgi'able """
     app.run(host='0.0.0.0', port=8181) # Running on port 80 in all interfaces.
