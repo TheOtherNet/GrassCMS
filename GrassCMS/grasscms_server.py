@@ -225,4 +225,4 @@ if __name__ == '__main__':
                     default='retro',
                     force_default=False,
                     force_lower=False)
-    app.run(host='0.0.0.0', port=80) # Running on port 80 in all interfaces.
+    app.run(host='0.0.0.0', port=8181) # Running on port 80 in all interfaces.

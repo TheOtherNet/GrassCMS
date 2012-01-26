@@ -1,4 +1,5 @@
 flask-wtf
 flask-gravatar
 flask-openid
-https://github.com/mikemaccana/python-docx
+sqlalchemy
+https://github.com/mikemaccana/python-docx/tarball/master
