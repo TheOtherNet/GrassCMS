@@ -7,8 +7,7 @@ from grasscms.models import File, Text, Blog, Page
 from flaskext.gravatar import Gravatar
 from werkzeug import secure_filename
 import json, os, mimetypes
-import docx
-from odt2rst import odt2rst, Options
+from grasscms.odt2rst import odt2rst, Options
 #from odt2txt import OpenDocumentTextFile # Markdown is disabled right now
 
 odt_mimetypes = [ 'vnd.oasis.opendocument.text' ]
