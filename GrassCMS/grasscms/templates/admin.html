@@ -6,92 +6,91 @@
 {%endblock%}
 
 {% block head %}
-    <style>
-    #resizable { width: 150px; height: 150px; padding: 0.5em; }
-    #resizable h3 { text-align: center; margin: 0; }
-
-    </style>
-    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" />
-    <link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/bootstrap-image-gallery.min.css">
+    <script src="{{url_for('static', filename='js/grasscms.js')}}"></script>
+    <script> $(function(){ grasscms_startup(); }); </script>
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-
-    <!--[if lt IE 7]><link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/bootstrap-ie6.min.css"><![endif]-->
-    <link rel="stylesheet" href="/static/jquery.fileupload-ui.css">
-
-    <script type="text/javascript">
-        function get_pos(obj, ui) { return $(obj).children('img').attr('id') + "?x=" + ui.position.top + "&y=" + ui.position.left; }
-        function get_menu(){ $.ajax({url:'/get_menu/{{blog.name}}', success: function(data){ console.debug(data); } }); }
-        function create_page(){ $.ajax({url:'/new_page/' + $('#new_page').val(), success: function(data){ document.location.href=data; } })};
-        function get_dimensions(obj, ui){ return $(obj).children('img').attr('id') + "?width=" + ui.size.width + "&height=" + ui.size.width; }
-        $(function(){
-            $.each($('.img'), function(it){
-                var img=$(this);
-                img.parent().css('top',  '100px');
-                img.parent().css('left', '100px');
-                $.getJSON('/get/' + img.attr('id'), function(where){
-                    img.parent().css('top',  where[0] + "px");
-                    img.parent().css('left', where[1] + "px"); 
-                }); 
-            });
-
-            $('.img').resizable(
-                    { stop: function(ev, ui){ $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)});}}
-            ).parent().draggable(
-                    { stop: function(ev, ui){ $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}}
-            );
-        });
-        var fileUploadErrors = {
-            maxFileSize: 'File is too big',
-            minFileSize: 'File is too small',
-            acceptFileTypes: 'Filetype not allowed',
-            maxNumberOfFiles: 'Max number of files exceeded',
-            uploadedBytes: 'Uploaded bytes exceed file size',
-            emptyResult: 'Empty file upload result'
-        };
-    </script>
-
-
 {%endblock%}
     
 {% block body %}
-    <div onBlur="jQuery(this).hide()" class="container" style="overflow:hidden; height:150px; z-index:9999;display:none; background:rgba(0,0,0,0.7); position:absolute; top:0px; padding:0px; margin:0px; left:0px; width:100%; " id="container">
-        <form id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
-            <span class="btn success fileinput-button">
-                <span>Click here to upload a file</span>
-                <input type="file" onchange="jQuery('#fileupload').submit()"; name="files" >
-            </span>
+    <div onBlur="jQuery(this).hide()" class="container menu_wrapper" id="container">
+        <div class="menu_button">
+            <form id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
+                <span class="btn success px45 fileinput-button">
+                    <span> Click here to upload a file </span>
+                    <input type="file" onchange="jQuery('#fileupload').submit()"; name="files" >
+                </span>
 
-            <div style="position:absolute; top:0px; left:-100px; width:0px;">
-                <input type="submit"/>
-            </div>
-        </form>
-        <br/>
+                <div style="position:absolute; top:0px; left:-100px; width:0px;">
+                    <input type="submit"/>
+                </div>
+            </form>
+        </div>
 
-        <form id="newpage" action="#" onsubmit="create_page(); return false">
-            <span class="btn success">
-                <span>Create a new page</span> <input type="text" id="new_page" name="page" /> <span><a href="#" onclick="create_page()">Go</a></span>
+        <div class="menu_button">
+            <form id="newpage" action="#" onsubmit="create_page(); return false">
+                <span class="btn px45 success">
+                    <span> Create a new page </span>
+                    <input type="text" id="new_page" name="page" />
+                    <span><a href="#" onclick="create_page()">Go</a></span>
+                </span>
+                <div style="position:absolute; top:0px; left:-100px; width:0px;">
+                    <input type="submit"/>
+                </div>
+            </form>
+        </div>
+
+        <div class="menu_button">
+            <span class="btn px45 success">
+                <a onclick="get_blob({{page.id}}, false); return false" href="#">
+                    <span style="color:white"> Insert text </span> 
+                </a>
             </span>
-            <div style="position:absolute; top:0px; left:-100px; width:0px;">
-                <input type="submit"/>
-            </div>
-        </form>
-        <a onclick="get_menu(); return false" href="#"> Insert menu </a>
+        </div>
+
+        <div class="menu_button">
+            <span class="btn px45 success">
+                <a onclick="get_menu({{blog.id}}); return false" href="#">
+                    <span style="color:white"> Insert menu </span>
+                </a>
+            </span>
+        </div>
 
         <div style="text-align:center; background:rgba(0,0,0,0.9); position:relative; top:115px;" onclick="jQuery('#container').hide(200);"> <span style="font-size:xx-big">^</span> </div>
+
     </div>
     
     <div id="filedrag">
+
         <h1>{{title}}</h1>
-        {% if imgs %} {% for img in imgs %}
-            <img class="img" style=" width:{{img.width}}px; height: {{img.height}}px;" id="{{ img.id_ }}"  src='/static/uploads/{{ img.content }}' />
-{%endfor%} {%endif%}
-        {% if txts %} {% for txt in txts %} <div class="dragable" style="background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt[1] }}"><textarea style="padding-top:10px; min-width:4em; min-height:1em;" class="rst">{{ txt[0] }}</textarea></div> {%endfor%}{%endif%}
+
+        {% if imgs %} 
+            {% for img in imgs %}
+                <img class="img" style=" width:{{img.width}}px; height: {{img.height}}px;"
+                     id="{{ img.id_ }}"  src='/static/uploads/{{ img.content }}' />
+            {%endfor%}
+        {%endif%}
+
+        {% if txts %} 
+            {% for txt in txts %} 
+                <div class="dragable" style="background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt[1] }}">
+                    <span><textarea style="padding-top:10px; min-width:4em; min-height:1em;"
+                         onchange="update_file(this, '{{txt[1]}}');" class="rst">{{ txt[0] }}</textarea></span>
+                </div>
+            {%endfor%}
+        {%endif%}
+
+        {% if txt_blobs %}
+            {% for txt in txt_blobs %} 
+                <div class="dragable" style="background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt[1] }}">
+                    <span><textarea style="padding-top:10px; min-width:4em; min-height:1em;"
+                         onchange="update_blob(this, '{{page.id}}, '{{txt.id_}}');" class="rst">{{ txt.text }}</textarea></span>
+                </div> 
+            {%endfor%}
+        {%endif%}
+
     </div>
 
     <script src="/static/js/jquery.ui.widget.js"></script>
-    <script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
-    <script src="http://twitter.github.com/bootstrap/1.4.0/bootstrap-modal.min.js"></script>
-    <script src="http://blueimp.github.com/Bootstrap-Image-Gallery/bootstrap-image-gallery.min.js"></script>
     <script src="/static/js/jquery.iframe-transport.js"></script>
     <script src="/static/js/jquery.fileupload.js"></script>
     <script src="/static/js/jquery.fileupload-ui.js"></script>

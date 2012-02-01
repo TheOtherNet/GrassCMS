@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # For some reason, building exes with py2exe doesnt work right now.
-from distutils.core import setup
+from setuptools import setup
 from distutils.command.install import INSTALL_SCHEMES
 import os
 

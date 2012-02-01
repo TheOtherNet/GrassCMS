@@ -58,7 +58,7 @@ def convert_odt(path):
     """
     options = Options()
     options.temp_folder = '/tmp'
-    options.images_relative_folder = 'static/uploads'
+#    options.images_relative_folder = 'static/uploads'
     odt2rst(path, path, options)
     return
 
@@ -130,19 +130,23 @@ def update_rst_file(id_):
     with open(get_path(file_.content, 'w')):
         file_.write(getattr(form.request, 'rst_%s' %id_))
 
-@app.route('/text_blob')
-@app.route('/text_blob/<id>')
-def text(id_=False):
+@app.route('/text_blob/<page>')
+@app.route('/text_blob/<page>/<id>')
+def text(page, id_=False):
     """
         If called without an id, a new text (empty) will be created
         Otherwise, it'll try to update the text to the text in the form,
         if we have not specified text in the form (i.e, the first time after
         a text creation), it returns the text
     """
-    if not id_:
-        db_session.add(Text(text, g.user, page.id))
-        db_session.commit()
         
+    user_blog = Blog.query.filter_by(id=g.user.blog).first()
+    page = Page.query.filter_by(blog=user_blog.id, id = page).first()
+
+    if not id_:
+        db_session.add(Text("", g.user, page.id, user_blog.id))
+        db_session.commit()
+        return "" 
     else:
         text = Text.query.filter_by(id=id_).first()
         future_text = getattr(request.form, 'text_%s' %id_)
@@ -170,7 +174,8 @@ def index(blog_name=False, page="index"):
 
     try:
         page = Page.query.filter_by(blog=Blog.query.filter_by(name=blog_name).first().id, name = page).first()
-    except AttributeError:
+    except AttributeError, error:
+        app.logger.info(error)
         pass
 
     if not page:

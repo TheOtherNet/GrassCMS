@@ -72,7 +72,4 @@ jQuery(function () {
         }
     );
 
-    // Initialize the Bootstrap Image Gallery plugin:
-    jQuery('#fileupload .files').imagegallery();
-
 });

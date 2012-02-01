@@ -12,7 +12,7 @@ class Text(Base):
     page = Column(Integer, ForeignKey('pages.id'))
     user = Column(Integer, ForeignKey('users.id'))
 
-    def __init__(self, user=False, page=False, content=False, id_=False, blog=False, x=100, y=100, width=100, height=100):
+    def __init__(self, content=False, user=False, page=False, blog=False, x=100, y=100, width=100, height=100):
         self.user = user.id
         self.page = page
         self.content = content

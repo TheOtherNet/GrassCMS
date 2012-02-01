@@ -214,6 +214,8 @@ table { border-collapse: collapse; border-spacing: 0; }
    Primary styles
    Author: David Francos Cuartero
    ========================================================================== */
+
+.menu_wrapper { overflow:hidden; height:150px; z-index:9999;display:none; background:rgba(0,0,0,0.7); position:absolute; top:0px; padding:0px; margin:0px; left:0px; width:100%;  }
 #backtomainpage a{ color:#808080; text-decoration:none }
 #backtomainpage{ position:fixed; bottom:2px;  text-shadow:3px 3px 3px 3px grey; right:54px; font-size:1.3em; color:black; }
 .pad_options{text-shadow:none!important;}
@@ -223,7 +225,11 @@ table { border-collapse: collapse; border-spacing: 0; }
 .fourstepsp{ padding-top:20px; }
 .login li{ display:inline; margin-right:4px;}
 .login { bottom:0px; position:fixed; right:20px; } 
+.menu_button{float:left; margin-top: 3.5%; margin-left:40px;}
+#resizable { width: 150px; height: 150px; padding: 0.5em; }
+#resizable h3 { text-align: center; margin: 0; }
 
+.px45 { height:45px; }
 /* =============================================================================
    Non-semantic helper classes
    Please define your styles before this section.
