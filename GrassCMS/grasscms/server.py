@@ -163,6 +163,7 @@ def read_file(file_):
         return filen.read().decode('utf-8')
 
 @app.route('/')
+@app.route('/<blog_name>')
 @app.route('/<blog_name>/<page>')
 def index(blog_name=False, page="index"):
     if g.user:
