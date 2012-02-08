@@ -10,14 +10,12 @@ function update_file(obj, id){
     });
 }
 
-function get_blob(page_id, blob_id){
+function get_blob(page_name){
     blob="";
-    if ( blob_id ){ blob = '/' + blob_id; }
     $.ajax({
-        url:'/text_blob/' + page_id + blob,
-        success: function(data){ 
-            document.location.href=document.location.href;
-        } 
+        type : 'POST', 
+        url:'/text_blob/' + page_name, 
+        complete: function(data){ console.debug("DONE");  location.reload(true); } 
     }); 
 }
 
@@ -51,6 +49,11 @@ function create_page(){
     })
 }
 
+function get_txt_pos(obj, ui) {
+var id=$(obj).children('span').children('.jHtmlArea').children('textarea').attr('id');
+return id.replace('text_', '') + "?x=" + ui.position.top + "&y=" + ui.position.left; 
+}
+
 function get_pos(obj, ui) { 
     return $(obj).children('img').attr('id') + "?x=" + ui.position.top + "&y=" + ui.position.left; 
 }
@@ -79,5 +82,37 @@ function grasscms_startup(){
         stop: function(ev, ui){ 
             $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}
     });
+
     $("textarea").htmlarea();     
+/*
+    $('.text_blob').resizable( {
+        alsoResize: '.text_blob textarea', 
+        stop: function(ev, ui){ 
+            $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)});
+        }
+    }).draggable({ 
+        stop: function(ev, ui){ 
+            $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}
+    });
+
+    $('.text_rst').resizable({ 
+        stop: function(ev, ui){ 
+            $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)});
+        }
+    }).draggable({ 
+        stop: function(ev, ui){ 
+            $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}
+    });    
+*/ // FIXME: Resizable is not working properly.
+
+    $('.text_blob').draggable({ 
+        stop: function(ev, ui){ 
+            $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}
+    });
+    $('.text_rst').draggable({ 
+        stop: function(ev, ui){ 
+            $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}
+    });    
+    
+
 }

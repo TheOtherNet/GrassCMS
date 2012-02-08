@@ -1,5 +1,5 @@
 ﻿div.jHtmlArea { display: inline block; }
-div.jHtmlArea div { padding: 0px; margin: 0px; }
+div.jHtmlArea div { background:white; padding: 0px; margin: 0px; }
 div.jHtmlArea .ToolBar { }
 div.jHtmlArea .ToolBar ul { border: solid 1px #ccc; margin: 1px; padding: 1px; float: left; background: #fff url(jHtmlArea_Toolbar_Group_BG.png) repeat-x;}
 div.jHtmlArea .ToolBar ul li { list-style-type: none; float: left; border: none; padding: 1px; margin: 1px; }
@@ -8,7 +8,7 @@ div.jHtmlArea .ToolBar ul li a { display: block; width: 16px; height: 16px; back
 div.jHtmlArea .ToolBar ul li a.highlighted { border: solid 1px #aaa; background-color: #bbb; padding: 0; }
 div.jHtmlArea .ToolBar ul li.separator {height: 16px; margin: 0 2px 0 3px; border-left: 1px solid #ccc;}
 div.jHtmlArea .ToolBar ul li.separator:hover { padding: 1px; background-color: #fff; border-top:none; border-bottom:none; border-right:none;}
-div.jHtmlArea { background: white; }
+
 div.jHtmlArea .ToolBar ul li a:hover { }
 div.jHtmlArea .ToolBar ul li a.bold { background-position: 0 0; }
 div.jHtmlArea .ToolBar ul li a.italic { background-position: -16px 0; }
@@ -37,6 +37,7 @@ div.jHtmlArea .ToolBar ul li a.superscript { background-position: -112px -16px;}
 div.jHtmlArea .ToolBar ul li a.indent { background-position: -128px -16px;}
 div.jHtmlArea .ToolBar ul li a.outdent { background-position: -144px -16px;}
 div.jHtmlArea .ToolBar ul li a.horizontalrule { background-position: -160px -16px;}
+div.jHtmlArea .ToolBar ul li a.p { background-position: -176px -16px;}
 
 
 div.jHtmlArea .ToolBar ul li a.justifyleft { background-position: 0 -32px;}

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
+"""
+    GrassCMS - Simple drag and drop content management system
+"""
 from grasscms.main import * 
 from grasscms.forms import *
 from grasscms.openid_login import *
@@ -130,8 +133,8 @@ def update_rst_file(id_):
     with open(get_path(file_.content, 'w')):
         file_.write(getattr(form.request, 'rst_%s' %id_))
 
-@app.route('/text_blob/<page>')
-@app.route('/text_blob/<page>/<id>')
+@app.route('/text_blob/<page>', methods=['POST'])
+@app.route('/text_blob/<page>/<id_>', methods=['POST'])
 def text(page, id_=False):
     """
         If called without an id, a new text (empty) will be created
@@ -141,20 +144,19 @@ def text(page, id_=False):
     """
         
     user_blog = Blog.query.filter_by(id=g.user.blog).first()
-    page = Page.query.filter_by(blog=user_blog.id, id = page).first()
+    page = Page.query.filter_by(blog=user_blog.id, name = page).first()
 
     if not id_:
         db_session.add(Text("", g.user, page.id, user_blog.id))
         db_session.commit()
         return "" 
     else:
-        text = Text.query.filter_by(id=id_).first()
-        future_text = getattr(request.form, 'text_%s' %id_)
-        if future_text:
-            Text.content = future_text
-            db_session.commit()
-        else:
-            return text.text
+        text = Text.query.filter_by(id_=int(id_.replace('text_', '')), page=page.id).first()
+        if not text:
+            return ""
+        text.content = request.form[id_]
+        db_session.commit()
+        return text.content
 
 def read_file(file_):
     with open(file_) as filen:
@@ -180,11 +182,12 @@ def index(blog_name=False, page="index"):
 
     if not page:
         flash(u'There\'s no such page')
+        return redirect('/')
 
     if not blog_name or not page:
         return render_template('landing.html', page=user_page, blog=user_blog)
 
-    txts = [ (read_file(file_.content), file_.id_) for file_ in\
+    txts = [ (file_, read_file(file_.content)) for file_ in\
         File.query.filter_by(page = page.id, type_="rst")\
         if file_.content]
 
@@ -221,6 +224,9 @@ def set_position(type_, id_):
 
 @app.route('/set_dimensions/<type_>/<id_>', methods=['GET', 'POST'])
 def set_dimensions(type_, id_):
+    """
+        AJAX call to set dimensions of an element.
+    """
     if type_ == "text":
         element = Text.query.filter_by(id_=id_, user=g.user.id).first()
     else:

@@ -44,7 +44,7 @@
 
         <div class="menu_button">
             <span class="btn px45 success">
-                <a onclick="get_blob({{page.id}}, false); return false" href="#">
+                <a onclick="get_blob('{{page.name}}'); return false" href="#">
                     <span style="color:white"> Insert text </span> 
                 </a>
             </span>
@@ -74,19 +74,19 @@
         {%endif%}
 
         {% if txts %} 
-            {% for txt in txts %} 
-                <div class="dragable" style="background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt[1] }}">
+            {% for txt, content in txts %} 
+                <div class="text_rst dragable" style="background:rgba(0,0,0,0.9);padding-top:10px; position:absolute; top:{{txt.x}}px; left:{{txt.y}}px;"  id="{{ txt.id_ }}" >
                     <span><textarea style="padding-top:10px; min-width:4em; min-height:1em;"
-                         onchange="update_file(this, '{{txt[1]}}');" class="rst">{{ txt[0] }}</textarea></span>
+                         onchange="update_file(this, '{{txt.id_}}');" class="rst">{{ content }} </textarea></span>
                 </div>
             {%endfor%}
         {%endif%}
 
         {% if txt_blobs %}
             {% for txt in txt_blobs %} 
-                <div class="dragable" style="background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt[1] }}">
-                    <span><textarea style="padding-top:10px; min-width:4em; min-height:1em;"
-                         onchange="update_blob(this, '{{page.id}}, '{{txt.id_}}');" class="rst">{{ txt.text }}</textarea></span>
+                <div class="text_blob dragable" style="position:absolute; top:{{txt.x}}px; left:{{txt.y}}px; background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt.id_ }}" >
+                    <span><textarea style="padding-top:10px;min-width:4em; min-height:1em;"
+                         id='text_{{txt.id_}}' class="{{page.name}}"> {{ txt.content }}</textarea></span>
                 </div> 
             {%endfor%}
         {%endif%}
