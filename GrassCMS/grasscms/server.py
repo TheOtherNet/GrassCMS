@@ -187,6 +187,8 @@ def index(blog_name=False, page="index"):
 
     if not blog_name or not page:
         return render_template('landing.html', page=user_page, blog=user_blog)
+    if type(page) is str:
+        return render_template('landing.html', page=user_page, blog=user_blog)
 
     txts = [ (file_, read_file(file_.content)) for file_ in\
         File.query.filter_by(page = page.id, type_="rst")\
@@ -195,7 +197,6 @@ def index(blog_name=False, page="index"):
     txt_blobs = Text.query.filter_by(page=page.id)
 
     if not g.user or g.user.blog != user_blog_id:
-
         return render_template('index.html',
             imgs=File.query.filter_by(page=page.id, type_="image"), page=user_page, blog=user_blog,
             txts=txts, txt_blobs=txt_blobs)
