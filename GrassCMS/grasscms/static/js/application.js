@@ -26,6 +26,8 @@ jQuery(function () {
         );
         jQuery('#fileupload').fileupload('option', {
             maxFileSize: 5000000,
+            maxNumberOfFiles: 1,
+
         });
     } else {
         // Load existing files:

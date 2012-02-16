@@ -5,4 +5,20 @@
         <div class="warn">{{ messages }}</div>
         <div class="imgs">{% if imgs %}{% for img in imgs %} <img style="position:fixed; left:{{img.y}}px; top:{{img.x}}px; width:{{img.width}}; height: {{img.height}}" class="dragable" src='/static/uploads/{{ img.content }}' /> {%endfor%}
         {% else %} <p> User has not yet uploaded anything </p> {% endif %}</div>
+
+        {% if txts %} 
+            {% for txt, content in txts %} 
+                <div style="position:absolute; top:{{txt.x}}px; left:{{txt.y}}px;"  id="{{ txt.id_ }}" >
+                    {{ content|safe }}
+                </div>
+            {%endfor%}
+        {%endif%}
+
+        {% if txt_blobs %}
+            {% for txt in txt_blobs %} 
+                <div style="position:absolute; top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
+                         {{ txt.content|safe }}
+                </div> 
+            {%endfor%}
+        {%endif%}
     </div>{% endblock %}

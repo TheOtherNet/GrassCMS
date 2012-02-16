@@ -1,8 +1,5 @@
 {% extends "layout.html" %}
 {% block menu %}
-    <li>
-        <a href="/upload/" title="#" onclick="jQuery('.container').toggle(200); return false;"> Add content </a>
-    </li>
 {%endblock%}
 
 {% block head %}
@@ -13,52 +10,43 @@
     <link href="{{ url_for('static', filename='css/jHtmlArea.css') }}" rel="stylesheet" type="text/css"/>
     
 {%endblock%}
-    
 {% block body %}
-    <div onBlur="jQuery(this).hide()" class="container menu_wrapper" id="container">
+    <div class="menu_wrapper">
         <div class="menu_button">
-            <form id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
-                <span class="btn success px45 fileinput-button">
-                    <span> Click here to upload a file </span>
-                    <input type="file" onchange="jQuery('#fileupload').submit()"; name="files" >
-                </span>
-
+            <form style="width:42px" id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
+                <input style="width:0px;height:0px" type="file" id="files" class="files" name="files" >
+                <img title="Upload files" src="{{url_for('static', filename='images/add.png')}}" id="fakefiles" />
                 <div style="position:absolute; top:0px; left:-100px; width:0px;">
                     <input type="submit"/>
                 </div>
             </form>
+        </div>
+
+
+        <div class="menu_button">
+                <a onclick="get_blob('{{page.name}}'); return false" href="#">
+                    <img title="Add new text" src="{{url_for('static', filename='images/text.png')}}" />
+                </a>
+        </div>
+
+        <div class="menu_button">
+                <a onclick="get_menu('{{blog.name}}','{{blog.id}}','{{page.name}}'); return false" href="#">
+                    <img title="Add new menu" src="{{url_for('static', filename='images/menu.png')}}" />
+                </a>
         </div>
 
         <div class="menu_button">
             <form id="newpage" action="#" onsubmit="create_page(); return false">
-                <span class="btn px45 success">
-                    <span> Create a new page </span>
+                <img title="Add new page" src="{{url_for('static', filename='images/page.png')}}" onclick="$('#new_page_div').toggle(100)" />
+                <div id="new_page_div" style="display:none">
                     <input type="text" id="new_page" name="page" />
                     <span><a href="#" onclick="create_page()">Go</a></span>
-                </span>
+                </div>
                 <div style="position:absolute; top:0px; left:-100px; width:0px;">
                     <input type="submit"/>
                 </div>
             </form>
         </div>
-
-        <div class="menu_button">
-            <span class="btn px45 success">
-                <a onclick="get_blob('{{page.name}}'); return false" href="#">
-                    <span style="color:white"> Insert text </span> 
-                </a>
-            </span>
-        </div>
-
-        <div class="menu_button">
-            <span class="btn px45 success">
-                <a onclick="get_menu({{blog.id}}); return false" href="#">
-                    <span style="color:white"> Insert menu </span>
-                </a>
-            </span>
-        </div>
-
-        <div style="text-align:center; background:rgba(0,0,0,0.9); position:relative; top:115px;" onclick="jQuery('#container').hide(200);"> <span style="font-size:xx-big">^</span> </div>
 
     </div>
     

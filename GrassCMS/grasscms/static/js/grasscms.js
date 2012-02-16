@@ -15,6 +15,7 @@ function get_blob(page_name){
     $.ajax({
         type : 'POST', 
         url:'/text_blob/' + page_name, 
+        method: 'POST',
         complete: function(data){ console.debug("DONE");  location.reload(true); } 
     }); 
 }
@@ -31,11 +32,27 @@ function update_blob(obj, page_id, id){
     }); 
 }
 
-function get_menu(blog_id){ 
+function get_links(blog, data){
+    var data = $.parseJSON(data), data_2 = "";
+    $(data).each(function(element){  data_2 += "<li><a href=\"" + blog + "/" + data[element] + "\"> " + data[element] + "</a></li>";  });
+    console.debug(data_2);
+    console.debug(data);
+    return "<ul style='list-style:none; display:inline; margin-right:3px;'>"+ data_2 + "</ul>";
+}
+
+function get_menu(blog, blog_id, page_id){ 
     $.ajax({
-        url:'/get_menu/' + blog_id,
-        success: function(data){ 
-            document.location.href=document.location.href; 
+        url:'/get_menu/' + blog_id +'/', 
+        type : 'POST', 
+        success: function(data_){
+            $.ajax({
+                type : 'POST', 
+                url:'/text_blob/' + page_id + "/",
+                data: { text: get_links(blog, data_) },
+                complete: function(data){ 
+                        console.debug(data_);
+                } 
+            });
         } 
     }); 
 }
@@ -74,16 +91,13 @@ function grasscms_startup(){
         }); 
     });
 
-    $('.img').resizable({ 
-        stop: function(ev, ui){ 
-            $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)});
-        }
-    }).parent().draggable({ 
-        stop: function(ev, ui){ 
-            $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}
-    });
-
+    $('.img').resizable({ stop: function(ev, ui){ $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)}); }
+    }).parent().draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}});
     $("textarea").htmlarea();     
+    $('.text_blob').draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
+    $('.text_rst').draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
+    $('#fakefiles').live('click', function () { $('#files').click(); });
+
 /*
     $('.text_blob').resizable( {
         alsoResize: '.text_blob textarea', 
@@ -104,15 +118,4 @@ function grasscms_startup(){
             $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}
     });    
 */ // FIXME: Resizable is not working properly.
-
-    $('.text_blob').draggable({ 
-        stop: function(ev, ui){ 
-            $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}
-    });
-    $('.text_rst').draggable({ 
-        stop: function(ev, ui){ 
-            $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}
-    });    
-    
-
 }

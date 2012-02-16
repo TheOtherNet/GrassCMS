@@ -116,9 +116,13 @@ def new_page(name):
     else:
         abort(401)
 
-@app.route('/get_menu/<blog>')
+@app.route('/get_pagination/')
+def get_pagination(blog, page):
+    return "Not implemented"
+
+@app.route('/get_menu/<blog>/', methods=['POST'])
 def get_menu(blog):
-    blog = Blog.query.filter_by(name = blog).first()
+    blog = Blog.query.filter_by(id = blog).first()
     return json.dumps([ a.name for a in Page.query.filter_by(blog = blog.id)])
         
 @app.route('/update_rst/<id_>')
@@ -134,6 +138,7 @@ def update_rst_file(id_):
         file_.write(getattr(form.request, 'rst_%s' %id_))
 
 @app.route('/text_blob/<page>', methods=['POST'])
+@app.route('/text_blob/<page>/', methods=['POST'])
 @app.route('/text_blob/<page>/<id_>', methods=['POST'])
 def text(page, id_=False):
     """
@@ -147,7 +152,11 @@ def text(page, id_=False):
     page = Page.query.filter_by(blog=user_blog.id, name = page).first()
 
     if not id_:
-        db_session.add(Text("", g.user, page.id, user_blog.id))
+        try:
+            text = request.form['text']
+        except:
+            text = ""
+        db_session.add(Text(text, g.user, page.id, user_blog.id))
         db_session.commit()
         return "" 
     else:
@@ -176,14 +185,13 @@ def index(blog_name=False, page="index"):
         user_blog = False
 
     try:
-        page = Page.query.filter_by(blog=Blog.query.filter_by(name=blog_name).first().id, name = page).first()
+        tmp_blog = Blog.query.filter_by(name=blog_name).first()
+        page = Page.query.filter_by(blog=tmp_blog.id, name = page).first()
+        app.logger.info(tmp_blog.id)
+        app.logger.info(page.name)
     except AttributeError, error:
-        app.logger.info(error)
+        page = user_page
         pass
-
-    if not page:
-        flash(u'There\'s no such page')
-        return redirect('/')
 
     if not blog_name or not page:
         return render_template('landing.html', page=user_page, blog=user_blog)
@@ -198,11 +206,11 @@ def index(blog_name=False, page="index"):
 
     if not g.user or g.user.blog != user_blog_id:
         return render_template('index.html',
-            imgs=File.query.filter_by(page=page.id, type_="image"), page=user_page, blog=user_blog,
+            imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog,
             txts=txts, txt_blobs=txt_blobs)
     else:
         return render_template('admin.html',
-            imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog, page=user_page,
+            imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog, page=page,
             txts=txts, txt_blobs=txt_blobs)
 
 @app.route('/get/<id_>', methods=['GET', 'POST'])
