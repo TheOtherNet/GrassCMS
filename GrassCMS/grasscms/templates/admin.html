@@ -4,52 +4,49 @@
 
 {% block head %}
     <script src="{{url_for('static', filename='js/grasscms.js')}}"></script>
-    <script src="{{url_for('static', filename='js/jHtmlArea-0.6.0.min.js')}}"></script>
+    <script src="{{url_for('static', filename='ckeditor/ckeditor.js')}}"></script>
     <script> $(function(){ grasscms_startup(); }); </script>
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
-    <link href="{{ url_for('static', filename='css/jHtmlArea.css') }}" rel="stylesheet" type="text/css"/>
-    
 {%endblock%}
-{% block body %}
-    <div class="menu_wrapper">
-        <div class="menu_button">
+
+{% block admin_menu %}
+        <li class="menu_button">
             <form style="width:42px" id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
                 <input style="width:0px;height:0px" type="file" id="files" class="files" name="files" >
                 <img title="Upload files" src="{{url_for('static', filename='images/add.png')}}" id="fakefiles" />
-                <div style="position:absolute; top:0px; left:-100px; width:0px;">
+                <div style="position:fixed; top:0px; left:-100px; width:0px;">
                     <input type="submit"/>
                 </div>
             </form>
-        </div>
+        </li>
 
-
-        <div class="menu_button">
+        <li class="menu_button">
                 <a onclick="get_blob('{{page.name}}'); return false" href="#">
                     <img title="Add new text" src="{{url_for('static', filename='images/text.png')}}" />
                 </a>
-        </div>
+        </li>
 
-        <div class="menu_button">
+        <li class="menu_button">
                 <a onclick="get_menu('{{blog.name}}','{{blog.id}}','{{page.name}}'); return false" href="#">
                     <img title="Add new menu" src="{{url_for('static', filename='images/menu.png')}}" />
                 </a>
-        </div>
+        </li>
 
-        <div class="menu_button">
+        <li class="menu_button">
             <form id="newpage" action="#" onsubmit="create_page(); return false">
-                <img title="Add new page" src="{{url_for('static', filename='images/page.png')}}" onclick="$('#new_page_div').toggle(100)" />
-                <div id="new_page_div" style="display:none">
-                    <input type="text" id="new_page" name="page" />
-                    <span><a href="#" onclick="create_page()">Go</a></span>
+                <img title="Add new page" src="{{url_for('static', filename='images/page.png')}}" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" />
+                <div id="new_page_div" style="display:inline; display:none; ">
+                    <input type="text" id="new_page" name="page" placeholder="Page name" required />
+                    <span><a href="#" onclick="create_page()">Create page</a></span>
                 </div>
-                <div style="position:absolute; top:0px; left:-100px; width:0px;">
+                <div style="position:fixed; top:0px; left:-100px; width:0px;">
                     <input type="submit"/>
                 </div>
             </form>
-        </div>
+        </li>
 
-    </div>
-    
+{%endblock%} 
+
+{% block body %}
     <div id="filedrag">
 
         <h1>{{title}}</h1>
@@ -63,18 +60,19 @@
 
         {% if txts %} 
             {% for txt, content in txts %} 
-                <div class="text_rst dragable" style="background:rgba(0,0,0,0.9);padding-top:10px; position:absolute; top:{{txt.x}}px; left:{{txt.y}}px;"  id="{{ txt.id_ }}" >
-                    <span><textarea style="padding-top:10px; min-width:4em; min-height:1em;"
-                         onchange="update_file(this, '{{txt.id_}}');" class="rst">{{ content }} </textarea></span>
+                <div class="text_rst draggable" style="background:rgba(0,0,0,0.9);padding-top:10px; position:fixed; top:{{txt.x}}px; left:{{txt.y}}px;"  id="{{ txt.id_ }}" >
+
+                    <div style="padding-top:10px;"><textarea style="min-width:4em; min-height:5em;" 
+                         onchange="update_file(this, '{{txt.id_}}');" class="rst">{{ content }} </textarea></div>
                 </div>
             {%endfor%}
         {%endif%}
 
         {% if txt_blobs %}
             {% for txt in txt_blobs %} 
-                <div class="text_blob dragable" style="position:absolute; top:{{txt.x}}px; left:{{txt.y}}px; background:rgba(0,0,0,0.9);padding-top:10px;" id="{{ txt.id_ }}" >
-                    <span><textarea style="padding-top:10px;min-width:4em; min-height:1em;"
-                         id='text_{{txt.id_}}' class="{{page.name}}"> {{ txt.content }}</textarea></span>
+                <div class="text_blob draggable" style="position:fixed; top:{{txt.x}}px; left:{{txt.y}}px; background:transparent; border:0px; margin-top:20px;" id="{{ txt.id_ }}" >
+                    <div style="padding-top:10px;"><textarea style="min-width:4em; min-height:5em;" 
+                         id='text_{{txt.id_}}' class="{{page.name}} ckeditor"> {{ txt.content }}</textarea></div>
                 </div> 
             {%endfor%}
         {%endif%}

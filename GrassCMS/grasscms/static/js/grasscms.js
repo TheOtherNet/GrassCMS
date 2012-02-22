@@ -14,7 +14,7 @@ function get_blob(page_name){
     blob="";
     $.ajax({
         type : 'POST', 
-        url:'/text_blob/' + page_name, 
+        url:'/text_blob/' + page_name +"/", 
         method: 'POST',
         complete: function(data){ console.debug("DONE");  location.reload(true); } 
     }); 
@@ -80,7 +80,7 @@ function get_dimensions(obj, ui){
     console.debug(a); return a;
 }
 
-function grasscms_startup(){
+function setup_images(){
     $.each($('.img'), function(it){
         var img=$(this);
         img.parent().css('top',  '100px');
@@ -91,23 +91,25 @@ function grasscms_startup(){
         }); 
     });
 
-    $('.img').resizable({ stop: function(ev, ui){ $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)}); }
-    }).parent().draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}});
-    $("textarea").htmlarea();     
-    $('.text_blob').draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
-    $('.text_rst').draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
+    $('.img').resizable({ 
+        stop: function(ev, ui){ $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)}); }}).parent().draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}});
+
+    $('.img').resizable().parent().draggable();
+}
+
+
+function setup_text(){
+//    $('.text_blob').resizable({ alsoResize: $(this).find()}).parent().draggable();
+//    $('.text_rst').draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
+$('.draggable').draggable();
+}
+
+function grasscms_startup(){
+    setup_images();
+    setup_text();
     $('#fakefiles').live('click', function () { $('#files').click(); });
 
 /*
-    $('.text_blob').resizable( {
-        alsoResize: '.text_blob textarea', 
-        stop: function(ev, ui){ 
-            $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)});
-        }
-    }).draggable({ 
-        stop: function(ev, ui){ 
-            $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}
-    });
 
     $('.text_rst').resizable({ 
         stop: function(ev, ui){ 
@@ -118,4 +120,9 @@ function grasscms_startup(){
             $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}
     });    
 */ // FIXME: Resizable is not working properly.
+}
+
+function display_toolbar(id){
+    var id = id + ' .ToolBar';
+    $(id).toggle();
 }
