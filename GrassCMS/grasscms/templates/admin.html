@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
-{% block menu %}
-{%endblock%}
+{% block menu %} {%endblock%}
 
 {% block head %}
     <script src="{{url_for('static', filename='js/grasscms.js')}}"></script>
@@ -47,10 +46,8 @@
 {%endblock%} 
 
 {% block body %}
-    <div id="filedrag">
-
+    <div id="filedrag" style="margin-top:40px">
         <h1>{{title}}</h1>
-
         {% if imgs %} 
             {% for img in imgs %}
                 <img class="img" style=" width:{{img.width}}px; height: {{img.height}}px;"
@@ -58,24 +55,26 @@
             {%endfor%}
         {%endif%}
 
-        {% if txts %} 
-            {% for txt, content in txts %} 
-                <div class="text_rst draggable" style="background:rgba(0,0,0,0.9);padding-top:10px; position:fixed; top:{{txt.x}}px; left:{{txt.y}}px;"  id="{{ txt.id_ }}" >
-
+        {% if txts %}
+            {% for txt, content in txts %}
+                <div class="text_rst draggable texts" 
+                    style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
                     <div style="padding-top:10px;"><textarea style="min-width:4em; min-height:5em;" 
                          onchange="update_file(this, '{{txt.id_}}');" class="rst">{{ content }} </textarea></div>
                 </div>
             {%endfor%}
         {%endif%}
 
-        {% if txt_blobs %}
-            {% for txt in txt_blobs %} 
-                <div class="text_blob draggable" style="position:fixed; top:{{txt.x}}px; left:{{txt.y}}px; background:transparent; border:0px; margin-top:20px;" id="{{ txt.id_ }}" >
-                    <div style="padding-top:10px;"><textarea style="min-width:4em; min-height:5em;" 
-                         id='text_{{txt.id_}}' class="{{page.name}} ckeditor"> {{ txt.content }}</textarea></div>
-                </div> 
-            {%endfor%}
-        {%endif%}
+        {% if txt_blobs %} {% for txt in txt_blobs %} 
+            <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
+                <div> <a onclick="$('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon-white icon icon-edit"></i></a> </div>
+                <div>
+                    <textarea style="min-width:4em; min-height:5em;" 
+                        id='text_{{txt.id_}}' class="{{page.name}} ckeditor"> 
+                            {{ txt.content }}</textarea>
+                </div>
+            </div> 
+        {%endfor%} {%endif%}
 
     </div>
 

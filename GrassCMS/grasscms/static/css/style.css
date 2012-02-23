@@ -9,7 +9,9 @@ textarea, iframe { border:0px!important; }
     top:0px;
     left:430px;
     z-index:2010;
+    display:none;
 }
+.texts{ background:rgba(0,0,0,0.9);padding-top:10px; position:fixed;} 
 .icons { display:none; position:absolute; }
 article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block; }
 audio, canvas, video { display: inline-block; *display: inline; *zoom: 1; }
