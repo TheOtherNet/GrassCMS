@@ -36,7 +36,7 @@
     {%block head %} {%endblock%}
 </head>
 
-<body>
+<body style="padding-top:90px; position:relative;" >
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container" style="width: auto;">
@@ -68,12 +68,13 @@
             </div>
         </div>
     </div>
-
+    
     <header>
-        {% for message in get_flashed_messages() %} <div class="error"> {{ message }} </div> {% endfor %}
+        {% block header %} {%endblock%}
+        {% for message in get_flashed_messages() %} <div class="alert" ><a class="close" data-dismiss="alert" href="#">&times;</a><p> {{ message }} </p></div> {% endfor %}
     </header>
 
-    <div role="main">
+    <div role="main" class="container">
         {% block body %}{% endblock %}
     </div>
 
