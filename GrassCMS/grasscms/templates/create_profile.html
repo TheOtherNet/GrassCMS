@@ -1,27 +1,18 @@
 {% extends "layout.html" %}
 {% block title %}Create Profile{% endblock %}
 {% block body %}
-    <div class="body" style="width:50%; margin-top:130px">
+    <div class="span6" style="margin-top:130px">
     <h2>Edit Profile</h2>
-    <form action="" method="post">
-        <ul class="unstyled">
-            <li>
-                <label for="name"> Name </label> 
-                <input type="text" name="name" size=30 value="{{ request.values.name }}" />
-            </li>
-            <li>
-                <label for="email"> Email </label> 
-                <input type="text" name="email" size=30 value="{{ request.values.email }}">
-            </li>
-            <li>
-                <label for="page"> Page </label> 
-                <input type="text" name="page" size=30 value="{{ request.values.page_name }}">
-            </li>
-            <li>
-                <input type=submit value="Update profile" />
-                <input type=submit name="delete" value="Delete" />
-            </li>
-        </ul>
+    <form class="form-horizontal" method="post">
+        <label for="name"> Name </label> 
+        <input type="text" name="name" size=30 value="{{ request.values.name }}" required />
+        <label for="email"> Email </label> 
+        <input type="text" name="email" size=30 value="{{ request.values.email }}" required />
+        <label for="page"> Page </label> 
+        <input type="text" name="page" placeholder="Put your page name here" size=30 required value="{{ request.values.page_name }}" />
+        <p class=""> This will be your page name, you would not be able to change it so be careful </p>
+        <input type=submit value="Update profile" />
+        <input type=submit name="delete" value="Delete" />
     </form>
     <p>
     If you don't want to proceed, you can <a href="{{ url_for('logout')
