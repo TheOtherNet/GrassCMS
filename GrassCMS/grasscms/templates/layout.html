@@ -46,13 +46,21 @@
                 </ul>
                 <ul class="nav pull-right" style="margin-top:2px">
                     {% if g.user %}
-                        <li> 
-                            <img src="{{ g.user.email | gravatar(size=32) }}" style="vertical-align:top" /> 
-                        </li>
-                        {%if g.user.name %} <li> <a href="/{{blog.name}}/{{page.name}}"> {{ g.user.name }}</a> </li>  
-                        {%else%} <li> {{g.user.name}} </li> {%endif%}
-                        <li> <a href="{{ url_for('edit_profile') }}"> Profile </a> </li>
-                        <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
+                    <li>
+                        <img src="{{ g.user.email | gravatar(size=32) }}" style="margin-right:10px" /> 
+                    </li>
+                    <li>
+                        <div class="btn-group">          
+                            <a class="btn " href="/{{blog.name}}/{{page.name}}"> <i class="icon-user"></i> {{ g.user.name }}</a>
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li> <a href="{{ url_for('edit_profile') }}"><i class="icon-edit"></i> Edit profile </a> </li>
+                                <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                <li class="divider"></li>
+                                <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
+                           </ul>        
+                        </div>
+                    </li>
                     {% else %}
                         <li> <a onclick="open_login(this); return false;" title="Sign in" href="{{ url_for('login') }}"> Sign in </a> </li> 
                     {% endif %}
