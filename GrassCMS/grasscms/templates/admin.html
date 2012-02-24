@@ -10,7 +10,7 @@
     function setup_text(){
         $('.draggable').draggable({handle: '.handler', stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
         $('.CKeditor_blob').ckeditor();
-        CKEDITOR.on('currentInstance', function(){ $('.handler').toggle(); });
+        CKEDITOR.on('currentInstance', function(){ $('.handler').toggle(); $('.cke_bottom').hide(); $('.cke_top').hide(); });
     }
     </script>
     <script> $(function(){ grasscms_startup(); }); </script>
