@@ -123,7 +123,7 @@ def get_pagination(blog, page):
 @app.route('/get_menu/<blog>/', methods=['POST'])
 def get_menu(blog):
     blog = Blog.query.filter_by(id = blog).first()
-    return json.dumps([ "/%s/%s" %(blog.name, a.name) for a in Page.query.filter_by(blog = blog.id)])
+    return json.dumps([ "%s" %(a.name) for a in Page.query.filter_by(blog = blog.id)])
         
 @app.route('/update_rst/<id_>')
 def update_rst_file(id_):

@@ -34,7 +34,7 @@ function update_blob(obj, page_id, id){
 
 function get_links(blog, data){
     var data = $.parseJSON(data), data_2 = "";
-    $(data).each(function(element){  data_2 += "<li><a href=\"" + blog + "/" + data[element] + "\"> " + data[element] + "</a></li>";  });
+    $(data).each(function(element){  data_2 += "<li><a href=\"/" + blog + "/" + data[element] + "\"> " + data[element] + "</a></li>";  });
     console.debug(data_2);
     console.debug(data);
     return "<ul style='list-style:none; display:inline; margin-right:3px;'>"+ data_2 + "</ul>";
