@@ -155,7 +155,7 @@ def text(page, id_=False):
         try:
             text = request.form['text']
         except:
-            text = ""
+            text = "Insert your text here"
         db_session.add(Text(text, g.user, page.id, user_blog.id))
         db_session.commit()
         return "" 
