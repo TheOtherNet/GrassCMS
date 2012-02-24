@@ -66,9 +66,10 @@ function create_page(){
     })
 }
 
-function get_txt_pos(obj, ui) {
-var id=$(obj).children('span').children('.jHtmlArea').children('textarea').attr('id');
-return id.replace('text_', '') + "?x=" + ui.position.top + "&y=" + ui.position.left; 
+function get_txt_pos(obj) {
+console.debug($(obj));
+
+return $(obj).attr('id') + "?x=" + $(obj).css('left').replace('px','') + "&y=" + $(obj).css('top').replace('px',''); 
 }
 
 function get_pos(obj, ui) { 
@@ -98,11 +99,6 @@ function setup_images(){
 }
 
 
-function setup_text(){
-//    $('.text_blob').resizable({ alsoResize: $(this).find()}).parent().draggable();
-//    $('.text_rst').draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
-$('.draggable').draggable();
-}
 
 function grasscms_startup(){
     setup_images();

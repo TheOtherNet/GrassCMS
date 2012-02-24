@@ -2,8 +2,17 @@
 {% block menu %} {%endblock%}
 
 {% block head %}
+    <script src="{{url_for('static', filename='js/jquery-ui.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/grasscms.js')}}"></script>
     <script src="{{url_for('static', filename='ckeditor/ckeditor.js')}}"></script>
+    <script src="{{url_for('static', filename='ckeditor/adapters/jquery.js')}}"></script>
+    <script>
+    function setup_text(){
+        $('.draggable').draggable({handle: '.handler', stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
+        $('.CKeditor_blob').ckeditor();
+        CKEDITOR.on('currentInstance', function(){ $('.handler').toggle(); });
+    }
+    </script>
     <script> $(function(){ grasscms_startup(); }); </script>
 {%endblock%}
 
@@ -55,22 +64,23 @@
             {%endfor%}
         {%endif%}
 
-        {% if txts %}
-            {% for txt, content in txts %}
-                <div class="text_rst draggable texts" 
-                    style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                    <div style="padding-top:10px;"><textarea style="min-width:4em; min-height:5em;" 
-                         onchange="update_file(this, '{{txt.id_}}');" class="rst">{{ content }} </textarea></div>
+        {% if txts %} {% for txt, content in txts %} 
+            <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
+                <div class="handler" style="display:none; background:black; border-radius:3px"> <a onclick="$('cke_top').hide(); $('cke_bottom').hide(); $('#cke_bottom_text_{{txt.id_}}').toggle(); $('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon icon-edit"></i></a> </div>
+                <div>
+                    <textarea style="min-width:4em; min-height:5em;"  
+                        id='text_{{txt.id_}}' class="{{page.name}}  CKeditor_file"> 
+                            {{ content }}</textarea>
                 </div>
-            {%endfor%}
-        {%endif%}
+            </div> 
+        {%endfor%} {%endif%}
 
         {% if txt_blobs %} {% for txt in txt_blobs %} 
             <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                <div> <a onclick="$('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon-white icon icon-edit"></i></a> </div>
+                <div class="handler" style="display:none; background:black; border-radius:3px"> <a onclick="$('cke_top').hide(); $('cke_bottom').hide(); $('#cke_bottom_text_{{txt.id_}}').toggle(); $('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon icon-edit"></i></a> </div>
                 <div>
                     <textarea style="min-width:4em; min-height:5em;" 
-                        id='text_{{txt.id_}}' class="{{page.name}} ckeditor"> 
+                        id='text_{{txt.id_}}' class="{{page.name}} CKeditor_blob"> 
                             {{ txt.content }}</textarea>
                 </div>
             </div> 
