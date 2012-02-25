@@ -10,7 +10,9 @@
     function setup_text(){
         $('.draggable').draggable({handle: '.handler', stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
         $('.CKeditor_blob').ckeditor();
-        CKEDITOR.on('currentInstance', function(){ $('.handler').toggle(); $('.cke_bottom').hide(); $('.cke_top').hide(); });
+        CKEDITOR.on('currentInstance', function(that){
+            console.debug (this); console.debug(that);
+        });
     }
     </script>
     <script> $(function(){ grasscms_startup(); }); </script>
@@ -77,7 +79,7 @@
 
         {% if txt_blobs %} {% for txt in txt_blobs %} 
             <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                <div class="handler" style="display:none; background:black; border-radius:3px"> <a onclick="$('cke_top').hide(); $('cke_bottom').hide(); $('#cke_bottom_text_{{txt.id_}}').toggle(); $('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon icon-edit"></i></a> </div>
+                <div class="handler" style="display:none; background:black; height:4px; border-radius:3px"> </div>
                 <div>
                     <textarea style="min-width:4em; min-height:5em;" 
                         id='text_{{txt.id_}}' class="{{page.name}} CKeditor_blob"> 
