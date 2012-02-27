@@ -22,9 +22,11 @@ function get_blob(page_name){
 
 function update_blob(obj, page_id, id){
     $.ajax({
-        url:'/text_blob/' + id, 
+        url:'/text_blob/' + page_id + "/" +  id ,
+        method: 'POST',
+        type: 'POST',
         data: { 
-            'text': $(obj).val() 
+            'text': obj
         },
         success: function(data){ 
             console.debug(data);  

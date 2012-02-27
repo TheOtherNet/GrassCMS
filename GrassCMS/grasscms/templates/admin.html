@@ -12,14 +12,17 @@
         $('.CKeditor_blob').ckeditor(addevents);
     }
 
-    function addevents(editor){
-        editor=CKEDITOR.instances[$(editor).attr('id')]; console.debug(editor);
+    function save(editor){ if(editor.checkDirty()){ update_blob( editor.getData(), {{ page.id }}, editor.name); } }
 
+    function addevents(editor){
+        editor=CKEDITOR.instances[$(editor).attr('id')];
+        editor.on( 'saveSnapshot', function(e) { save(e.editor); });
         editor.on("blur", function(event) { 
             $('.container').css('height','auto');
             $("#handler_" + event.editor.name ).toggle(); 
             $("#cke_top_" + event.editor.name ).toggle(); 
             $("#cke_bottom_" + event.editor.name ).toggle(); 
+            save(event.editor)
         });
 
         editor.on("focus", function(event) { 
@@ -27,6 +30,7 @@
             $("#handler_" + event.editor.name ).toggle(); 
             $("#cke_top_" + event.editor.name ).toggle(); 
             $("#cke_bottom_" + event.editor.name ).toggle(); 
+            save(event.editor);
         });
 
     }
@@ -87,7 +91,7 @@
             <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
                 <div class="handler" id="handler_text_{{txt.id_}}" style="display:none; background:black; border-radius:3px"> <a onclick="$('cke_top').hide(); $('cke_bottom').hide(); $('#cke_bottom_text_{{txt.id_}}').toggle(); $('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon icon-edit"></i></a> </div>
                 <div>
-                    <textarea style="min-width:4em; min-height:5em;"  
+                    <textarea onchange="console.debug(this);" style="min-width:4em; min-height:5em;"  
                         id='text_{{txt.id_}}' class="{{page.name}}  CKeditor_file editor"> 
                             {{ content }}</textarea>
                 </div>
@@ -98,7 +102,7 @@
             <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
                 <div class="handler" style="display:none; background:black; height:4px; border-radius:3px" id="handler_text_{{txt.id_}}" > </div>
                 <div>
-                    <textarea style="min-width:4em; min-height:5em;" 
+                    <textarea onchange="console.debug(this);" style="min-width:4em; min-height:5em;"  
                         id='text_{{txt.id_}}' class="{{page.name}} CKeditor_blob editor"> 
                             {{ txt.content }}</textarea>
                 </div>
