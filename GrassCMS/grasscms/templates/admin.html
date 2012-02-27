@@ -9,11 +9,28 @@
     <script>
     function setup_text(){
         $('.draggable').draggable({handle: '.handler', stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
-        $('.CKeditor_blob').ckeditor();
-        CKEDITOR.on('currentInstance', function(that){
-            console.debug (this); console.debug(that);
-        });
+        $('.CKeditor_blob').ckeditor(addevents);
     }
+
+    function addevents(editor){
+        editor=CKEDITOR.instances[$(editor).attr('id')]; console.debug(editor);
+
+        editor.on("blur", function(event) { 
+            $('.container').css('height','auto');
+            $("#handler_" + event.editor.name ).toggle(); 
+            $("#cke_top_" + event.editor.name ).toggle(); 
+            $("#cke_bottom_" + event.editor.name ).toggle(); 
+        });
+
+        editor.on("focus", function(event) { 
+            $('.container').css('height','5em');
+            $("#handler_" + event.editor.name ).toggle(); 
+            $("#cke_top_" + event.editor.name ).toggle(); 
+            $("#cke_bottom_" + event.editor.name ).toggle(); 
+        });
+
+    }
+    //    $('.CKeditor_blob').each(function(ck){ var editor = $(ck).ckeditorGet(); console.debug(editor); editor.on('click', function(ev){ console.debug("FOO"); }); });
     </script>
     <script> $(function(){ grasscms_startup(); }); </script>
 {%endblock%}
@@ -68,10 +85,10 @@
 
         {% if txts %} {% for txt, content in txts %} 
             <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                <div class="handler" style="display:none; background:black; border-radius:3px"> <a onclick="$('cke_top').hide(); $('cke_bottom').hide(); $('#cke_bottom_text_{{txt.id_}}').toggle(); $('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon icon-edit"></i></a> </div>
+                <div class="handler" id="handler_text_{{txt.id_}}" style="display:none; background:black; border-radius:3px"> <a onclick="$('cke_top').hide(); $('cke_bottom').hide(); $('#cke_bottom_text_{{txt.id_}}').toggle(); $('#cke_top_text_{{txt.id_}}').toggle();" href="#"> <i class="icon icon-edit"></i></a> </div>
                 <div>
                     <textarea style="min-width:4em; min-height:5em;"  
-                        id='text_{{txt.id_}}' class="{{page.name}}  CKeditor_file"> 
+                        id='text_{{txt.id_}}' class="{{page.name}}  CKeditor_file editor"> 
                             {{ content }}</textarea>
                 </div>
             </div> 
@@ -79,10 +96,10 @@
 
         {% if txt_blobs %} {% for txt in txt_blobs %} 
             <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                <div class="handler" style="display:none; background:black; height:4px; border-radius:3px"> </div>
+                <div class="handler" style="display:none; background:black; height:4px; border-radius:3px" id="handler_text_{{txt.id_}}" > </div>
                 <div>
                     <textarea style="min-width:4em; min-height:5em;" 
-                        id='text_{{txt.id_}}' class="{{page.name}} CKeditor_blob"> 
+                        id='text_{{txt.id_}}' class="{{page.name}} CKeditor_blob editor"> 
                             {{ txt.content }}</textarea>
                 </div>
             </div> 
