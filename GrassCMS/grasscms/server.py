@@ -163,7 +163,7 @@ def text(page, id_=False):
         text = Text.query.filter_by(id_=int(id_.replace('text_', '')), page=page.id).first()
         if not text:
             return ""
-        text.content = request.form[id_]
+        text.content = request.form['text']
         db_session.commit()
         return text.content
 
