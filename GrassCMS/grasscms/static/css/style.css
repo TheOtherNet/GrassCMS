@@ -12,7 +12,7 @@ textarea, iframe { border:0px!important; }
     left:400px;
     z-index:2010;
     display:none;
-    width:800px;
+    width:800px!important;
 }
 .cke_skin_kama { border:none!important;} 
 .cke_skin_kama .cke_wrapper{
