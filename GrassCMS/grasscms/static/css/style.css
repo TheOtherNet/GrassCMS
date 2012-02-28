@@ -5,12 +5,14 @@
 .menu_button form{ margin:0px!important; }
 .ToolBar { display:none; width: 668px!important; position: fixed!important;top: 7px!important;z-index: 2000!important;left: 430px!important; }
 textarea, iframe { border:0px!important; }
+.cke_toolbox_collapser { display:none; }
 .cke_top{
     position:fixed;
     top:0px;
-    left:430px;
+    left:400px;
     z-index:2010;
     display:none;
+    width:800px;
 }
 .cke_skin_kama { border:none!important;} 
 .cke_skin_kama .cke_wrapper{
