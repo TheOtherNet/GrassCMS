@@ -7,16 +7,32 @@
     <script src="{{url_for('static', filename='ckeditor/ckeditor.js')}}"></script>
     <script src="{{url_for('static', filename='ckeditor/adapters/jquery.js')}}"></script>
     <script>
+    function save(editor){ 
+            if(editor.checkDirty()){ update_blob( editor.getData(), '{{ page.name }}', editor.name); }
+            var curr_dime = get_txt_current_dimensions(editor.name)
+            $.ajax({ url: '/set_dimensions/text/' + editor.name.replace('text_',''), data: { width:curr_dime[0], height:curr_dime[1] } });
+    }
+
     function setup_text(){
         $('.draggable').draggable({handle: '.handler', stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
         $('.CKeditor_blob').ckeditor(addevents);
     }
 
-    function save(editor){ if(editor.checkDirty()){ update_blob( editor.getData(), '{{ page.name }}', editor.name); } }
+    function get_txt_stored_dimensions(editor){ var name = editor.name;
+        $.getJSON('/get/' + name.replace('text_', ''), function(where){ 
+            editor.resize(where[2], where[3]);
+        });
+    }
+
+    function get_txt_current_dimensions(name){
+        return new Array($('#cke_' + name).css('width').replace('px',''), $('#cke_' + name).css('height').replace('px',''));
+    }
 
     function addevents(editor){
         editor=CKEDITOR.instances[$(editor).attr('id')];
+        get_txt_stored_dimensions(editor);
         editor.on( 'saveSnapshot', function(e) { save(e.editor); });
+
         editor.on("blur", function(event) { 
             $('.container').css('height','auto');
             $("#handler_" + event.editor.name ).toggle(); 

@@ -69,9 +69,7 @@ function create_page(){
 }
 
 function get_txt_pos(obj) {
-console.debug($(obj));
-
-return $(obj).attr('id') + "?x=" + $(obj).css('left').replace('px','') + "&y=" + $(obj).css('top').replace('px',''); 
+    return $(obj).attr('id') + "?x=" + $(obj).css('top').replace('px','') + "&y=" + $(obj).css('left').replace('px',''); 
 }
 
 function get_pos(obj, ui) { 

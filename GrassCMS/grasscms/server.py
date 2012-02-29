@@ -215,8 +215,12 @@ def index(blog_name=False, page="index"):
 
 @app.route('/get/<id_>', methods=['GET', 'POST'])
 def get_data(id_):
-    element = File.query.filter_by(id_=id_, user=g.user.id).first()
-    return json.dumps([element.x, element.y, element.width, element.height])
+    try:
+        element = File.query.filter_by(id_=id_, user=g.user.id).first()
+        return json.dumps([element.x, element.y, element.width, element.height])
+    except:
+        element = Text.query.filter_by(id_=id_, user=g.user.id).first()
+        return json.dumps([element.x, element.y, element.width, element.height])
 
 @app.route('/set_position/<type_>/<id_>', methods=['GET', 'POST'])
 def set_position(type_, id_):
