@@ -72,7 +72,7 @@ function delete_image(blog, image_id){
     return ;
 }
 
-function assign_menu(blog, blog_id){ 
+function assign_menu(blog_id){ 
     $.ajax({
         url:'/update_menu/' + blog_id +'/', 
         type : 'POST', 

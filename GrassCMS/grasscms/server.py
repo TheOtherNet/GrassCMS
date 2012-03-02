@@ -138,14 +138,16 @@ def get_menu(blog):
     menu_blog = Html.query.filter_by(blog = blog.id )
     if not menu_blog:
         menu_blog = Html(blog=blog.id_, 
-        content=[ "%s" %(a.name) for a in \
-        Page.query.filter_by(blog = blog.id)])
+        content='\n'.join([ "<a href=\"/%s/%s\">%s"\
+            %(blog.name, a.name, a.name) for a in \
+            Page.query.filter_by(blog = blog.id)]))
         db_session.add(menu_blog)
     else:
-        menu_blog.content = [ "%s" %(a.name) for a in \
-        Page.query.filter_by(blog = blog.id)]
+        menu_blog.content='\n'.join([ "<a href=\"/%s/%s\">%s"\
+            %(blog.name, a.name, a.name) for a in \
+            Page.query.filter_by(blog = blog.id)])
     db_session.commit()
-    return 
+    return ""
         
 @app.route('/text_blob/<page>', methods=['POST'])
 @app.route('/text_blob/<page>/', methods=['POST'])
