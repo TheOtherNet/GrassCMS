@@ -6,18 +6,17 @@
 from grasscms.main import * 
 from grasscms.forms import *
 from grasscms.openid_login import *
-from grasscms.models import File, Text, Blog, Page
+from grasscms.odt2html import Odt2html, quick_xsl
+from grasscms.models import File, Text, Blog, Page, Html
 from flaskext.gravatar import Gravatar
 from werkzeug import secure_filename
-import json, os, mimetypes
-from grasscms.odt2rst import odt2rst, Options
-#from odt2txt import OpenDocumentTextFile # Markdown is disabled right now
+import json, os, mimetypes, zipfile
 
-# Initialize some stuff
 odt_mimetypes = [ 'vnd.oasis.opendocument.text' ]
 docx_mimetypes = [
     'vnd.openxmlformats-officedocument.wordprocessingml.document' 
 ] 
+odt_converter = Odt2html(quick_xsl)
 
 Base.metadata.create_all(bind=engine) # Create database if not done.
 gravatar = Gravatar(app, # Gravatar module, 100px wide.
@@ -53,25 +52,32 @@ def save_file(file_):
     file_.save(path)
     return (file_secure_name, path)
 
+def extract_odt_images(path):
+    """
+        TODO: same problem as the images, will be overwriten...
+    """
+    with zipfile.ZipFile(path, 'r') as zipf:
+        images = [ image for image in zipf.infolist() \
+            if "Pictures" in image.filename  ]
+        for image in images:
+            zipf.extract(image, get_path(''))
+
 def convert_odt(path):
     """
         Convert from odt
-        TODO: Each time this is called Options and the rest of stuffs that should be static are executed.
-        TODO Create a tmp dir foreach name.
     """
-    options = Options()
-    options.temp_folder = '/tmp'
-#    options.images_relative_folder = 'static/uploads'
-    odt2rst(path, path, options)
-    return
+    result = odt_converter.convert(path)
+    extract_odt_images(path)
+    os.unlink(path)
+    return result
 
 def convert_docx(path):
     """
         Convert from docx
     """
     file_contents = docx.getdocumenttext(docx.opendocx(path))
-    with open(path, 'w') as file_:
-        file_.write('\n'.join([ unicode(a.decode('utf-8')) for a in file_contents]))
+    os.unlink(path)
+    return '\n'.join([ unicode(a.decode('utf-8')) for a in file_contents])
 
 def do_conversion(filename, path):
     """
@@ -81,11 +87,11 @@ def do_conversion(filename, path):
     if type_[0] == "image":
         return ("image", filename)
     if type_[1] in odt_mimetypes:
-        convert_odt(path)
-        type_ = "rst"
+        path = convert_odt(path)
+        type_ = "text"
     if type_[1] in docx_mimetypes:
-        convert_docx(path)
-        type_ = "rst"
+        path = convert_docx(path)
+        type_ = "text"
     return (type_, path)
 
 @app.route("/upload/<page>", methods=("GET", "POST"))
@@ -99,7 +105,13 @@ def upload_(page):
     for i in request.files.keys():
         filename, path = save_file(request.files[i])
         type_, filename = do_conversion(filename, path)
-        db_session.add(File(type_, g.user, page.id, filename))
+        if type_ == "image":
+            db_session.add(File(type_, g.user, page.id, filename))
+        elif type_ == "text":
+            db_session.add(Text(filename.decode('utf-8'), g.user, page.id, blog.id))
+            app.logger.info(filename)
+        else: 
+            abort(500) # TODO: Die gracefully when we cannot import the file.
         db_session.commit()
         return redirect(blog.name + "/" + page.name)
 
@@ -120,23 +132,21 @@ def new_page(name):
 def get_pagination(blog, page):
     return "Not implemented"
 
-@app.route('/get_menu/<blog>/', methods=['POST'])
+@app.route('/update_menu/<blog>/', methods=['POST'])
 def get_menu(blog):
     blog = Blog.query.filter_by(id = blog).first()
-    return json.dumps([ "%s" %(a.name) for a in Page.query.filter_by(blog = blog.id)])
+    menu_blog = Html.query.filter_by(blog = blog.id )
+    if not menu_blog:
+        menu_blog = Html(blog=blog.id_, 
+        content=[ "%s" %(a.name) for a in \
+        Page.query.filter_by(blog = blog.id)])
+        db_session.add(menu_blog)
+    else:
+        menu_blog.content = [ "%s" %(a.name) for a in \
+        Page.query.filter_by(blog = blog.id)]
+    db_session.commit()
+    return 
         
-@app.route('/update_rst/<id_>')
-def update_rst_file(id_):
-    """
-        TODO Make this work
-    """
-    file_ = File.query.filter_by(id=id_)
-    if not file_.user == g.user.id:
-        abort(401)
-
-    with open(get_path(file_.content, 'w')):
-        file_.write(getattr(form.request, 'rst_%s' %id_))
-
 @app.route('/text_blob/<page>', methods=['POST'])
 @app.route('/text_blob/<page>/', methods=['POST'])
 @app.route('/text_blob/<page>/<id_>', methods=['POST'])
@@ -198,20 +208,16 @@ def index(blog_name=False, page="index"):
     if type(page) is str:
         return render_template('landing.html', page=user_page, blog=user_blog)
 
-    txts = [ (file_, read_file(file_.content)) for file_ in\
-        File.query.filter_by(page = page.id, type_="rst")\
-        if file_.content]
-
     txt_blobs = Text.query.filter_by(page=page.id)
 
     if not g.user or g.user.blog != user_blog_id:
         return render_template('index.html',
             imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog,
-            txts=txts, txt_blobs=txt_blobs)
+            txt_blobs=txt_blobs)
     else:
         return render_template('admin.html',
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog, page=page,
-            txts=txts, txt_blobs=txt_blobs)
+             txt_blobs=txt_blobs)
 
 @app.route('/get/<id_>', methods=['GET', 'POST'])
 def get_data(id_):

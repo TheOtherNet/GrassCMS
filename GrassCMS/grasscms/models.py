@@ -1,16 +1,25 @@
 from grasscms.main import *
+from sqlalchemy.ext.declarative import declared_attr
 
-class Text(Base):
-    __tablename__ = "text"
+class BaseWidget(object):
     id_ = Column(Integer, primary_key=True)
     x = Column(Integer)
     y = Column(Integer)
     width = Column(Integer)
     height = Column(Integer)
     content = Column(String(60))
-    blog = Column(Integer, ForeignKey('blogs.id'))
-    page = Column(Integer, ForeignKey('pages.id'))
-    user = Column(Integer, ForeignKey('users.id'))
+
+    @declared_attr
+    def blog(cls):
+        return Column(Integer, ForeignKey('blogs.id'))
+
+    @declared_attr
+    def page(cls):
+        return Column(Integer, ForeignKey('pages.id'))
+
+    @declared_attr
+    def user(cls):
+        return Column(Integer, ForeignKey('users.id'))
 
     def __init__(self, content=False, user=False, page=False, blog=False, x=100, y=100, width=100, height=100):
         self.user = user.id
@@ -22,27 +31,15 @@ class Text(Base):
         self.width = width
         self.height = height
 
-class File(Base):
-    __tablename__ = "file"
-    id_ = Column(Integer, primary_key=True)
-    x = Column(Integer)
-    y = Column(Integer)
-    width = Column(Integer)
-    height = Column(Integer)
-    content = Column(String(60))
-    type_ = Column(String(60))
-    page = Column(Integer, ForeignKey('pages.id'))
-    user = Column(Integer, ForeignKey('users.id'))
+class Text(BaseWidget, Base):
+    __tablename__ = "Text"
 
-    def __init__(self, type_, user=False, page=False, content=False, id_=False, x=100, y=100, width=100, height=100):
-        self.type_ = type_
-        self.user = user.id
-        self.page = page
-        self.content = content
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
+class Html(BaseWidget, Base):
+    __tablename__ = "Html"
+
+class File(BaseWidget, Base):
+    __tablename__ = "File"
+    type_ = Column(String(20))
 
 class Blog(Base):
     __tablename__ = "blogs"
