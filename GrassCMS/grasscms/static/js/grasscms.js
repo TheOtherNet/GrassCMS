@@ -77,16 +77,16 @@ function assign_menu(blog_id){
         url:'/update_menu/' + blog_id +'/', 
         type : 'POST', 
         success: function(data_){
-            document.location.href=document.location.href; 
+            location.reload(true);
         } 
     }); 
 }
         
-function create_page(){ 
+function create_page(blog_id){ 
     $.ajax({
         url:'/new_page/' + $('#new_page').val(),
         success: function(data){ 
-            document.location.href=data; 
+            assign_menu(blog_id);
         } 
     })
 }
@@ -97,13 +97,12 @@ function get_txt_pos(obj) {
     return $(obj).attr('id') + "?x=" + $(obj).css('top').replace('px','') + "&y=" + $(obj).css('left').replace('px',''); 
 }
 
-function get_pos(obj, ui) { 
-    return $(obj).children('img').attr('id') + "?x=" + ui.position.top + "&y=" + ui.position.left; 
+function get_pos(obj, ui, class_) { 
+    return $(obj).children(class_).attr('id').replace(class_.replace('.',''), '') + "?x=" + ui.position.top + "&y=" + ui.position.left; 
 }
 
-function get_dimensions(obj, ui){ 
-    var a=$(obj).children('img').attr('id') + "?width=" + ui.size.width + "&height=" + ui.size.height; 
-    console.debug(a); return a;
+function get_dimensions(obj, ui, class_){ 
+    return $(obj).children(class_).attr('id').replace(class_.replace('.',''), '') + "?width=" + ui.size.width + "&height=" + ui.size.height; 
 }
 
 function get_txt_stored_dimensions(editor){ var name = editor.name;
@@ -140,6 +139,24 @@ function addevents(editor){
 
 /* setup images and text */
 
+function setup_static_html(){
+    $.each($('.static'), function(it){
+        var static_=$(this);
+        static_.parent().css('top',  '100px');
+        static_.parent().css('left', '100px');
+        $.getJSON('/get/' + static_.attr('id'), function(where){
+            static_.parent().css('top',  where[0] + "px");
+            static_.parent().css('left', where[1] + "px"); 
+        }); 
+    });
+
+    $('.static').resizable({ 
+            stop: function(ev, ui){ 
+                $.ajax({ url: '/set_dimensions/html/' + get_dimensions(this, ui, '.static_html')}); }}).parent().draggable({
+                    stop: function(ev, ui){ $.ajax({ url: '/set_position/html/' + get_pos(this, ui, '.static')});}});
+
+}
+
 function setup_images(){
     $.each($('.img'), function(it){
         var img=$(this);
@@ -152,9 +169,10 @@ function setup_images(){
     });
 
     $('.img').resizable({ 
-        stop: function(ev, ui){ $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui)}); }}).parent().draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/file/' + get_pos(this, ui)});}});
+        stop: function(ev, ui){ $.ajax({ url: '/set_dimensions/file/' + get_dimensions(this, ui, 'img')}); }}).parent().draggable({stop: function(ev, ui){ $.ajax({ url: '/set_position/file/' + get_pos(this, ui, 'img')});}});
 
     $('.img').resizable().parent().draggable();
+
 }
 
 function setup_text(){
@@ -165,6 +183,7 @@ function setup_text(){
 /* other */
 function grasscms_startup(){
     setup_images();
+    setup_static_html();
     setup_text();
     $('#fakefiles').live('click', function () { $('#files').click(); });
 }

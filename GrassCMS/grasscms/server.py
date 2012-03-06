@@ -135,17 +135,21 @@ def get_pagination(blog, page):
 @app.route('/update_menu/<blog>/', methods=['POST'])
 def get_menu(blog):
     blog = Blog.query.filter_by(id = blog).first()
-    menu_blog = Html.query.filter_by(blog = blog.id )
+    menu_blog = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
     if not menu_blog:
-        menu_blog = Html(blog=blog.id_, 
-        content='\n'.join([ "<a href=\"/%s/%s\">%s"\
+        menu_blog = Html(blog=blog.id, user = g.user, width=100, height=100,
+        content='\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
             %(blog.name, a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)]))
+        menu_blog.field_name = "menu"
         db_session.add(menu_blog)
+        app.logger.info(menu_blog.content)
     else:
-        menu_blog.content='\n'.join([ "<a href=\"/%s/%s\">%s"\
+        menu_blog.content='\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
             %(blog.name, a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)])
+        app.logger.info("Updating")
+        app.logger.info(menu_blog.content)
     db_session.commit()
     return ""
         
@@ -199,10 +203,10 @@ def index(blog_name=False, page="index"):
     try:
         tmp_blog = Blog.query.filter_by(name=blog_name).first()
         page = Page.query.filter_by(blog=tmp_blog.id, name = page).first()
-        app.logger.info(tmp_blog.id)
-        app.logger.info(page.name)
+        blog = tmp_blog
     except AttributeError, error:
         page = user_page
+        blog = user_blog
         pass
 
     if not blog_name or not page:
@@ -211,15 +215,17 @@ def index(blog_name=False, page="index"):
         return render_template('landing.html', page=user_page, blog=user_blog)
 
     txt_blobs = Text.query.filter_by(page=page.id)
-
+    blog_menu = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
+    if blog_menu:
+        app.logger.info(blog_menu.content)
     if not g.user or g.user.blog != user_blog_id:
-        return render_template('index.html',
-            imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog,
-            txt_blobs=txt_blobs)
+        return render_template( 'index.html',
+            imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog, 
+            blog_menu=blog_menu, txt_blobs=txt_blobs )
     else:
         return render_template('admin.html',
-            imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog, page=page,
-             txt_blobs=txt_blobs)
+            imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
+                page=page, blog_menu=blog_menu, txt_blobs=txt_blobs)
 
 @app.route('/get/<id_>', methods=['GET', 'POST'])
 def get_data(id_):
@@ -237,6 +243,8 @@ def set_position(type_, id_):
     """
     if type_ == "text":
         element = Text.query.filter_by(id_=id_, user=g.user.id).first()
+    elif type_ == "html":
+        element = Html.query.filter_by(id_=id_, user=g.user.id).first()
     else:
         element = File.query.filter_by(id_=id_, user=g.user.id).first()
     element.x = int(request.args.get('x'))
@@ -251,6 +259,8 @@ def set_dimensions(type_, id_):
     """
     if type_ == "text":
         element = Text.query.filter_by(id_=id_, user=g.user.id).first()
+    elif type_ == "html":
+        element = Html.query.filter_by(id_=id_, user=g.user.id).first()
     else:
         element = File.query.filter_by(id_=id_, user=g.user.id).first()
     element.width = int(request.args.get('width')) or 100

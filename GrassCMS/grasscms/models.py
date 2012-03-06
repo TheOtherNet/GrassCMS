@@ -36,6 +36,7 @@ class Text(BaseWidget, Base):
 
 class Html(BaseWidget, Base):
     __tablename__ = "Html"
+    field_name = Column(String(60))
 
 class File(BaseWidget, Base):
     __tablename__ = "File"
