@@ -8,15 +8,10 @@ from grasscms.forms import *
 from grasscms.openid_login import *
 from grasscms.odt2html import Odt2html, quick_xsl
 from grasscms.models import File, Text, Blog, Page, Html
+from grasscms.converters import *
 from flaskext.gravatar import Gravatar
 from werkzeug import secure_filename
 import json, os, mimetypes, zipfile
-
-odt_mimetypes = [ 'vnd.oasis.opendocument.text' ]
-docx_mimetypes = [
-    'vnd.openxmlformats-officedocument.wordprocessingml.document' 
-] 
-odt_converter = Odt2html(quick_xsl)
 
 Base.metadata.create_all(bind=engine) # Create database if not done.
 gravatar = Gravatar(app, # Gravatar module, 100px wide.
@@ -37,12 +32,6 @@ def get_path(filename):
     """
     return os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
-def get_type(path):
-    """
-        Get the mimetype of the file, returns an array.
-    """
-    return mimetypes.guess_type(path)[0].split('/')
-
 def save_file(file_):
     """
         Securely save a file 
@@ -52,47 +41,16 @@ def save_file(file_):
     file_.save(path)
     return (file_secure_name, path)
 
-def extract_odt_images(path):
-    """
-        TODO: same problem as the images, will be overwriten...
-    """
-    with zipfile.ZipFile(path, 'r') as zipf:
-        images = [ image for image in zipf.infolist() \
-            if "Pictures" in image.filename  ]
-        for image in images:
-            zipf.extract(image, get_path(''))
+def get_element_by_id(id_, type_):
+    if type_ == "file" or type_ == "img":
+        element = File.query.filter_by(id_=id_, user=g.user.id).first()
+    elif type_ == "text":
+        element = Text.query.filter_by(id_=id_, user=g.user.id).first()
+    else:
+        element = Html.query.filter_by(id_=id_, user=g.user.id, 
+            type_=type_).first()
 
-def convert_odt(path):
-    """
-        Convert from odt
-    """
-    result = odt_converter.convert(path)
-    extract_odt_images(path)
-    os.unlink(path)
-    return result
-
-def convert_docx(path):
-    """
-        Convert from docx
-    """
-    file_contents = docx.getdocumenttext(docx.opendocx(path))
-    os.unlink(path)
-    return '\n'.join([ unicode(a.decode('utf-8')) for a in file_contents])
-
-def do_conversion(filename, path):
-    """
-        Automatically convert convertable files
-    """
-    type_ = get_type(path)
-    if type_[0] == "image":
-        return ("image", filename)
-    if type_[1] in odt_mimetypes:
-        path = convert_odt(path)
-        type_ = "text"
-    if type_[1] in docx_mimetypes:
-        path = convert_docx(path)
-        type_ = "text"
-    return (type_, path)
+# Upload
 
 @app.route("/upload/<page>", methods=("GET", "POST"))
 def upload_(page):
@@ -116,6 +74,8 @@ def upload_(page):
         return redirect(blog.name + "/" + page.name)
 
     return render_template("upload.html", filedata="", page=page, blog=blog)
+
+# Create pages, menus and pagination
 
 @app.route('/new_page/<name>')
 def new_page(name):
@@ -151,8 +111,17 @@ def get_menu(blog):
         app.logger.info("Updating")
         app.logger.info(menu_blog.content)
     db_session.commit()
-    return ""
-        
+    return "true"
+       
+@app.route('/delete_menu/<blog>/', methods=['POST'])
+def delete_menu(blog):
+    blog = Blog.query.filter_by(id = blog).first()
+    db_session.delete(Html.query.filter_by(blog=blog.id, 
+        field_name="menu" ).first())
+    return "true"
+
+# Text blobs
+
 @app.route('/text_blob/<page>', methods=['POST'])
 @app.route('/text_blob/<page>/', methods=['POST'])
 @app.route('/text_blob/<page>/<id_>', methods=['POST'])
@@ -183,9 +152,8 @@ def text(page, id_=False):
         db_session.commit()
         return text.content
 
-def read_file(file_):
-    with open(file_) as filen:
-        return filen.read().decode('utf-8')
+
+#Index handler
 
 @app.route('/')
 @app.route('/<blog_name>')
@@ -227,26 +195,19 @@ def index(blog_name=False, page="index"):
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
                 page=page, blog_menu=blog_menu, txt_blobs=txt_blobs)
 
-@app.route('/get/<id_>', methods=['GET', 'POST'])
-def get_data(id_):
-    try:
-        element = File.query.filter_by(id_=id_, user=g.user.id).first()
-        return json.dumps([element.x, element.y, element.width, element.height])
-    except:
-        element = Text.query.filter_by(id_=id_, user=g.user.id).first()
-        return json.dumps([element.x, element.y, element.width, element.height])
+# Persistence handlers
+
+@app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'])
+def get_position(type_, id_):
+    element = get_element_by_id(id_, type_)
+    return json.dumps([element.x, element.y, element.width, element.height])
 
 @app.route('/set_position/<type_>/<id_>', methods=['GET', 'POST'])
 def set_position(type_, id_):
     """
         Sets position.
     """
-    if type_ == "text":
-        element = Text.query.filter_by(id_=id_, user=g.user.id).first()
-    elif type_ == "html":
-        element = Html.query.filter_by(id_=id_, user=g.user.id).first()
-    else:
-        element = File.query.filter_by(id_=id_, user=g.user.id).first()
+    element = get_element_by_id(id_, type_)
     element.x = int(request.args.get('x'))
     element.y = int(request.args.get('y'))
     db_session.commit()
@@ -257,12 +218,7 @@ def set_dimensions(type_, id_):
     """
         AJAX call to set dimensions of an element.
     """
-    if type_ == "text":
-        element = Text.query.filter_by(id_=id_, user=g.user.id).first()
-    elif type_ == "html":
-        element = Html.query.filter_by(id_=id_, user=g.user.id).first()
-    else:
-        element = File.query.filter_by(id_=id_, user=g.user.id).first()
+    element = get_element_by_id(id_, type_)
     element.width = int(request.args.get('width')) or 100
     element.height = int(request.args.get('height')) or 100
     db_session.commit()

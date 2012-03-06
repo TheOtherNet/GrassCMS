@@ -102,6 +102,7 @@
             fail: function (e, data) {
                 console.debug("Reload me, failed");
                 console.debug(e);
+                console.debug(data);
                 document.location.reload();
             },
             // Callback for file deletion:

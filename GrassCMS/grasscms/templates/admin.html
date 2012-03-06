@@ -3,7 +3,10 @@
 
 {% block head %}
     <script src="{{url_for('static', filename='js/jquery-ui.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/grasscms.js')}}"></script>
+    <script src="{{url_for('static', filename='js/grasscms/grasscms.js')}}"></script>
+    <script src="{{url_for('static', filename='js/grasscms/files.js')}}"></script>
+    <script src="{{url_for('static', filename='js/grasscms/text.js')}}"></script>
+    <script src="{{url_for('static', filename='js/grasscms/static_html.js')}}"></script>
     <script src="{{url_for('static', filename='ckeditor/ckeditor.js')}}"></script>
     <script src="{{url_for('static', filename='ckeditor/adapters/jquery.js')}}"></script>
     <script>
@@ -33,11 +36,6 @@
                 </a>
         </li>
         {% if blog_menu %}
-        <li class="menu_button">
-                <a onclick="assign_menu('{{blog.id}}'); return false" href="#">
-                    <img title="Update main menu" src="{{url_for('static', filename='images/menu.png')}}" />
-                </a>
-        </li>
         {% else %}
         <li class="menu_button">
                 <a onclick="assign_menu('{{blog.id}}'); return false" href="#">
