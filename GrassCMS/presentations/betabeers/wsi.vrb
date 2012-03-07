@@ -1,0 +1,43 @@
+\frametitle {Aplicaciones - BOINC API}
+
+\begin{block}{Simple API}
+\tiny
+\begin{verbatim}
+int boinc_init();
+boinc_fraction_done(double fraction_done);
+int boinc_finish(int status);
+\end{verbatim}
+\end{block}
+\pause
+\normalsize
+\begin{block}{Ejemplo}
+\tiny
+\begin{columns}
+\column{.5\textwidth}
+\begin{verbatim}
+   int main()
+   {
+     int i;
+     for(i=1;i<=10;i++)
+     {
+       ...
+     }
+   }
+\end{verbatim}
+\column{.5\textwidth}
+\pause
+\begin{verbatim}
+int main()
+{
+  boinc_init();
+  int i;
+  for(i=1;i<=10;i++)
+  {
+    ...
+      boinc_fraction_done(i/10);
+  }
+  boinc_finish(0);
+}
+\end{verbatim}
+\end{columns}
+\end{block}
