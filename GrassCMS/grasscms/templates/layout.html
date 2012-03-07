@@ -69,7 +69,7 @@
     
     <header>
         {% block header %} {%endblock%}
-        {% for message in get_flashed_messages() %} <div class="alert" ><a class="close" data-dismiss="alert" href="#">&times;</a><p> {{ message }} </p></div> {% endfor %}
+        {% for message in get_flashed_messages() %} <div style="z-index:10000; position:fixed; bottom:0px;" class="alert" ><a class="close" data-dismiss="alert" href="#">&times;</a><p> {{ message }} </p></div> {% endfor %}
     </header>
 
     <div role="main" class="container">

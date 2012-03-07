@@ -225,3 +225,18 @@ def set_dimensions(type_, id_):
 def server():
     """ Main server, will allow us to make it wsgi'able """
     app.run(host='0.0.0.0', port=8181) # Running on port 80 in all interfaces.
+
+@app.route('/get_rotation/<type_>/<id_>')
+def get_rotation(type_, id_):
+    foo=get_element_by_id(id_, type_)
+    return foo.rotation
+
+@app.route('/set_rotation/<type_>/<id_>/<angle>', methods=['GET', 'POST'])
+def set_rotation(type_, id_, angle):
+    """
+        AJAX call to set dimensions of an element.
+    """
+    element = get_element_by_id(id_, type_)
+    element.rotation = angle
+    db_session.commit()
+    return element.rotation
