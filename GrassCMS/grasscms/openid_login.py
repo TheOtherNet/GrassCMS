@@ -88,7 +88,7 @@ def create_profile():
 
             db_session.add(User(form['name'], form['email'], session['openid'], blog.id, page.id)) # Add a user with that blog referenced
             db_session.commit()
-            return redirect(oid.get_next_url())
+            return redirect("/" + form['page_name'] + "/index")
     return render_template('create_profile.html', next_url=oid.get_next_url())
 
 @app.route('/profile', methods=['GET', 'POST'])
