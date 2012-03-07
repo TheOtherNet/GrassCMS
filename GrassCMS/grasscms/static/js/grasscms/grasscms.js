@@ -29,8 +29,8 @@ function persistent(class_, type, use_parent){
     $.each($(class_), function(it){
         var element=$(this); // get the element in a variable, for future usage. This is probably better in performance
         if (element.parent().attr('id') != "filedrag" || class_ == ".img" ){
-            element.parent().css('top',  '100px'); // Default top and left values to 100px, so that will be the start of every object
-            element.parent().css('left', '100px');
+            element.parent().css('top',  '0px'); // Default top and left values to 100px, so that will be the start of every object
+            element.parent().css('left', '0px');
         }
         $.getJSON('/get_position/' + type + "/" + element.attr('id'), function(where){ // Get the object's position
                 if (element.parent().attr('id') != "filedrag" || class_ == ".img" ){
@@ -140,7 +140,7 @@ function create_page(blog_id){
 function makeGuideY(dom_element) {
     $(dom_element).draggable({
         axis: "y",
-        containment: "#canvas",
+        containment: "#filedrag",
         drag: function() {
             var position = $(this).position();
             var yPos = $(this).css('top');
@@ -154,7 +154,7 @@ function makeGuideY(dom_element) {
 
             if ($(this).hasClass("draggable-y-newest")) {
                 $(this).removeClass("draggable-y-newest");
-                $("#canvas .y-guide").clone().removeClass("y-guide").addClass("draggable-y-newest").appendTo("#canvas").each(function() {
+                $("#filedrag .y-guide").clone().removeClass("y-guide").addClass("draggable-y-newest").appendTo("#filedrag").each(function() {
                     makeGuideY(this);
                 });
             }
@@ -165,7 +165,7 @@ function makeGuideY(dom_element) {
 function makeGuideX(dom_element) {
     $(dom_element).draggable({
         axis: "x",
-        containment: "#canvas",
+        containment: "#filedrag",
         drag: function() {
             var position = $(this).position();
             var xPos = $(this).css('left');
@@ -179,7 +179,7 @@ function makeGuideX(dom_element) {
 
             if ($(this).hasClass("draggable-x-newest")) {
                 $(this).removeClass("draggable-x-newest");
-                $("#canvas .x-guide").clone().removeClass("x-guide").addClass("draggable-x-newest").appendTo("#canvas").each(function() {
+                $("#filedrag .x-guide").clone().removeClass("x-guide").addClass("draggable-x-newest").appendTo("#filedrag").each(function() {
                     makeGuideX(this);
                 });
             }
