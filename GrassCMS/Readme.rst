@@ -5,6 +5,11 @@ and place them and resize them as you want. It also features a rich text editor 
 with lots of features.
 Remember, you don't need to save anything, it's automatic!
 
+It basically features a personal site, where you can store pages and subpaginate them, 
+the administration panel is completly transparent, you'll see everything exactly as
+the user sees it, and as it's automagic everything will be saved in real time, 
+so you don't need to worry about anything.
+
 Current features:
     - Automagic odt import
     - Txt file import
