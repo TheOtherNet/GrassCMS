@@ -3,15 +3,15 @@
 """
     GrassCMS - Simple drag and drop content management system
 """
+
 from grasscms.main import * 
 from grasscms.forms import *
 from grasscms.openid_login import *
-from grasscms.odt2html import Odt2html, quick_xsl
 from grasscms.models import File, Text, Blog, Page, Html
 from grasscms.converters import *
 from flaskext.gravatar import Gravatar
 from werkzeug import secure_filename
-import json, os, mimetypes, zipfile
+import json, os
 
 Base.metadata.create_all(bind=engine) # Create database if not done.
 gravatar = Gravatar(app, # Gravatar module, 100px wide.
@@ -48,8 +48,8 @@ def get_element_by_id(id_, type_):
         element = Text.query.filter_by(id_=id_, user=g.user.id).first()
     else:
         element = Html.query.filter_by(id_=id_, user=g.user.id, 
-            type_=type_).first()
-
+            field_name=type_).first()
+    return element
 # Upload
 
 @app.route("/upload/<page>", methods=("GET", "POST"))
@@ -63,11 +63,14 @@ def upload_(page):
     for i in request.files.keys():
         filename, path = save_file(request.files[i])
         type_, filename = do_conversion(filename, path)
+        app.logger.info(type_)
+        app.logger.info(filename)
         if type_ == "image":
-            db_session.add(File(type_, g.user, page.id, filename))
+            image=File(user=g.user, page=page.id, content=filename)
+            image.type_="image"
+            db_session.add(image)
         elif type_ == "text":
             db_session.add(Text(filename.decode('utf-8'), g.user, page.id, blog.id))
-            app.logger.info(filename)
         else: 
             abort(500) # TODO: Die gracefully when we cannot import the file.
         db_session.commit()
@@ -103,13 +106,10 @@ def get_menu(blog):
             Page.query.filter_by(blog = blog.id)]))
         menu_blog.field_name = "menu"
         db_session.add(menu_blog)
-        app.logger.info(menu_blog.content)
     else:
         menu_blog.content='\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
             %(blog.name, a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)])
-        app.logger.info("Updating")
-        app.logger.info(menu_blog.content)
     db_session.commit()
     return "true"
        
@@ -184,8 +184,6 @@ def index(blog_name=False, page="index"):
 
     txt_blobs = Text.query.filter_by(page=page.id)
     blog_menu = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
-    if blog_menu:
-        app.logger.info(blog_menu.content)
     if not g.user or g.user.blog != user_blog_id:
         return render_template( 'index.html',
             imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog, 

@@ -60,7 +60,7 @@
 {%endblock%} 
 
 {% block body %}
-    <div id="filedrag"> 
+    <div id="filedrag" style="position:fixed; top:0px; left:0px; width:100%; height:100%;"> 
         <h1>{{title}}</h1>
         {% if imgs %} 
             {% for img in imgs %}
@@ -81,7 +81,7 @@
         {%endfor%} {%endif%}
 
         {% if blog_menu %}
-            <div class="static static_html" style="width:{{blog_menu.width}}px; height:{{blog_menu.height}}px; top:{{blog_menu.x}}px; left:{{blog_menu.y}}px;" id="{{ blog_menu.id_ }}" id="static_html{{blog_menu.id_}}">  {{ blog_menu.content|safe }} </div>
+            <div class="static static_html" style="width:{{blog_menu.width}}px; height:{{blog_menu.height}}px; top:{{blog_menu.x}}px; left:{{blog_menu.y}}px;" id="{{ blog_menu.id_ }}" id="menu{{blog_menu.id_}}">  {{ blog_menu.content|safe }} </div>
         {%endif%}
 
         {% if txt_blobs %} {% for txt in txt_blobs %} 
