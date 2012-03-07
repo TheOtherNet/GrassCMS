@@ -119,6 +119,8 @@ function grasscms_startup(){
     persistent('.img', 'img'); // Make images and static html widgets persistent
     persistent('.static_html', 'menu');
     setup_text(); // Make text editor persistent
+    $(".draggable-x-handle").each(function() { makeGuideX(this); });
+    $(".draggable-y-handle").each(function() { makeGuideY(this); });
     $('#fakefiles').live('click', function () { $('#files').click(); }); // Stylize file input.
 }
 
@@ -134,3 +136,55 @@ function create_page(blog_id){
         } 
     })
 }
+
+function makeGuideY(dom_element) {
+    $(dom_element).draggable({
+        axis: "y",
+        containment: "#canvas",
+        drag: function() {
+            var position = $(this).position();
+            var yPos = $(this).css('top');
+            $(this).find($('.pos')).text('Y: ' + yPos);
+        },
+        start: function() {
+            $(this).find($('.pos')).css('display', 'block');
+        },
+        stop: function() {
+            $(this).find($('.pos')).css('display', 'none');
+
+            if ($(this).hasClass("draggable-y-newest")) {
+                $(this).removeClass("draggable-y-newest");
+                $("#canvas .y-guide").clone().removeClass("y-guide").addClass("draggable-y-newest").appendTo("#canvas").each(function() {
+                    makeGuideY(this);
+                });
+            }
+        }
+    });
+}
+
+function makeGuideX(dom_element) {
+    $(dom_element).draggable({
+        axis: "x",
+        containment: "#canvas",
+        drag: function() {
+            var position = $(this).position();
+            var xPos = $(this).css('left');
+            $(this).find($('.pos')).text('X: ' + xPos);
+        },
+        start: function() {
+            $(this).find($('.pos')).css('display', 'block');
+        },
+        stop: function() {
+            $(this).find($('.pos')).css('display', 'none');
+
+            if ($(this).hasClass("draggable-x-newest")) {
+                $(this).removeClass("draggable-x-newest");
+                $("#canvas .x-guide").clone().removeClass("x-guide").addClass("draggable-x-newest").appendTo("#canvas").each(function() {
+                    makeGuideX(this);
+                });
+            }
+        }
+    });
+}
+
+
