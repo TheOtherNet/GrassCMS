@@ -62,12 +62,11 @@ function setup_text(){
 
 
 function get_blob(page_name){
-    blob="";
     $.ajax({
         type : 'POST', 
         url:'/text_blob/' + page_name +"/", 
         method: 'POST',
-        complete: function(data){ console.debug("DONE");  location.reload(true); } 
+        success: function(data){ $('#filedrag').append(data); setup_text(); } 
     }); 
 }
 
@@ -80,8 +79,9 @@ function update_blob(obj, page_id, id){
         data: { 
             'text': obj
         },
-        success: function(data){ 
-            console.debug(data);  
+        complete: function(data){ 
+            console.debug(data); 
+            console.debug("FOO"); 
         } 
     }); 
 

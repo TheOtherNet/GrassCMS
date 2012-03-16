@@ -99,11 +99,10 @@
                 console.debug("Reload me");
             },
             // Callback for failed (abort or error) uploads:
-            fail: function (e, data) {
-                console.debug("Reload me, failed");
-                console.debug(e);
-                console.debug(data);
-                document.location.reload();
+            complete: function (e, data) {
+                $('#filedrag').append($.parseJSON(e.responseText));
+                persistent('.img', 'img');
+                grasscms_startup(); // Checkme
             },
             // Callback for file deletion:
             destroy: function (e, data) {

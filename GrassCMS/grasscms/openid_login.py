@@ -91,6 +91,10 @@ def create_profile():
             return redirect("/" + form['page_name'] + "/index")
     return render_template('create_profile.html', next_url=oid.get_next_url())
 
+@app.route('/delete-profile', methods=['DELETE'])
+def delete_profile():
+    return 
+
 @app.route('/profile', methods=['GET', 'POST'])
 def edit_profile():
     """

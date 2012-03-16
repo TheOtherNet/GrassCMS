@@ -27,22 +27,23 @@ function assign_menu(blog_id){
     $.ajax({
         url:'/update_menu/' + blog_id +'/', 
         type : 'POST', 
-        success: function(data_){
-            location.reload(true);
+        success: function(data_){ data_=$.parseJSON(data_);
+            if($("menu"+data_[0]).html()){ $("#menu"+data_[0]).html(data_[1]); } else { $('#filedrag').append(data_[1]); persistent('.static_html', 'menu');
+            }
         } 
     }); 
 }
  
-function unassign_menu(blog_id){ 
+function delete_static_html(blog_id, id_){ 
     /*
         Delete a menu
         After successful creation, it reloads the page.
     */
     $.ajax({
-        url:'/delete_menu/' + blog_id +'/', 
-        type : 'POST', 
+        url:'/html/' + blog_id +'/' + id_, 
+        type : 'DELETE',
         success: function(data_){
-            location.reload(true);
+            $('#'+id_).remove();
         } 
     }); 
 }
