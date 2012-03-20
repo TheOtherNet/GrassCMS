@@ -6,14 +6,26 @@
 .ToolBar { display:none; width: 668px!important; position: fixed!important;top: 7px!important;z-index: 2000!important;left: 430px!important; }
 textarea, iframe { border:0px!important; }
 .cke_toolbox_collapser { display:none; }
+
+#standard_tools{
+    position:fixed;
+    top:0px;
+    left:320px;
+    z-index:2010;
+    display:none;
+    width:400px!important;
+}
+
 .cke_top{
     position:fixed;
     top:0px;
-    left:400px;
+
+    right:160px;
     z-index:2010;
     display:none;
     width:800px!important;
 }
+
 .cke_skin_kama { border:none!important;} 
 .cke_skin_kama .cke_wrapper{
  background:none!important; 

@@ -84,6 +84,13 @@ function persistent(class_, type, use_parent){
             }
         }); 
 
+    $.each($(class_), function(it){
+        var element=$(this); // get the element in a variable, for future usage. This is probably better in performance
+        element.parent().data('id', element.attr('id'));
+        console.debug(class_);
+        element.parent().data('id', element.attr('id'));
+    });
+
     } else {
 
         $(class_).resizable({ // Make it resizable
@@ -204,7 +211,7 @@ function startRotate( e ) {
 
   // Track the image that we're going to rotate
   imageBeingRotated = this;
-
+  console.debug(imageBeingRotated);
   // Store the angle of the mouse at the start of the rotation, relative to the image centre
   var imageCentre = getImageCentre( imageBeingRotated );
   var mouseStartXFromCentre = e.pageX - imageCentre[0];
@@ -217,7 +224,19 @@ function startRotate( e ) {
   // Set up an event handler to rotate the image as the mouse is moved
   $(document).mousemove( rotateImage );
 
+
+
   return false;
+}
+
+function show_standard_tools(e){ 
+    $('#standard_tools').data('id', e.data('id'));
+    $('.cke_top').hide();
+    $('#standard_tools').show();
+ }
+
+function hide_standard_tools(e){
+    $('#standard_tools').hide();
 }
 
 // Stop rotating an image
@@ -246,7 +265,7 @@ function grasscms_startup(){
     */
 
     make_rotable('.img', 'img');
-  $(document).mouseup( stopRotate );
+    $(document).mouseup( stopRotate );
 
     persistent('.img', 'img'); // Make widgets and static html widgets persistent
     $('.img').mousedown( startRotate ); // Make widgets rotable
@@ -255,6 +274,29 @@ function grasscms_startup(){
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
     $('#fakefiles').live('click', function () { $('#files').click(); }); // Stylize file input.
+    $('#filedrag').disableSelection();
+
+    $('#filedrag>div').click(function(e){
+        var e=$(e.currentTarget); console.debug(e);
+        if (! e.attr('class').match('no_tools')){
+            show_standard_tools(e);
+        }
+    });
+        
+    $('#slider').slider({ 
+        min: 0, 
+        max: 1, 
+        step: 0.01, 
+        value: 1,
+        orientation: "horizontal",
+        slide: function(e,ui){
+            if ($('standard_tools').data('type') == "img"){
+                $('#' + $('#standard_tools').data('id')).css('opacity', ui.value);
+            } else {
+                $('#' + $('standard_tools').data('type') + $('#standard_tools').data('id')).css('opacity', ui.value);
+            }                
+        }
+    });;
 }
 
 function create_page(blog_id){ 
@@ -320,4 +362,16 @@ function makeGuideX(dom_element) {
     });
 }
 
-
+jQuery.fn.extend({ 
+        disableSelection : function() { 
+                return this.each(function() { 
+                        this.onselectstart = function() { return false; }; 
+                        this.unselectable = "on"; 
+                        jQuery(this).css('user-select', 'none'); 
+                        jQuery(this).css('-o-user-select', 'none'); 
+                        jQuery(this).css('-moz-user-select', 'none'); 
+                        jQuery(this).css('-khtml-user-select', 'none'); 
+                        jQuery(this).css('-webkit-user-select', 'none'); 
+                }); 
+        } 
+}); 

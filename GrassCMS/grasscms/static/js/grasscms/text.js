@@ -42,6 +42,8 @@ function setup_editor(editor){
             $('.container').css('height','auto');
             $("#handler_" + event.editor.name ).toggle(); 
             $("#cke_top_" + event.editor.name ).toggle(); 
+
+        $('#standard_tools').hide();
             $("#cke_bottom_" + event.editor.name ).toggle(); 
             save(event.editor)
     });
@@ -50,6 +52,8 @@ function setup_editor(editor){
         $('.container').css('height','5em');
         $("#handler_" + event.editor.name ).toggle(); 
         $("#cke_top_" + event.editor.name ).toggle(); 
+        $('#standard_tools').data('id', event.editor.name);
+        $('#standard_tools').show();
         $("#cke_bottom_" + event.editor.name ).toggle(); 
         save(event.editor);
     });

@@ -108,7 +108,7 @@ def get_menu(blog):
     menu_blog = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
     if not menu_blog:
         type_ = "menu"
-        menu_blog = Html(blog=blog.id, user = g.user, width=100, height=100,
+        menu_blog = Html(blog=blog.id, user = g.user, width=200, height=100,
         content='\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
             %(blog.name, a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)]))
@@ -171,6 +171,7 @@ def delete_text(page_, id_):
 # Persistence handlers
 @app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'])
 def get_position(type_, id_):
+    id_ = id_.replace('menu', '')
     element = get_element_by_id(id_, type_)
     try:
         return json.dumps([element.x, element.y, element.width, element.height])
@@ -194,8 +195,8 @@ def set_dimensions(type_, id_):
         AJAX call to set dimensions of an element.
     """
     element = get_element_by_id(id_, type_)
-    element.width = int(request.args.get('width')) or 100
-    element.height = int(request.args.get('height')) or 100
+    element.width = int(request.args.get('width')) or 200
+    element.height = int(request.args.get('height')) or 200
     db_session.commit()
     return json.dumps([element.x, element.y])
 
