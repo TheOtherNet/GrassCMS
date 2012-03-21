@@ -18,8 +18,5 @@
 
     GrassCMS javascript functions.
 */
-function delete_image(blog, image_id){
-    $.ajax(
-    return ;
-}
 
+function delete_image(image){ id_=$(image).attr('id');  $.ajax({ url: '/delete_file/' + id_ + "/", type: "DELETE", method:"DELETE", complete: function(data){ console.debug("FOO"); $('img#' + id_).hide(); } }); }

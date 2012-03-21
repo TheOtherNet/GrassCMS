@@ -76,16 +76,14 @@ def upload_(page):
 
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
-@app.route('/delete_file/<page>/<id_>', methods=['DELETE'])
-def delete_file(page, id_):
+@app.route('/delete_file/<id_>/', methods=['DELETE'])
+def delete_file(id_):
     """
         Delete a file object
     """
-    blog  = Blog.query.filter_by(id=g.user.blog).first()
-    page  = Page.query.filter_by(name=page, blog=blog.id).first()
-    db_session.delete(File.query.filter_by(id = id_, page = page))
-    db_session.commit();
-    return True
+    db_session.delete(File.query.filter_by(id_ = id_).first())
+    db_session.commit()
+    return json.dumps(True)
 
 @app.route('/new_page/<name>')
 def new_page(name):
@@ -203,7 +201,8 @@ def set_dimensions(type_, id_):
 @app.route('/get_rotation/<type_>/<id_>')
 def get_rotation(type_, id_):
     foo=get_element_by_id(id_, type_)
-    return foo.rotation
+    app.logger.info(foo.rotation)
+    return json.dumps(foo.rotation)
 
 @app.route('/set_rotation/<type_>/<id_>/<angle>', methods=['GET', 'POST'])
 def set_rotation(type_, id_, angle):

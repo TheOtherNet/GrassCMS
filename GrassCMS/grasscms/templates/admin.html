@@ -3,10 +3,12 @@
 
 {% block head %}
     <script src="{{url_for('static', filename='js/jquery-ui.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/grasscms/grasscms.js')}}"></script>
+    <script src="{{url_for('static', filename='js/grasscms/rotation.js')}}"></script>
     <script src="{{url_for('static', filename='js/grasscms/files.js')}}"></script>
     <script src="{{url_for('static', filename='js/grasscms/text.js')}}"></script>
     <script src="{{url_for('static', filename='js/grasscms/static_html.js')}}"></script>
+    <script src="{{url_for('static', filename='js/grasscms/grasscms.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jquery.hoverIntent.minified.js')}}"></script>
     <script src="{{url_for('static', filename='ckeditor/ckeditor.js')}}"></script>
     <script src="{{url_for('static', filename='ckeditor/adapters/jquery.js')}}"></script>
     <script>
@@ -58,25 +60,28 @@
 {%endblock%} 
 
 {% block body %}
-    <div id="standard_tools">
-        <div style="float:left;">
-            <div><p style="color:white; font-size:small; width:60px; text-align:center; margin-bottom:0px;">Opacity</p></div>
-            <div id="slider" data-wjs-element="box" style="width:60px;"></div>
-        </div>
 
-        <div style="float:left; margin-left:20px; margin-top:5px">
-            <div> <img src="{{url_for('static', filename='img/delete.png')}}" /> </div>
-        </div>
+    <div id="standard_tools_model" class="standard_tools" style="display:none">
+        <div class="standard_tools" style="display:none">
+            <div style="float:left;position:fixed; margin-top:-35px; margin-left:70px;">
+                <div><p style="color:white; font-size:small; width:60px; text-align:center; margin-bottom:0px;">Opacity</p></div>
+                <div class="slider" data-wjs-element="box" style="width:60px;"></div>
+            </div>
+    
+            <div style="float:left; margin-left:2px; margin-top:-20px; position:fixed">
+                <div> <img style="width:16px" src="{{url_for('static', filename='img/up.png')}}" /> </div>
+            </div>
+            <div style="float:left; margin-left:18px; margin-top:-20px; position:fixed; ">
+                <div> <img style="width:16px" src="{{url_for('static', filename='img/down.png')}}" /> </div>
+            </div>
+    
+            <div style="float:left; margin-left:34px; margin-top:-20px; position:fixed; ">
+                <div> <a href="#" onclick="delete_image($(this).parent().parent().parent().parent().children('img'));"> <img style="width:16px" src="{{url_for('static', filename='img/delete.png')}}" /> </a></div>
+            </div>
 
-        <div style="float:left; margin-left:20px; margin-top:5px">
-            <div> <img src="{{url_for('static', filename='img/up.png')}}" /> </div>
         </div>
-
-        <div style="float:left; margin-left:20px; margin-top:5px">
-            <div> <img src="{{url_for('static', filename='img/down.png')}}" /> </div>
-        </div>
-
     </div>
+
     <div id="filedrag" style="position:fixed; top:0px; left:0px; width:100%; height:100%;"> 
 
 <!-- Guides -->        
