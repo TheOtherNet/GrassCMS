@@ -33,7 +33,7 @@ function persistent(class_, type, use_parent){
             element.parent().css('top',  '0px'); // Default top and left values to 100px, so that will be the start of every object
             element.parent().css('left', '0px');
         }
-        $.getJSON('/get_position/' + type + "/" + element.attr('id'), function(where){ // Get the object's position
+        $.getJSON('/get_position/' + type + "/" + element.attr('id').replace('img', '').replace(type.replace('.', '')), function(where){ // Get the object's position
                 if (element.parent().attr('id') != "filedrag" || class_ == ".img" ){
                     element.parent().css('top',  where[0] + "px"); // And apply it to current object
                     element.parent().css('left', where[1] + "px"); 
@@ -45,7 +45,6 @@ function persistent(class_, type, use_parent){
     });
 
     if ( $(class_).parent().attr('id') != "filedrag" || class_ == ".img" ){
-
         $(class_).resizable({ // Make it resizable
             stop: function(ev, ui){  // When you stop the resize, execute the ajax call to set it on the server.
                 $.ajax(
@@ -59,7 +58,7 @@ function persistent(class_, type, use_parent){
         }).parent().draggable({
             stop: function(ev, ui){
                 if (class_ != ".static_html"){
-                    if ( imageBeingRotated && class_ == ".img" ){  return false; }
+                    if ( rotating && class_ == ".img" ){  return false; }
                      $.ajax(
                         {
                             url: '/set_position/' + type + "/" +
@@ -97,7 +96,7 @@ function persistent(class_, type, use_parent){
         }).draggable({
             stop: function(ev, ui){
                 if (class_ != ".static_html"){
-                    if ( imageBeingRotated && class_ == ".img" ){  return false; }
+                    if ( rotating && class_ == ".img" ){  return false; }
                     $.ajax(
                         {
                             url: '/set_position/' + type + "/" +
@@ -126,22 +125,28 @@ function show_standard_tools(e){
 function hide_standard_tools(e){
     $(e).children('.standard_tools').hide();
 }
-
+function ready_fake_files(){    
+    $('#fakefiles').live('click', function () { $('#files').click(); }); // Stylize file input.
+}
 function grasscms_startup(){
-    /*
-        Startup function, called on every admin page init.
-    */
-
-    make_rotable('.img', 'img');
-    $(document).mouseup( stopRotate );
-
+    $('.img').hover(function() { var img = $(this); $(document).mousemove(function(evt){ mouse(evt, img); }); console.debug("rotating");
+    }, function(){$(document).unbind("mousemove"); });
+    $('img').each(function(img){
+        console.debug(img);
+        $.ajax({ url: "/get_rotation/img/" + img.attr('id').replace('img','') + "/" + degree, complete: function(degree){ 
+           img.css('-moz-transform', 'rotate(' + degree + 'deg)');
+           img.css('-webkit-transform', 'rotate(' + degree + 'deg)');
+           img.css('-o-transform', 'rotate(' + degree + 'deg)');
+           img.css('-ms-transform', 'rotate(' + degree + 'deg)');
+        }});  // TODO: This only supports images =(
+    });
     persistent('.img', 'img'); // Make widgets and static html widgets persistent
-    $('.img').mousedown( startRotate ); // Make widgets rotable
     persistent('.static_html', 'menu');
+    ready_fake_files();
     setup_text(); // Make text editor persistent
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
-    $('#fakefiles').live('click', function () { $('#files').click(); }); // Stylize file input.
+
     $('#filedrag').disableSelection();
 
 

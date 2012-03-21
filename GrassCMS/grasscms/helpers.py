@@ -25,6 +25,6 @@ def render_text(text):
 
 
 def render_image(image):
-    return json.dumps('<img class="img" style="width:%spx;height:%spx;" id="%s" \
+    return json.dumps('<img class="img" style="width:%spx;height:%spx;" id="img%s" \
            src="/static/uploads/%s" />' %(image.width, image.height, image.id_, image.content))
 

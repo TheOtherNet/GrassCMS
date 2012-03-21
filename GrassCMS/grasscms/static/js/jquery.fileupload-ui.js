@@ -11,6 +11,12 @@
 
 /*jslint nomen: true, unparam: true, regexp: true */
 /*global define, window, document, URL, webkitURL, FileReader */
+jQuery.fn.reset = function () {
+  $(this).each (function() { this.reset(); });
+}
+function reset_html(id) {
+    $('#'+id).html($('#'+id).html());
+}
 
 (function (factory) {
     'use strict';
@@ -102,6 +108,7 @@
             complete: function (e, data) {
                 $('#filedrag').append($.parseJSON(e.responseText));
                 persistent('.img', 'img');
+                reset_html('fileupload');
                 grasscms_startup(); // Checkme
             },
             // Callback for file deletion:
