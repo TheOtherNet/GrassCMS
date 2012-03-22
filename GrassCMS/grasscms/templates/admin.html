@@ -24,13 +24,11 @@
 {% block admin_menu %}
         <li class="menu_button">
             <form style="width:42px" id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
-
                 <input style="width:0px;height:0px" type="file" id="files" class="files" name="files" >
                 <img title="Upload files" src="{{url_for('static', filename='images/add.png')}}" id="fakefiles" />
                 <div style="position:fixed; top:0px; left:-100px; width:0px;">
                     <input type="submit"/>
                 </div>
-
             </form>
         </li>
 
@@ -57,10 +55,6 @@
             </form>
         </li>
 
-{%endblock%} 
-
-{% block body %}
-
     <div id="standard_tools_model" class="standard_tools" style="display:none">
         <div class="standard_tools" style="display:none">
             <div style="float:left;position:fixed; margin-top:-35px; margin-left:70px;">
@@ -82,34 +76,21 @@
         </div>
     </div>
 
+{%endblock%} 
+
+{% block body %}
     <div id="filedrag" style="position:fixed; top:0px; left:0px; width:100%; height:100%;"> 
 
-<!-- Guides -->        
-        <div class="x-guide draggable-x">  <span class="pos"></span> </div><div class="y-guide draggable-y"> <span class="pos"></span>  </div><div class="draggable-x-handle draggable-x draggable-x-newest"> <span class="pos"></span></div><div class="draggable-y-handle draggable-y draggable-y-newest"> <span class="pos"></span></div>
-
+        {%block admin_body%} 
+            <div class="x-guide draggable-x">  <span class="pos"></span> </div><div class="y-guide draggable-y"> <span class="pos"></span>  </div><div class="draggable-x-handle draggable-x draggable-x-newest"> <span class="pos"></span></div><div class="draggable-y-handle draggable-y draggable-y-newest"> <span class="pos"></span></div>
+        {%endblock%}
 
         {% if blog_menu %}
             <div class="static static_html" style="width:{{blog_menu.width}}px; height:{{blog_menu.height}}px; top:{{blog_menu.x}}px; left:{{blog_menu.y}}px;" id="menu{{ blog_menu.id_ }}">  {{ blog_menu.content|safe }} </div>
         {%endif%}
 
-
-        {% if imgs %} 
-            {% for img in imgs %}
-                <img class="img" style=" width:{{img.width}}px; height: {{img.height}}px;"
-                     id="img{{ img.id_ }}"  src='/static/uploads/{{ img.content }}' />
-            {%endfor%}
-        {%endif%}
-
-        {% if txt_blobs %} {% for txt in txt_blobs %} 
-            <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                <div class="handler" style="display:none; background:black; height:13px; border-radius:2px; margin-bottom:-4px; margin-left:2px; " id="handler_text_{{txt.id_}}" > <a style="color:white; margin-left:3px" onclick="delete_text(this); return false;">X</a> </div>
-                <div>
-                    <textarea  style="min-width:1em; min-height:1em;"  
-                        id='text_{{txt.id_}}' class="{{page.name}} CKeditor_blob editor"> 
-                            {{ txt.content }}</textarea>
-                </div>
-            </div> 
-        {%endfor%} {%endif%}
+        {% if imgs %} {% for img in imgs %} {{ img|image|safe }}{%endfor%}{%endif%}
+        {% if txt_blobs %} {% for txt in txt_blobs %} {{txt|text|safe }} {%endfor%} {%endif%}
 
     </div>
 

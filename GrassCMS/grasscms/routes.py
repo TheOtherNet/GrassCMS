@@ -4,15 +4,48 @@ from grasscms.forms import *
 from grasscms.openid_login import *
 from grasscms.converters import *
 from grasscms.helpers import *
+import json, os, urllib
+from werkzeug import secure_filename
 
-import json, os
+def render_html(type_, html):
+    if type_ == "menu_old":
+        return json.dumps([html.id_, html.content])
+    else:
+        return '<div class="static static_html" style="width:%spx; height:%spx; \
+        top:%spx; left:%spx;" id="%s%s"> %s </di>' %(html.width, html.height, html.x, html.y, type_, html.id_, html.content)
+
+def render_text(text):
+    if g.user_is_admin:
+        return '<div class="text_blob draggable texts" style="top:%spx; left:%spx;" id="%s" > \
+                <div class="handler" style="display:none;" id="handler_text_%s" > \
+                    <a style="color:white; margin-left:3px;" onclick="delete_text(this); return false;">X</a> </div> \
+                <div>\
+                    <textarea  style="min-width:1em; min-height:1em;"  \
+                        id="text_%s" class="CKeditor_blob editor"> \
+                            %s</textarea>\
+                </div>\
+            </div>' %(text.x, text.y, text.id_, text.id_, text.id_, text.content)
+    else:
+        return '<div class="text_blob" style="position:fixed; top:%spx; left:%spx; width:%spx; height:%spx; overflow:auto; opacity:%s; rotation:%s;">%s</div>' %(text.x, text.y, text.width, text.height, text.opacity, text.rotation, text.content)
+
+def render_image(image):
+    if g.user_is_admin:
+        return '<img class="img" style="opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
+           src="/static/uploads/%s" />' %(image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
+    else:
+        return '<img class="img" style="top:%spx; position:fixed; left:%spx; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
+           src="/static/uploads/%s" />' %(image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
+
+app.jinja_env.filters['html'] = render_html
+app.jinja_env.filters['text'] = render_text
+app.jinja_env.filters['image'] = render_image
 
 @app.route('/')
-@app.route('/<blog_name>')
 @app.route('/<blog_name>/<page>')
 def index(blog_name=False, page="index"):
     if g.user:
         user_blog = Blog.query.filter_by(id=g.user.blog).first()
+        app.logger.info(user_blog.name)
         user_page = Page.query.filter_by(id=g.user.index).first() if g.user else ""
         user_blog_id = user_blog.id
     else:
@@ -20,8 +53,11 @@ def index(blog_name=False, page="index"):
         user_blog_id = False
         user_blog = False
 
+    tmp_blog = False
+
     try:
-        tmp_blog = Blog.query.filter_by(name=blog_name).first()
+        tmp_blog = Blog.query.filter_by(name=urllib.unquote(blog_name)).first()
+        app.logger.info(tmp_blog)
         page = Page.query.filter_by(blog=tmp_blog.id, name = page).first()
         blog = tmp_blog
     except AttributeError, error:
@@ -31,12 +67,18 @@ def index(blog_name=False, page="index"):
 
     if not blog_name or not page:
         return render_template('landing.html', page=user_page, blog=user_blog)
-    if type(page) is str:
+    elif type(page) is str:
         return render_template('landing.html', page=user_page, blog=user_blog)
+    else:
+        g.requested_blog=tmp_blog
+
+    if g.requested_blog == user_blog and g.user:
+        g.user_is_admin = True
 
     txt_blobs = Text.query.filter_by(page=page.id)
     blog_menu = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
-    if not g.user or g.user.blog != user_blog_id:
+
+    if not g.user_is_admin:
         return render_template( 'index.html',
             imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog, 
             blog_menu=blog_menu, txt_blobs=txt_blobs )

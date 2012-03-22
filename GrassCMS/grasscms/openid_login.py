@@ -19,6 +19,7 @@ def check_form(name, email, page_name):
 @app.before_request
 def before_request():
     g.user = None
+    g.user_is_admin = None
     if 'openid' in session:
         g.user = User.query.filter_by(openid=session['openid']).first()
 

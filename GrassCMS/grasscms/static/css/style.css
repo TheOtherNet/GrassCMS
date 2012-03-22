@@ -2,6 +2,8 @@
 .draggable{ z-index:2000; }
 .menu_button a{ padding-top:4px!important; padding-bottom:4px!important;}
 .menu_button { display:inline;}
+.handler{ background:black; height:13px; border-radius:2px; margin-bottom:-4px; margin-left:2px; }
+
 .menu_button form{ margin:0px!important; }
 .ToolBar { display:none; width: 668px!important; position: fixed!important;top: 7px!important;z-index: 2000!important;left: 430px!important; }
 textarea, iframe { border:0px!important; }

@@ -2,15 +2,12 @@
 {% block body %}
     <div>
         <div class="warn">{{ messages }}</div>
-
-        <div class="imgs">{% if imgs %}{% for img in imgs %} <img style="position:fixed; left:{{img.y}}px; top:{{img.x}}px; width:{{img.width}}; height: {{img.height}}" class="dragable" src='/static/uploads/{{ img.content }}' /> {%endfor%}{% endif %}</div>
-
-        {% if txt_blobs %}
-            {% for txt in txt_blobs %} 
-                <div style="position:absolute; top:{{txt.x}}px; height:{{txt.height}}px; width:{{txt.width}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                         {{ txt.content|safe }}
-                </div> 
-            {%endfor%}
+        {% if blog_menu %}
+            <div class="static static_html" style="width:{{blog_menu.width}}px; height:{{blog_menu.height}}px; top:{{blog_menu.x}}px; left:{{blog_menu.y}}px;" id="menu{{ blog_menu.id_ }}">  {{ blog_menu.content|safe }} </div>
         {%endif%}
 
-    </div>{% endblock %}
+        {% if imgs %} {% for img in imgs %} {{ img|image|safe }}{%endfor%}{%endif%}
+        {% if txt_blobs %} {% for txt in txt_blobs %} {{txt|text|safe }} {%endfor%} {%endif%}
+
+    </div>
+{% endblock %}
