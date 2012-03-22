@@ -9,6 +9,7 @@ class BaseWidget(object):
     height = Column(Integer)
     content = Column(String(60))
     rotation = Column(String(60))
+    opacity = Column(String(60))
 
     @declared_attr
     def blog(cls):
@@ -32,6 +33,7 @@ class BaseWidget(object):
         self.width = width
         self.height = height
         self.rotation = 0
+        self.opacity = 1
 
 class Text(BaseWidget, Base):
     __tablename__ = "Text"

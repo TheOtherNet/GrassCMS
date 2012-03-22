@@ -157,14 +157,12 @@ def text(page, id_=False):
     db_session.commit()
     return render_text(text)
 
-@app.route('/delete_text_blob/<page>/<id_>', methods=['DELETE'])
-def delete_text(page_, id_):
-    page = get_page(page_).id
-    text = Text.query.filter_by(id_=int(id_.replace('text_', '')), 
-        page=page).first()
+@app.route('/delete_text_blob/<id_>', methods=['DELETE'])
+def delete_text(id_):
+    text = Text.query.filter_by(id_=id_).first();
     db_session.delete(text)
     db_session.commit()
-    return True
+    return json.dumps("True")
 
 # Persistence handlers
 @app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'])
@@ -197,6 +195,21 @@ def set_dimensions(type_, id_):
     element.height = int(request.args.get('height')) or 200
     db_session.commit()
     return json.dumps([element.x, element.y])
+
+@app.route('/get_opacity/<type_>/<id_>')
+def get_opacity(type_, id_):
+    foo=get_element_by_id(id_, type_)
+    return json.dumps(foo.opacity)
+
+@app.route('/set_opacity/<type_>/<id_>/<opacity>', methods=['GET', 'POST'])
+def set_opacity(type_, id_, opacity):
+    """
+        AJAX call to set dimensions of an element.
+    """
+    element = get_element_by_id(id_, type_)
+    element.opacity=opacity
+    db_session.commit()
+    return element.opacity
 
 @app.route('/get_rotation/<type_>/<id_>')
 def get_rotation(type_, id_):

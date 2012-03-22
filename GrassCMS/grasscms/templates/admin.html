@@ -102,7 +102,7 @@
 
         {% if txt_blobs %} {% for txt in txt_blobs %} 
             <div class="text_blob draggable texts" style="top:{{txt.x}}px; left:{{txt.y}}px;" id="{{ txt.id_ }}" >
-                <div class="handler" style="display:none; background:black; height:13px; border-radius:2px; margin-bottom:-4px; margin-left:2px; " id="handler_text_{{txt.id_}}" > </div>
+                <div class="handler" style="display:none; background:black; height:13px; border-radius:2px; margin-bottom:-4px; margin-left:2px; " id="handler_text_{{txt.id_}}" > <a style="color:white; margin-left:3px" onclick="delete_text(this); return false;">X</a> </div>
                 <div>
                     <textarea  style="min-width:1em; min-height:1em;"  
                         id='text_{{txt.id_}}' class="{{page.name}} CKeditor_blob editor"> 

@@ -76,10 +76,8 @@ function persistent(class_, type, use_parent){
             }
         }); 
 
-    $.each($(class_), function(it){
-        $(this).parent().data('id', $(this).attr('id'));
-        $(this).parent().append($('#standard_tools_model').html());
-    });
+
+
 
     } else {
 
@@ -131,16 +129,32 @@ function ready_fake_files(){
 function grasscms_startup(){
     $('.img').hover(function() { var img = $(this); $(document).mousemove(function(evt){ mouse(evt, img); }); console.debug("rotating");
     }, function(){$(document).unbind("mousemove"); });
-    $('img').each(function(img){
-        console.debug(img);
-        $.ajax({ url: "/get_rotation/img/" + img.attr('id').replace('img','') + "/" + degree, complete: function(degree){ 
-           img.css('-moz-transform', 'rotate(' + degree + 'deg)');
+    $('#filedrag>img').each(function(){
+        var img=$(this); console.debug(img);
+
+        $.ajax({ url: "/get_opacity/img/" + img.attr('id').replace('img',''), complete: function(data){ 
+           opacity=$.parseJSON(data.responseText); 
+           img.css('opacity', opacity);
+        }});  // TODO: This only supports images =(
+
+        $.ajax({ url: "/get_rotation/img/" + img.attr('id').replace('img',''), complete: function(data){ 
+            degree=$.parseJSON(data.responseText); 
+                console.debug(degree);
+               img.css('-moz-transform', 'rotate(' + degree + 'deg)');
            img.css('-webkit-transform', 'rotate(' + degree + 'deg)');
            img.css('-o-transform', 'rotate(' + degree + 'deg)');
            img.css('-ms-transform', 'rotate(' + degree + 'deg)');
         }});  // TODO: This only supports images =(
+
     });
     persistent('.img', 'img'); // Make widgets and static html widgets persistent
+
+    $('.img').each(function(){
+        var img=$(this); console.debug(img);
+        img.parent().data('id', $(this).attr('id'));
+        img.parent().append($('#standard_tools_model').html());
+        
+    });
     persistent('.static_html', 'menu');
     ready_fake_files();
     setup_text(); // Make text editor persistent
@@ -163,7 +177,9 @@ function grasscms_startup(){
         value: 1,
         orientation: "horizontal",
         slide: function(e,ui){
-            console.debug(e); console.debug(ui.value);
+            target=$(e.target).parent().parent().parent().parent().children('.img');
+            target.css('opacity', ui.value);
+            $.ajax({ url: "/set_opacity/img/" + target.attr('id').replace('img','') + "/" + ui.value })  // TODO: This only supports images =(
         }
     });;
 }

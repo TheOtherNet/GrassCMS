@@ -75,7 +75,6 @@ function get_blob(page_name){
 }
 
 function update_blob(obj, page_id, id){
-
     $.ajax({
         url:'/text_blob/' + page_id + "/" +  id ,
         method: 'POST',
@@ -91,13 +90,14 @@ function update_blob(obj, page_id, id){
 
 }
 
-function delete_text(page_id, id_){
+function delete_text(elem){
+    id=$(elem).parent().parent().attr('id').replace('text_','');
     $.ajax({
-        url:'/text_blob/' + page_id + "/" +  id ,
+        url:'/delete_text_blob/' + id ,
         method: 'DELETE',
         type: 'DELETE',
-        success: function(data){ 
-            console.debug(data);  
+        complete: function(data){ 
+            $(elem).parent().parent().hide();
         } 
     }); 
 }
