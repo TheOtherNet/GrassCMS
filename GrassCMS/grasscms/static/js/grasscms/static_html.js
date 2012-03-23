@@ -27,8 +27,9 @@ function assign_menu(blog_id){
     $.ajax({
         url:'/update_menu/' + blog_id +'/', 
         type : 'POST', 
-        success: function(data_){ data_=$.parseJSON(data_);
-            if($("menu"+data_[0]).html()){ $("#menu"+data_[0]).html(data_[1]); } else { $('#filedrag').append(data_[1]); persistent('.static_html', 'menu');
+        success: function(data_){
+            data_=$.parseJSON(data_);
+            if($("#menu"+data_[0]).html()){ $("#menu"+data_[0]).html(data_[1]); } else { $('#filedrag').append(data_[1]); persistent('.static_html', 'menu');
             }
         } 
     }); 

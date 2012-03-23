@@ -11,8 +11,8 @@ def render_html(type_, html):
     if type_ == "menu_old":
         return json.dumps([html.id_, html.content])
     else:
-        return '<div class="static static_html" style="width:%spx; height:%spx; \
-        top:%spx; left:%spx;" id="%s%s"> %s </di>' %(html.width, html.height, html.x, html.y, type_, html.id_, html.content)
+        return json.dumps(['', '<div class="static static_html" style="width:%spx; height:%spx; \
+        top:%spx; left:%spx;" id="%s%s"> %s </di>' %(html.width, html.height, html.x, html.y, type_, html.id_, html.content)])
 
 def render_text(text, is_ajax=False):
     if g.user_is_admin or is_ajax: 
