@@ -260,12 +260,12 @@ def get_rotation(type_, id_):
     return json.dumps(foo.rotation)
 
 @app.route('/get_zindex/<type_>/<id_>')
-def get_opacity(type_, id_):
+def get_zindex(type_, id_):
     foo=get_element_by_id(id_, type_)
     return json.dumps(foo.zindex)
 
 @app.route('/set_zindex/<type_>/<id_>/<zindex>', methods=['GET', 'POST'])
-def set_opacity(type_, id_, zindex):
+def set_zindex(type_, id_, zindex):
     """
         AJAX call to set dimensions of an element.
     """
