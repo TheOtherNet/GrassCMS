@@ -63,10 +63,10 @@
             </div>
     
             <div style="float:left; margin-left:2px; margin-top:-20px; position:fixed">
-                <div> <img style="width:16px" src="{{url_for('static', filename='img/up.png')}}" /> </div>
+                <div><a href="#" onclick="increment_zindex($(this).parent().parent().parent().parent().children('.img'))"> <img style="width:16px" src="{{url_for('static', filename='img/up.png')}}" /></a></div>
             </div>
             <div style="float:left; margin-left:18px; margin-top:-20px; position:fixed; ">
-                <div> <img style="width:16px" src="{{url_for('static', filename='img/down.png')}}" /> </div>
+                <div><a href="#" onclick="downgrade_zindex($(this).parent().parent().parent().parent().children('.img'))"> <img style="width:16px" src="{{url_for('static', filename='img/down.png')}}" /></a></div>
             </div>
     
             <div style="float:left; margin-left:34px; margin-top:-20px; position:fixed; ">

@@ -9,13 +9,10 @@
 textarea, iframe { border:0px!important; }
 .cke_toolbox_collapser { display:none; }
 
-#standard_tools{
-    position:fixed;
-    top:0px;
-    left:320px;
-    z-index:2010;
+.standard_tools{
+    position:absolute;
+    z-index:3010;
     display:none;
-    width:400px!important;
 }
 
 .cke_top{

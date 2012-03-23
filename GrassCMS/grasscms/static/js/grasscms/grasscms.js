@@ -132,6 +132,11 @@ function grasscms_startup(){
     $('#filedrag>img').each(function(){
         var img=$(this); console.debug(img);
 
+        $.ajax({ url: "/get_zindex/img/" + img.attr('id').replace('img',''), complete: function(data){ 
+           zindex=$.parseJSON(data.responseText); 
+           img.css('z-index', zindex);
+        }});  // TODO: This only supports images =(
+
         $.ajax({ url: "/get_opacity/img/" + img.attr('id').replace('img',''), complete: function(data){ 
            opacity=$.parseJSON(data.responseText); 
            img.css('opacity', opacity);
@@ -182,6 +187,16 @@ function grasscms_startup(){
             $.ajax({ url: "/set_opacity/img/" + target.attr('id').replace('img','') + "/" + ui.value })  // TODO: This only supports images =(
         }
     });;
+}
+
+function increment_zindex(elem){ var target=$(elem); console.debug(target);
+    target.css('z-index', parseInt(target.css('z-index'), 10) + 1 );
+    $.ajax({ url: "/set_zindex/img/" + target.attr('id').replace('img','') + "/" + target.css('z-index') })  // TODO: This only supports images =(
+}
+            
+function downgrade_zindex(elem){ target=$(elem); console.debug(target);
+    target.css('z-index', parseInt(target.css('z-index'), 10) - 1 );
+    $.ajax({ url: "/set_zindex/img/" + target.attr('id').replace('img','') + "/" + target.css('z-index')})  // TODO: This only supports images =(
 }
 
 function create_page(blog_id){ 

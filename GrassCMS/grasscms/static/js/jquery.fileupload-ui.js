@@ -106,7 +106,7 @@ function reset_html(id) {
             },
             // Callback for failed (abort or error) uploads:
             complete: function (e, data) {
-                $('#filedrag').append($.parseJSON(e.responseText));
+                $('#filedrag').append(e.responseText);
                 persistent('.img', 'img');
                 reset_html('fileupload');
                 grasscms_startup(); // Checkme

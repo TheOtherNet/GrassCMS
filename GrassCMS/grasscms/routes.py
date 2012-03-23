@@ -14,8 +14,8 @@ def render_html(type_, html):
         return '<div class="static static_html" style="width:%spx; height:%spx; \
         top:%spx; left:%spx;" id="%s%s"> %s </di>' %(html.width, html.height, html.x, html.y, type_, html.id_, html.content)
 
-def render_text(text):
-    if g.user_is_admin:
+def render_text(text, is_ajax=False):
+    if g.user_is_admin or is_ajax: 
         return '<div class="text_blob draggable texts" style="top:%spx; left:%spx;" id="%s" > \
                 <div class="handler" style="display:none;" id="handler_text_%s" > \
                     <a style="color:white; margin-left:3px;" onclick="delete_text(this); return false;">X</a> </div> \
@@ -28,13 +28,13 @@ def render_text(text):
     else:
         return '<div class="text_blob" style="position:fixed; top:%spx; left:%spx; width:%spx; height:%spx; overflow:auto; opacity:%s; rotation:%s;">%s</div>' %(text.x, text.y, text.width, text.height, text.opacity, text.rotation, text.content)
 
-def render_image(image):
-    if g.user_is_admin:
-        return '<img class="img" style="opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
-           src="/static/uploads/%s" />' %(image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
+def render_image(image, is_ajax=False):
+    if g.user_is_admin or is_ajax:
+        return '<img class="img" style="z-index:%s; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
+           src="/static/uploads/%s" />' %(image.zindex, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
     else:
-        return '<img class="img" style="top:%spx; position:fixed; left:%spx; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
-           src="/static/uploads/%s" />' %(image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
+        return '<img class="img" style="z-index:%s;top:%spx; position:fixed; left:%spx; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
+           src="/static/uploads/%s" />' %(image.zindex, image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
 
 app.jinja_env.filters['html'] = render_html
 app.jinja_env.filters['text'] = render_text
@@ -105,12 +105,12 @@ def upload_(page):
             object_.type_="image"
             db_session.add(object_)
             db_session.commit()
-            result = render_image(object_)
+            result = render_image(object_, is_ajax=True)
         elif type_ == "text":
             object_ = Text(filename.decode('utf-8'), g.user, page.id, blog.id)
             db_session.add(object_)
             db_session.commit()
-            result = render_text(text)
+            result = render_text(text, is_ajax=True)
         else: 
             abort(500)
 
@@ -187,17 +187,17 @@ def text(page, id_=False):
     if not id_:
         text = Text("Insert your text here", g.user, page, user_blog.id)
         db_session.add(text)
-        result = render_text(text)
+        result = render_text(text, is_ajax=True)
     else:
         text = Text.query.filter_by(id_=int(id_.replace('text_', '')), 
             page=page).first()
         if not text:
             abort(500) # Nope.
         text.content = request.form['text']
-        result = render_text(text)
+        result = render_text(text, is_ajax=True)
 
     db_session.commit()
-    return render_text(text)
+    return render_text(text, is_ajax=True)
 
 @app.route('/delete_text_blob/<id_>', methods=['DELETE'])
 def delete_text(id_):
@@ -258,6 +258,21 @@ def get_rotation(type_, id_):
     foo=get_element_by_id(id_, type_)
     app.logger.info(foo.rotation)
     return json.dumps(foo.rotation)
+
+@app.route('/get_zindex/<type_>/<id_>')
+def get_opacity(type_, id_):
+    foo=get_element_by_id(id_, type_)
+    return json.dumps(foo.zindex)
+
+@app.route('/set_zindex/<type_>/<id_>/<zindex>', methods=['GET', 'POST'])
+def set_opacity(type_, id_, zindex):
+    """
+        AJAX call to set dimensions of an element.
+    """
+    element = get_element_by_id(id_, type_)
+    element.zindex=zindex
+    db_session.commit()
+    return element.zindex
 
 @app.route('/set_rotation/<type_>/<id_>/<angle>', methods=['GET', 'POST'])
 def set_rotation(type_, id_, angle):
