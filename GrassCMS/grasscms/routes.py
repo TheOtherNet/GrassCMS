@@ -76,16 +76,16 @@ def index(blog_name=False, page="index"):
         g.user_is_admin = True
 
     txt_blobs = Text.query.filter_by(page=page.id)
-    blog_menu = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
+    static_htmls = Html.query.filter_by(blog=blog.id)
 
     if not g.user_is_admin:
         return render_template( 'index.html',
             imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog, 
-            blog_menu=blog_menu, txt_blobs=txt_blobs )
+            static_htmls=static_htmls, txt_blobs=txt_blobs )
     else:
         return render_template('admin.html',
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
-                page=page, blog_menu=blog_menu, txt_blobs=txt_blobs)
+                page=page, static_htmls=static_htmls, txt_blobs=txt_blobs)
 
 @app.route("/upload/<page>", methods=("GET", "POST"))
 def upload_(page):
@@ -111,6 +111,12 @@ def upload_(page):
             db_session.add(object_)
             db_session.commit()
             result = render_text(text, is_ajax=True)
+        elif type_ == "video":
+            object_ = Html("<video style='width:100%; height:100%'><source src='/static/uploads/" + filename.decode('utf-8') + "'></source></video>", g.user, page.id, blog.id)
+            object_.field_name="video"
+            db_session.add(object_)
+            db_session.commit()
+            result = render_html(text, is_ajax=True)
         else: 
             abort(500)
 

@@ -127,6 +127,7 @@ function ready_fake_files(){
     $('#fakefiles').live('click', function () { $('#files').click(); }); // Stylize file input.
 }
 function grasscms_startup(){
+    $('video,audio').mediaelementplayer(/* Options */);
     $('.img').hover(function() { var img = $(this); $(document).mousemove(function(evt){ mouse(evt, img); }); console.debug("rotating");
     }, function(){$(document).unbind("mousemove"); });
     $('#filedrag>img').each(function(){

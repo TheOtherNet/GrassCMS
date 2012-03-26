@@ -11,6 +11,7 @@ odt_mimetypes = [ 'vnd.oasis.opendocument.text' ]
 docx_mimetypes = [
     'vnd.openxmlformats-officedocument.wordprocessingml.document' 
 ] 
+
 odt_converter = Odt2html(quick_xsl)
 
 def get_type(path):
@@ -52,11 +53,15 @@ def do_conversion(filename, path):
     """
     type_ = get_type(path)
     if type_[0] == "image":
-        return ("image", filename)
-    if type_[1] in odt_mimetypes:
+        path = filename
+        type_ = "image"
+    elif type_[0] == "video":
+        type_ = "video"
+        path = filename
+    elif type_[1] in odt_mimetypes:
         path = convert_odt(path)
         type_ = "text"
-    if type_[1] in docx_mimetypes:
+    elif type_[1] in docx_mimetypes:
         path = convert_docx(path)
         type_ = "text"
     return (type_, path)
