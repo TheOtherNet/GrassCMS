@@ -88,9 +88,7 @@
             <div class="x-guide draggable-x">  <span class="pos"></span> </div><div class="y-guide draggable-y"> <span class="pos"></span>  </div><div class="draggable-x-handle draggable-x draggable-x-newest"> <span class="pos"></span></div><div class="draggable-y-handle draggable-y draggable-y-newest"> <span class="pos"></span></div>
         {%endblock%}
 
-        {% if static_htmls %}{%for static_html in static_htmls %}
-            <div class="static static_html" style="width:{{static_html.width}}px; height:{{static_html.height}}px; top:{{static_html.x}}px; left:{{static_html.y}}px;" id="{{ static_html.field_name }}{{ static_html.id_ }}">  {{ static_html.content|safe }} </div>
-        {%endfor%}{%endif%}
+        {% if static_htmls %}{%for static_html in static_htmls %}{{ static_html|html|safe }}{%endfor%}{%endif%}
 
         {% if imgs %} {% for img in imgs %} {{ img|image|safe }}{%endfor%}{%endif%}
         {% if txt_blobs %} {% for txt in txt_blobs %} {{txt|text|safe }} {%endfor%} {%endif%}

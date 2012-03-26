@@ -7,12 +7,16 @@ from grasscms.helpers import *
 import json, os, urllib
 from werkzeug import secure_filename
 
-def render_html(type_, html):
-    if type_ == "menu_old":
-        return json.dumps([html.id_, html.content])
+def render_html(html, type_=False, is_ajax=False):
+    if is_ajax:
+        if type_ == "menu_old":
+            return json.dumps([html.id_, html.content])
+        else:
+            return json.dumps(['', '<div class="static %s static_html" style="width:%spx; height:%spx; \
+                top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)])
     else:
-        return json.dumps(['', '<div class="static static_html" style="width:%spx; height:%spx; \
-        top:%spx; left:%spx;" id="%s%s"> %s </di>' %(html.width, html.height, html.x, html.y, type_, html.id_, html.content)])
+            return '<div class="static %s static_html" style="width:%spx; height:%spx; \
+                top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
 
 def render_text(text, is_ajax=False):
     if g.user_is_admin or is_ajax: 
@@ -112,11 +116,13 @@ def upload_(page):
             db_session.commit()
             result = render_text(text, is_ajax=True)
         elif type_ == "video":
-            object_ = Html("<video style='width:100%; height:100%'><source src='/static/uploads/" + filename.decode('utf-8') + "'></source></video>", g.user, page.id, blog.id)
-            object_.field_name="video"
+            object_ = Html('', g.user, page.id, blog.id)
             db_session.add(object_)
             db_session.commit()
-            result = render_html(text, is_ajax=True)
+            object_.content = "<video id='video"+object_.id +"'><source src='/static/uploads/" + filename.decode('utf-8') + "'></source></video>"
+            object_.field_name="video"
+
+            result = render_html(object_, is_ajax=True)
         else: 
             abort(500)
 
@@ -154,19 +160,21 @@ def get_menu(blog):
     menu_blog = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
     if not menu_blog:
         type_ = "menu"
-        menu_blog = Html(blog=blog.id, user = g.user, width=200, height=100,
-        content='\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
-            %(blog.name, a.name, a.name) for a in \
-            Page.query.filter_by(blog = blog.id)]))
+        menu_blog = Html(blog=blog.id, user = g.user, width=200, height=100, content="")
         menu_blog.field_name = "menu"
         db_session.add(menu_blog)
+        db_session.commit()
+        menu_blog.content='<div id="menu%s">%s</div>' %(menu_blog.id_, '\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
+            %(blog.name, a.name, a.name) for a in \
+            Page.query.filter_by(blog = blog.id)]) + "</div>")
     else:
         type_ = "menu_old"
-        menu_blog.content='\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
+        menu_blog.content='<div id="%s">' %(menu_blog.id_) + '\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
             %(blog.name, a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)])
+        menu_blog.content += "</div>"
     db_session.commit()
-    return render_html(type_, menu_blog)
+    return render_html(menu_blog, type_, True)
        
 @app.route('/html/<blog>/<id_>', methods=['DELETE'])
 def delete_html(blog, id_):
@@ -219,8 +227,9 @@ def get_position(type_, id_):
     element = get_element_by_id(id_, type_)
     try:
         return json.dumps([element.x, element.y, element.width, element.height])
-    except:
-        return False
+    except Exception, error:
+        app.logger.info(error)
+        return "False"
 
 @app.route('/set_position/<type_>/<id_>', methods=['GET', 'POST'])
 def set_position(type_, id_):
@@ -228,8 +237,8 @@ def set_position(type_, id_):
         Sets position.
     """
     element = get_element_by_id(id_, type_)
-    element.x = int(request.args.get('x'))
-    element.y = int(request.args.get('y'))
+    element.x = float(request.args.get('x'))
+    element.y = float(request.args.get('y'))
     db_session.commit()
     return json.dumps([element.x, element.y])
 
@@ -239,8 +248,8 @@ def set_dimensions(type_, id_):
         AJAX call to set dimensions of an element.
     """
     element = get_element_by_id(id_, type_)
-    element.width = int(request.args.get('width')) or 200
-    element.height = int(request.args.get('height')) or 200
+    element.width = float(request.args.get('width')) or 200
+    element.height = float(request.args.get('height')) or 200
     db_session.commit()
     return json.dumps([element.x, element.y])
 
@@ -296,8 +305,7 @@ def get_element_by_id(id_, type_):
     elif type_ == "text":
         element = Text.query.filter_by(id_=id_, user=g.user.id).first()
     else:
-        element = Html.query.filter_by(id_=id_, user=g.user.id, 
-            field_name=type_).first()
+        element = Html.query.filter_by(id_=id_, user=g.user.id).first()
     return element
 
 def get_page(page):
