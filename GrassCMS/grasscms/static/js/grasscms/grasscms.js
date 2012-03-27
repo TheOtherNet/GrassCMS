@@ -145,12 +145,8 @@ jQuery.fn.extend({
                 element.parent().css('left', where[1] + "px"); 
             });
         }
-
-
-
     });
-    
-    }});
+}});
 
 function grasscms_startup(){
     $('video,audio').mediaelementplayer(/* Options */);

@@ -119,9 +119,9 @@ def upload_(page):
             object_ = Html('', g.user, page.id, blog.id)
             db_session.add(object_)
             db_session.commit()
-            object_.content = "<video id='video"+object_.id +"'><source src='/static/uploads/" + filename.decode('utf-8') + "'></source></video>"
+            object_.content = "<video width='100%%' height='100%%' id='video%s'><source src='/static/uploads/%s'></source></video>" %(object_.id_, filename.decode('utf-8'))
             object_.field_name="video"
-
+            db_session.commit()
             result = render_html(object_, is_ajax=True)
         else: 
             abort(500)
