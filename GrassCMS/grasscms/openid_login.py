@@ -30,8 +30,9 @@ def after_request(response):
     return response
 
 @app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', subdomain="<subdomain>", methods=['GET', 'POST'])
 @oid.loginhandler
-def login():
+def login(subdomain=False):
     """
         Does the login via OpenID.  Has to call into `oid.try_login`
         to start the OpenID machinery.

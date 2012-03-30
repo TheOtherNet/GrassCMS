@@ -43,38 +43,45 @@ def render_image(image, is_ajax=False):
 app.jinja_env.filters['html'] = render_html
 app.jinja_env.filters['text'] = render_text
 app.jinja_env.filters['image'] = render_image
+app.config['SERVER_NAME'] = "grasscms.com:8181"
 
-@app.route('/')
-@app.route('/<blog_name>/<page>')
-def index(blog_name=False, page="index"):
+def check_user():
     if g.user:
         user_blog = Blog.query.filter_by(id=g.user.blog).first()
-        app.logger.info(user_blog.name)
         user_page = Page.query.filter_by(id=g.user.index).first() if g.user else ""
-        user_blog_id = user_blog.id
     else:
         user_page = False
-        user_blog_id = False
         user_blog = False
+    return (user_blog, user_page)
 
-    tmp_blog = False
+@app.route('/')
+def landing():
+    user_page, user_blog = check_user()
+    return render_template('landing.html', page=user_page, blog=user_blog)
+
+@app.route('/', subdomain="<blog_name>")
+@app.route('/page/<page>/', subdomain='<blog_name>')
+@app.route('/<blog_name>/<page>') 
+def index(blog_name=False, page="index"):
+    blog_name = blog_name.replace('_', ' ')
+    user_blog, user_page = check_user()
+
+    if not page:
+        page = "index"
 
     try:
-        tmp_blog = Blog.query.filter_by(name=urllib.unquote(blog_name)).first()
-        app.logger.info(tmp_blog)
+        tmp_blog = Blog.query.filter("UPPER(%s) LIKE '%s%s%s'" %("name", '%', urllib.unquote(blog_name).upper(), '%')).first()
+        app.logger.info(page)
         page = Page.query.filter_by(blog=tmp_blog.id, name = page).first()
         blog = tmp_blog
+        app.logger.info(blog)
+        app.logger.info(page)
     except AttributeError, error:
         page = user_page
         blog = user_blog
         pass
 
-    if not blog_name or not page:
-        return render_template('landing.html', page=user_page, blog=user_blog)
-    elif type(page) is str:
-        return render_template('landing.html', page=user_page, blog=user_blog)
-    else:
-        g.requested_blog=tmp_blog
+    g.requested_blog=tmp_blog
 
     if g.requested_blog == user_blog and g.user:
         g.user_is_admin = True
