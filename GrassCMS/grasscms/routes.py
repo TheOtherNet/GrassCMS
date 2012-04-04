@@ -35,7 +35,7 @@ def render_text(text, is_ajax=False):
 def render_image(image, is_ajax=False):
     if g.user_is_admin or is_ajax:
         return '<img class="img" style="z-index:%s; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
-           src="/static/uploads/%s" />' %(image.zindex, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
+           src="%suploads/%s" />' %(image.zindex, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, app.config['STATIC_ROOT'], image.content)
     else:
         return '<img class="img" style="z-index:%s;top:%spx; position:fixed; left:%spx; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
            src="/static/uploads/%s" />' %(image.zindex, image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
@@ -43,7 +43,7 @@ def render_image(image, is_ajax=False):
 app.jinja_env.filters['html'] = render_html
 app.jinja_env.filters['text'] = render_text
 app.jinja_env.filters['image'] = render_image
-app.config['SERVER_NAME'] = "grasscms.com:8181"
+
 
 def check_user():
     if g.user:
@@ -59,6 +59,7 @@ def landing():
     user_page, user_blog = check_user()
     return render_template('landing.html', page=user_page, blog=user_blog)
 
+@app.route('/')
 @app.route('/', subdomain="<blog_name>")
 @app.route('/page/<page>/', subdomain='<blog_name>')
 @app.route('/<blog_name>/<page>') 
@@ -81,13 +82,17 @@ def index(blog_name=False, page="index"):
         blog = user_blog
         pass
 
+
+    if page:
+        txt_blobs = Text.query.filter_by(page=page.id)
+        static_htmls = Html.query.filter_by(blog=blog.id)
+    else:
+        return render_template('landing.html')
+
     g.requested_blog=tmp_blog
 
     if g.requested_blog == user_blog and g.user:
         g.user_is_admin = True
-
-    txt_blobs = Text.query.filter_by(page=page.id)
-    static_htmls = Html.query.filter_by(blog=blog.id)
 
     if not g.user_is_admin:
         return render_template( 'index.html',
@@ -98,8 +103,9 @@ def index(blog_name=False, page="index"):
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
                 page=page, static_htmls=static_htmls, txt_blobs=txt_blobs)
 
+@app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
 @app.route("/upload/<page>", methods=("GET", "POST"))
-def upload_(page):
+def upload_(page, subdomain=False):
 
     """
         Launch upload page, this will be unlikely rendered (only on old browsers)
@@ -146,8 +152,8 @@ def delete_file(id_):
     db_session.commit()
     return json.dumps(True)
 
-@app.route('/new_page/<name>')
-def new_page(name):
+@app.route('/new_page/<name>', subdomain="<subdomain>")
+def new_page(name, subdomain=False):
     page = Page.query.filter_by(name = name).first()
     if not page:
         blog = Blog.query.filter_by(id=g.user.blog).first()
@@ -157,12 +163,12 @@ def new_page(name):
     else:
         abort(401)
 
-@app.route('/get_pagination/')
-def get_pagination(blog, page):
+@app.route('/get_pagination/', subdomain="<subdomain>")
+def get_pagination(blog, page, subdomain=False):
     return "Not implemented"
 
-@app.route('/update_menu/<blog>/', methods=['POST'])
-def get_menu(blog):
+@app.route('/update_menu/<blog>/', methods=['POST'], subdomain="<subdomain>")
+def get_menu(blog, subdomain=False):
     blog = Blog.query.filter_by(id = blog).first()
     menu_blog = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
     if not menu_blog:
@@ -183,8 +189,8 @@ def get_menu(blog):
     db_session.commit()
     return render_html(menu_blog, type_, True)
        
-@app.route('/html/<blog>/<id_>', methods=['DELETE'])
-def delete_html(blog, id_):
+@app.route('/html/<blog>/<id_>', methods=['DELETE'], subdomain="<subdomain>")
+def delete_html(blog, id_, subdomain=False):
     blog = Blog.query.filter_by(id = blog).first()
     db_session.delete(Html.query.filter_by(blog=blog.id, id_=id_).first())
     db_session.commit()
@@ -192,10 +198,10 @@ def delete_html(blog, id_):
 
 # Text blobs
 
-@app.route('/text_blob/<page>', methods=['POST'])
-@app.route('/text_blob/<page>/', methods=['POST'])
-@app.route('/text_blob/<page>/<id_>', methods=['POST'])
-def text(page, id_=False):
+@app.route('/text_blob/<page>', methods=['POST'], subdomain="<subdomain>")
+@app.route('/text_blob/<page>/', methods=['POST'], subdomain="<subdomain>")
+@app.route('/text_blob/<page>/<id_>', methods=['POST'], subdomain="<subdomain>")
+def text(page, id_=False, subdomain=False):
     """
         If called without an id, a new text (empty) will be created
         Otherwise, it'll try to update the text to the text in the form,
@@ -220,16 +226,16 @@ def text(page, id_=False):
     db_session.commit()
     return render_text(text, is_ajax=True)
 
-@app.route('/delete_text_blob/<id_>', methods=['DELETE'])
-def delete_text(id_):
+@app.route('/delete_text_blob/<id_>', methods=['DELETE'], subdomain="<subdomain>")
+def delete_text(id_, subdomain=False):
     text = Text.query.filter_by(id_=id_).first();
     db_session.delete(text)
     db_session.commit()
     return json.dumps("True")
 
 # Persistence handlers
-@app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'])
-def get_position(type_, id_):
+@app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def get_position(type_, id_, subdomain=False):
     id_ = id_.replace('menu', '')
     element = get_element_by_id(id_, type_)
     try:
@@ -238,8 +244,8 @@ def get_position(type_, id_):
         app.logger.info(error)
         return "False"
 
-@app.route('/set_position/<type_>/<id_>', methods=['GET', 'POST'])
-def set_position(type_, id_):
+@app.route('/set_position/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def set_position(type_, id_, subdomain=False):
     """
         Sets position.
     """
@@ -249,8 +255,8 @@ def set_position(type_, id_):
     db_session.commit()
     return json.dumps([element.x, element.y])
 
-@app.route('/set_dimensions/<type_>/<id_>', methods=['GET', 'POST'])
-def set_dimensions(type_, id_):
+@app.route('/set_dimensions/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def set_dimensions(type_, id_, subdomain=False):
     """
         AJAX call to set dimensions of an element.
     """
@@ -260,13 +266,13 @@ def set_dimensions(type_, id_):
     db_session.commit()
     return json.dumps([element.x, element.y])
 
-@app.route('/get_opacity/<type_>/<id_>')
-def get_opacity(type_, id_):
+@app.route('/get_opacity/<type_>/<id_>', subdomain="<subdomain>")
+def get_opacity(type_, id_, subdomain=False):
     foo=get_element_by_id(id_, type_)
     return json.dumps(foo.opacity)
 
-@app.route('/set_opacity/<type_>/<id_>/<opacity>', methods=['GET', 'POST'])
-def set_opacity(type_, id_, opacity):
+@app.route('/set_opacity/<type_>/<id_>/<opacity>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def set_opacity(type_, id_, opacity, subdomain=False):
     """
         AJAX call to set dimensions of an element.
     """
@@ -275,19 +281,18 @@ def set_opacity(type_, id_, opacity):
     db_session.commit()
     return element.opacity
 
-@app.route('/get_rotation/<type_>/<id_>')
-def get_rotation(type_, id_):
+@app.route('/get_rotation/<type_>/<id_>', subdomain="<subdomain>")
+def get_rotation(type_, id_, subdomain=False):
     foo=get_element_by_id(id_, type_)
-    app.logger.info(foo.rotation)
     return json.dumps(foo.rotation)
 
-@app.route('/get_zindex/<type_>/<id_>')
-def get_zindex(type_, id_):
+@app.route('/get_zindex/<type_>/<id_>', subdomain="<subdomain>")
+def get_zindex(type_, id_, subdomain=False):
     foo=get_element_by_id(id_, type_)
     return json.dumps(foo.zindex)
 
-@app.route('/set_zindex/<type_>/<id_>/<zindex>', methods=['GET', 'POST'])
-def set_zindex(type_, id_, zindex):
+@app.route('/set_zindex/<type_>/<id_>/<zindex>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def set_zindex(type_, id_, zindex, subdomain=False):
     """
         AJAX call to set dimensions of an element.
     """
@@ -296,8 +301,8 @@ def set_zindex(type_, id_, zindex):
     db_session.commit()
     return element.zindex
 
-@app.route('/set_rotation/<type_>/<id_>/<angle>', methods=['GET', 'POST'])
-def set_rotation(type_, id_, angle):
+@app.route('/set_rotation/<type_>/<id_>/<angle>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def set_rotation(type_, id_, angle, subdomain=False):
     """
         AJAX call to set dimensions of an element.
     """

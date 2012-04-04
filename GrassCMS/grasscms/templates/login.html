@@ -1,9 +1,9 @@
 {%extends 'layout.html' %}
 
 {%block head%}
-	<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/openid.css')}}" />
-	<script type="text/javascript" src="{{ url_for('static',filename='js/openid-jquery.js')}}"></script>
-	<script type="text/javascript" src="{{ url_for('static',filename='js/openid-en.js')}}"></script> 
+	<link type="text/css" rel="stylesheet" href="{{ static('css/openid.css') }}" />
+	<script type="text/javascript" src="{{ static('js/openid-jquery.js') }}"></script>
+	<script type="text/javascript" src="{{ static('js/openid-en.js') }}"></script> 
     <script> $(document).ready(function() { openid.init('openid_identifier'); }); </script>
 {%endblock%}
 
