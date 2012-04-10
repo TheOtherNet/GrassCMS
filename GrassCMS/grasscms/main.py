@@ -19,8 +19,8 @@ db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-app.config['STATIC_ROOT'] = 'http://grasscms.com:8181/static/'
-app.config['SERVER_NAME'] = "grasscms.com:8181"
+app.config['STATIC_ROOT'] = 'http://grasscms.com/static/'
+app.config['SERVER_NAME'] = "grasscms.com"
 
 def static(path):
     root = app.config.get('STATIC_ROOT', None)
