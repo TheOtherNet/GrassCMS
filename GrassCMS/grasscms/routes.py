@@ -61,7 +61,7 @@ def landing():
 
 @app.route('/')
 @app.route('/', subdomain="<blog_name>")
-@app.route('/page/<page>/', subdomain='<blog_name>')
+@app.route('/page/<page>', subdomain='<blog_name>')
 @app.route('/<blog_name>/<page>') 
 def index(blog_name=False, page="index"):
     blog_name = blog_name.replace('_', ' ')
@@ -143,8 +143,8 @@ def upload_(page, subdomain=False):
 
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
-@app.route('/delete_file/<id_>/', methods=['DELETE'])
-def delete_file(id_):
+@app.route('/delete_file/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
+def delete_file(id_, subdomain=False):
     """
         Delete a file object
     """
