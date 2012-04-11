@@ -143,6 +143,7 @@ def upload_(page, subdomain=False):
 
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
+@app.route('/delete_file/<id_>/', methods=['DELETE'])
 @app.route('/delete_file/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
 def delete_file(id_, subdomain=False):
     """
@@ -152,6 +153,7 @@ def delete_file(id_, subdomain=False):
     db_session.commit()
     return json.dumps(True)
 
+@app.route('/new_page/<name>')
 @app.route('/new_page/<name>', subdomain="<subdomain>")
 def new_page(name, subdomain=False):
     page = Page.query.filter_by(name = name).first()
@@ -163,10 +165,12 @@ def new_page(name, subdomain=False):
     else:
         abort(401)
 
+@app.route('/get_pagination/')
 @app.route('/get_pagination/', subdomain="<subdomain>")
 def get_pagination(blog, page, subdomain=False):
     return "Not implemented"
 
+@app.route('/update_menu/<blog>/', methods=['POST'])
 @app.route('/update_menu/<blog>/', methods=['POST'], subdomain="<subdomain>")
 def get_menu(blog, subdomain=False):
     blog = Blog.query.filter_by(id = blog).first()
@@ -189,6 +193,7 @@ def get_menu(blog, subdomain=False):
     db_session.commit()
     return render_html(menu_blog, type_, True)
        
+@app.route('/html/<blog>/<id_>', methods=['DELETE'])
 @app.route('/html/<blog>/<id_>', methods=['DELETE'], subdomain="<subdomain>")
 def delete_html(blog, id_, subdomain=False):
     blog = Blog.query.filter_by(id = blog).first()
@@ -198,6 +203,9 @@ def delete_html(blog, id_, subdomain=False):
 
 # Text blobs
 
+@app.route('/text_blob/<page>', methods=['POST'])
+@app.route('/text_blob/<page>/', methods=['POST'])
+@app.route('/text_blob/<page>/<id_>', methods=['POST'])
 @app.route('/text_blob/<page>', methods=['POST'], subdomain="<subdomain>")
 @app.route('/text_blob/<page>/', methods=['POST'], subdomain="<subdomain>")
 @app.route('/text_blob/<page>/<id_>', methods=['POST'], subdomain="<subdomain>")
@@ -226,6 +234,7 @@ def text(page, id_=False, subdomain=False):
     db_session.commit()
     return render_text(text, is_ajax=True)
 
+@app.route('/delete_text_blob/<id_>', methods=['DELETE'])
 @app.route('/delete_text_blob/<id_>', methods=['DELETE'], subdomain="<subdomain>")
 def delete_text(id_, subdomain=False):
     text = Text.query.filter_by(id_=id_).first();
@@ -234,6 +243,7 @@ def delete_text(id_, subdomain=False):
     return json.dumps("True")
 
 # Persistence handlers
+@app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'])
 @app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def get_position(type_, id_, subdomain=False):
     id_ = id_.replace('menu', '')
@@ -244,6 +254,7 @@ def get_position(type_, id_, subdomain=False):
         app.logger.info(error)
         return "False"
 
+@app.route('/set_position/<type_>/<id_>', methods=['GET', 'POST'])
 @app.route('/set_position/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set_position(type_, id_, subdomain=False):
     """
@@ -255,6 +266,7 @@ def set_position(type_, id_, subdomain=False):
     db_session.commit()
     return json.dumps([element.x, element.y])
 
+@app.route('/set_dimensions/<type_>/<id_>', methods=['GET', 'POST'])
 @app.route('/set_dimensions/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set_dimensions(type_, id_, subdomain=False):
     """
@@ -266,11 +278,13 @@ def set_dimensions(type_, id_, subdomain=False):
     db_session.commit()
     return json.dumps([element.x, element.y])
 
+@app.route('/get_opacity/<type_>/<id_>')
 @app.route('/get_opacity/<type_>/<id_>', subdomain="<subdomain>")
 def get_opacity(type_, id_, subdomain=False):
     foo=get_element_by_id(id_, type_)
     return json.dumps(foo.opacity)
 
+@app.route('/set_opacity/<type_>/<id_>/<opacity>', methods=['GET', 'POST'])
 @app.route('/set_opacity/<type_>/<id_>/<opacity>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set_opacity(type_, id_, opacity, subdomain=False):
     """
@@ -281,16 +295,19 @@ def set_opacity(type_, id_, opacity, subdomain=False):
     db_session.commit()
     return element.opacity
 
+@app.route('/get_rotation/<type_>/<id_>')
 @app.route('/get_rotation/<type_>/<id_>', subdomain="<subdomain>")
 def get_rotation(type_, id_, subdomain=False):
     foo=get_element_by_id(id_, type_)
     return json.dumps(foo.rotation)
 
+@app.route('/get_zindex/<type_>/<id_>')
 @app.route('/get_zindex/<type_>/<id_>', subdomain="<subdomain>")
 def get_zindex(type_, id_, subdomain=False):
     foo=get_element_by_id(id_, type_)
     return json.dumps(foo.zindex)
 
+@app.route('/set_zindex/<type_>/<id_>/<zindex>', methods=['GET', 'POST'])
 @app.route('/set_zindex/<type_>/<id_>/<zindex>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set_zindex(type_, id_, zindex, subdomain=False):
     """
@@ -301,6 +318,7 @@ def set_zindex(type_, id_, zindex, subdomain=False):
     db_session.commit()
     return element.zindex
 
+@app.route('/set_rotation/<type_>/<id_>/<angle>', methods=['GET', 'POST'])
 @app.route('/set_rotation/<type_>/<id_>/<angle>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set_rotation(type_, id_, angle, subdomain=False):
     """
