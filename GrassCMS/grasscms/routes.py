@@ -38,7 +38,7 @@ def render_image(image, is_ajax=False):
            src="%suploads/%s" />' %(image.zindex, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, app.config['STATIC_ROOT'], image.content)
     else:
         return '<img class="img" style="z-index:%s;top:%spx; position:fixed; left:%spx; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
-           src="/static/uploads/%s" />' %(image.zindex, image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
+           src="%s/uploads/%s" />' %(app.config['STATIC_ROOT'], image.zindex, image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
 
 app.jinja_env.filters['html'] = render_html
 app.jinja_env.filters['text'] = render_text
@@ -132,7 +132,7 @@ def upload_(page, subdomain=False):
             object_ = Html('', g.user, page.id, blog.id)
             db_session.add(object_)
             db_session.commit()
-            object_.content = "<video width='100%%' height='100%%' id='video%s'><source src='/static/uploads/%s'></source></video>" %(object_.id_, filename.decode('utf-8'))
+            object_.content = "<video width='100%%' height='100%%' id='video%s'><source src='%s/uploads/%s'></source></video>" %(app.config['STATIC_ROOT'], object_.id_, filename.decode('utf-8'))
             object_.field_name="video"
             db_session.commit()
             result = render_html(object_, is_ajax=True)

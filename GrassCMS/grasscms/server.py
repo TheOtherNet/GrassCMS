@@ -23,5 +23,7 @@ gravatar = Gravatar(app, # Gravatar module, 100px wide.
 
 def server():
     """ Main server, will allow us to make it wsgi'able """
+    app.config['STATIC_ROOT'] = 'http://grasstest.com/static/'
+    app.config['SERVER_NAME'] = "grasstest.com"
     app.run(host='0.0.0.0', port=80) # Running on port 80 in all interfaces.
 
