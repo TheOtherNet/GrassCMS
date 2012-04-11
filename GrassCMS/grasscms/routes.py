@@ -99,7 +99,7 @@ def index(blog_name=False, page="index"):
             imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog, 
             static_htmls=static_htmls, txt_blobs=txt_blobs )
     else:
-        return render_template('admin.html',
+        return render_template('admin.html', first_run=request.args.get('first_run'),
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
                 page=page, static_htmls=static_htmls, txt_blobs=txt_blobs)
 

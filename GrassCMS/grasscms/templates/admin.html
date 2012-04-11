@@ -19,9 +19,13 @@
             var curr_dime = get_txt_current_dimensions(editor.name)
             $.ajax({ url: '/set_dimensions/text/' + editor.name.replace('text_',''), data: { width:curr_dime[0], height:curr_dime[1] } });
         }
-        $(function(){ grasscms_startup(); });
+        $(function(){
+            grasscms_startup();
 
-
+    {% if first_run == "true" %}
+        $('#first').modal('toggle');
+    {%endif%}
+ });
     </script>
 {%endblock%}
 
@@ -93,6 +97,19 @@
         {% if imgs %} {% for img in imgs %} {{ img|image|safe }}{%endfor%}{%endif%}
         {% if txt_blobs %} {% for txt in txt_blobs %} {{txt|text|safe }} {%endfor%} {%endif%}
 
+    </div>
+
+    <div class="modal" id="first" style="display:none">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Welcome to GrassCMS</h3>
+        </div>
+        <div class="modal-body">
+            <p>Here should go a video</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn">Close</a>
+        </div>
     </div>
 
     <script src="{{static('js/jquery.ui.widget.js')}}"></script>

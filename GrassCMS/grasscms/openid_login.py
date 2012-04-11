@@ -90,7 +90,7 @@ def create_profile():
 
             db_session.add(User(form['name'], form['email'], session['openid'], blog.id, page.id)) # Add a user with that blog referenced
             db_session.commit()
-            return redirect("/" + form['page_name'] + "/index")
+            return redirect("http://" + form['page_name'].replace(' ', '_') + "." + app.config['SERVER_NAME'] + "?first_run=true")
     return render_template('create_profile.html', next_url=oid.get_next_url())
 
 @app.route('/delete-profile', methods=['DELETE'])
