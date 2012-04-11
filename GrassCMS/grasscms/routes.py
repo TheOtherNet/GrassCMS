@@ -132,7 +132,7 @@ def upload_(page, subdomain=False):
             object_ = Html('', g.user, page.id, blog.id)
             db_session.add(object_)
             db_session.commit()
-            object_.content = "<video width='100%%' height='100%%' id='video%s'><source src='%s/uploads/%s'></source></video>" %(app.config['STATIC_ROOT'], object_.id_, filename.decode('utf-8'))
+            object_.content = "<video width='100%%' height='100%%' id='video%s'><source src='%suploads/%s/%s'></source></video>" %(object_.id_, app.config['STATIC_ROOT'], g.user.id, filename.decode('utf-8'))
             object_.field_name="video"
             db_session.commit()
             result = render_html(object_, is_ajax=True)
@@ -358,6 +358,5 @@ def save_file(file_):
     """
     file_secure_name = secure_filename(file_.filename)
     path = get_path(file_secure_name)
-    app.logger.info(path)
     file_.save(path)
     return (file_secure_name, path)
