@@ -10,6 +10,8 @@ app = Flask(__name__)
 app.config.update(
         DATABASE_URI = 'sqlite:////tmp/grasscms.db',
         SECRET_KEY = 'Foobar',
+	STATIC_ROOT =  'http://grasscms.com/static/',
+	SERVER_NAME = "grasscms.com",
         UPLOAD_FOLDER = UPLOAD_FOLDER,
         DEBUG = True )
 
@@ -18,9 +20,6 @@ db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
     bind=engine))
 Base = declarative_base()
 Base.query = db_session.query_property()
-    
-app.config['STATIC_ROOT'] = 'http://grasscms.com/static/'
-app.config['SERVER_NAME'] = "grasscms.com"
 
 def static(path):
     root = app.config.get('STATIC_ROOT', None)
