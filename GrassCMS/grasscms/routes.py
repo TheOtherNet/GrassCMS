@@ -35,10 +35,10 @@ def render_text(text, is_ajax=False):
 def render_image(image, is_ajax=False):
     if g.user_is_admin or is_ajax:
         return '<img class="img" style="z-index:%s; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
-           src="%suploads/%s" />' %(image.zindex, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, app.config['STATIC_ROOT'], image.content)
+           src="%s" />' %(image.zindex, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
     else:
         return '<img class="img" style="z-index:%s;top:%spx; position:fixed; left:%spx; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx;" id="img%s" \
-           src="%s/uploads/%s" />' %(app.config['STATIC_ROOT'], image.zindex, image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
+           src="%s" />' %(image.zindex, image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
 
 app.jinja_env.filters['html'] = render_html
 app.jinja_env.filters['text'] = render_text
@@ -118,7 +118,7 @@ def upload_(page, subdomain=False):
         filename, path = save_file(request.files[i])
         type_, filename = do_conversion(filename, path)
         if type_ == "image":
-            object_ = File(user=g.user, page=page.id, content=filename)
+            object_ = File(user=g.user, page=page.id, content="%suploads/%s/%s" %(app.config['STATIC_ROOT'], g.user.id, filename))
             object_.type_="image"
             db_session.add(object_)
             db_session.commit()
@@ -346,7 +346,11 @@ def get_path(filename):
     """
         Return the full path of a file in local.
     """
-    return os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    try:
+        os.mkdir(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
+    except:
+        pass
+    return os.path.join(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ), filename)
 
 def save_file(file_):
     """
@@ -354,5 +358,6 @@ def save_file(file_):
     """
     file_secure_name = secure_filename(file_.filename)
     path = get_path(file_secure_name)
+    app.logger.info(path)
     file_.save(path)
     return (file_secure_name, path)
