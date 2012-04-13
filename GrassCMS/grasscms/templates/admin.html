@@ -79,11 +79,10 @@
             </div>
     
             <div style="float:left; margin-left:2px; margin-top:-20px; position:fixed">
-                <div><a href="#" onclick="increment_zindex($(this).parent().parent().parent().parent().children($(this).parent().parent().parent().parent().data('type'))"> <img style="width:16px" src="{{static('img/up.png')}}" /></a></div>
+                <div><a href="#" onclick="increment_zindex(get_o(this));"> <img style="width:16px" src="{{static('img/up.png')}}" /></a></div>
             </div>
             <div style="float:left; margin-left:18px; margin-top:-20px; position:fixed; ">
-                <div><a href="#" onclick="downgrade_zindex(
-$(this).parent().parent().parent().parent().children($(this).parent().parent().parent().parent().data('type'))"> <img style="width:16px" src="{{static('img/down.png')}}" /></a></div>
+                <div><a href="#" onclick="downgrade_zindex(get_o(this))"> <img style="width:16px" src="{{static('img/down.png')}}" /></a></div>
             </div>
     
             <div style="float:left; margin-left:34px; margin-top:-20px; position:fixed; ">

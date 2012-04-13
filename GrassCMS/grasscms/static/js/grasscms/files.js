@@ -32,7 +32,6 @@ function delete_(element){
             url: '/delete_' + $(element).data('type').replace('.','') +'/' + id_ + "/", 
             type: "DELETE", method:"DELETE", 
             complete: function(data){ 
-                console.debug($('#'+$(element).data('type') + id_));
                 $("#"+$(element).data('type') + id_).parent().hide(); 
             } 
         }); 

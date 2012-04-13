@@ -127,7 +127,6 @@ jQuery.fn.extend({
     function set_position(type, id, ui){ if ( rotating && type == "img" ){  return false; }; $.ajax({url: '/set_position/' + type + "/" + id + "?x=" + ui.position.top + "&y=" + ui.position.left }); }
 
     return this.each(function(){ 
-        console.debug(type);
         var element=$(this);
         if (element.children(type).length > 0){ 
             var id = element.children(type).attr('id').replace(/[a-z]/gi, '').replace('_','');
@@ -135,69 +134,68 @@ jQuery.fn.extend({
             var id = element.attr('id').replace(/[a-z]/gi, '').replace('_','');
         }
         if (element.parent().attr('id') != "filedrag" ){ element=element.parent();}
+
+        element.data('id', $(this).attr('id'));
+        element.data('type', type);
+
         if (element.parent().attr('id') == "filedrag" && type != "img"){ 
             element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }});
-            element.data('id', $(this).attr('id'));
-            element.data('type', type);
-            element.append($('#standard_tools_model').html());        
-            $.getJSON('/get_position/' + type + "/" + id, function(where){
-                element.css('top',  where[0] + "px");
-                element.css('left', where[1] + "px"); 
-            });
         } else {
             element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }});
-            element.data('id', $(this).attr('id'));
-            element.data('type', type);
-            element.parent().append($('#standard_tools_model').html());        
-            $.getJSON('/get_position/' + type + "/" + id, function(where){
-                element.parent().css('top',  where[0] + "px");
-                element.parent().css('left', where[1] + "px"); 
-            });
+            element=element.parent()
         }
+            
+        element.append($('#standard_tools_model').html());        
+        $.getJSON('/get_position/' + type + "/" + id, function(where){
+            element.css('top',  where[0] + "px");
+            element.css('left', where[1] + "px"); 
+        });
+
+        var element=$(this); 
+        id_=element.attr('id').replace('img','').replace($(element.data('type')), '');
+        
+        $.ajax({ url: "/get_zindex/" + element.data('type') +"/" + id_, complete: function(data){ 
+           zindex=$.parseJSON(data.responseText); 
+           element.css('z-index', zindex);
+        }});  // TODO: This only supports images =(
+
+        $.ajax({ url: "/get_opacity/" + element.data('type')+ "/" + id_, complete: function(data){ 
+           opacity=$.parseJSON(data.responseText); 
+           element.css('opacity', opacity);
+        }});  // TODO: This only supports images =(
+
+        $.ajax({ url: "/get_rotation/"+ element.data('type') +"/" + id_, complete: function(data){ 
+           degree=$.parseJSON(data.responseText); 
+           element.css('-moz-transform', 'rotate(' + degree + 'deg)');
+           element.css('-webkit-transform', 'rotate(' + degree + 'deg)');
+           element.css('-o-transform', 'rotate(' + degree + 'deg)');
+           element.css('-ms-transform', 'rotate(' + degree + 'deg)');
+        }});  // TODO: This only supports images =(
     });
 }});
 
 function grasscms_startup(){
+    // Set up media element player
     $('video,audio').mediaelementplayer(/* Options */);
-//    $('.img').hover(function() { var img = $(this); $(document).mousemove(function(evt){ mouse(evt, img); }); 
-//    }, function(){$(document).unbind("mousemove"); });
-    $('#filedrag>img').each(function(){
-        var img=$(this); 
-
-        $.ajax({ url: "/get_zindex/img/" + img.attr('id').replace('img',''), complete: function(data){ 
-           zindex=$.parseJSON(data.responseText); 
-           img.css('z-index', zindex);
-        }});  // TODO: This only supports images =(
-
-        $.ajax({ url: "/get_opacity/img/" + img.attr('id').replace('img',''), complete: function(data){ 
-           opacity=$.parseJSON(data.responseText); 
-           img.css('opacity', opacity);
-        }});  // TODO: This only supports images =(
-
-        $.ajax({ url: "/get_rotation/img/" + img.attr('id').replace('img',''), complete: function(data){ 
-            degree=$.parseJSON(data.responseText); 
-               img.css('-moz-transform', 'rotate(' + degree + 'deg)');
-           img.css('-webkit-transform', 'rotate(' + degree + 'deg)');
-           img.css('-o-transform', 'rotate(' + degree + 'deg)');
-           img.css('-ms-transform', 'rotate(' + degree + 'deg)');
-        }});  // TODO: This only supports images =(
-
-    });
-
+    // Make stuff persistent
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
     $('.static_html.menu').persistent('static_html');
     $('.static_html.video').persistent('video');
+    // Setup standard tools
     setup_standard_tools();
+    // Get file upload button ready
     ready_fake_files();
+    // Setup text editor
     setup_text(); // Make text editor persistent
+    // Add x and y handles
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
-
+    // Disable selection on filedrag
     $('#filedrag').disableSelection();
-
 }
 
 function setup_standard_tools(){
+    return;
     $("#filedrag>div").hoverIntent({    
         timeout: 500, 
         out: function(e){ hide_standard_tools($(e.currentTarget));},
@@ -210,9 +208,19 @@ function setup_standard_tools(){
         value: 1,
         orientation: "horizontal",
         slide: function(e,ui){
-            target=$(e.target).parent().parent().parent().parent().children('.img');
-            target.css('opacity', ui.value);
-            $.ajax({ url: "/set_opacity/img/" + target.attr('id').replace('img','') + "/" + ui.value })  // TODO: This only supports images =(
+            if ($(e.target).parent().parent().parent().parent().data('type') == "static_html"){
+                target=$(e.target).parent().parent().parent().parent();
+            } else {
+                target=$(e.target).parent().parent().parent().parent().children('.'+$(e.target).data('type'));
+            }
+            if ($(e.target).parent().parent().parent().data('type') == "video"){
+                target=$(e.target).parent().parent().parent();
+            }
+
+            type = $(target).data('type');
+            id_=$(target).attr('id').replace($(target).data('type'), '').replace('menu','');
+
+            $.ajax({ url: "/set_opacity/" +type+"/" + id_ + "/" + ui.value })  // TODO: This only supports images =(
         }
     });
 }
