@@ -186,7 +186,7 @@ function grasscms_startup(){
 
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
     $('.static_html.menu').persistent('static_html');
-    $('.static_html.video').persistent('static_html');
+    $('.static_html.video').persistent('video');
     setup_standard_tools();
     ready_fake_files();
     setup_text(); // Make text editor persistent
