@@ -33,6 +33,11 @@ function downgrade_zindex(elem){ target=$(elem);
     $.ajax({ url: "/set_zindex/img/" + target.attr('id').replace('img','') + "/" + target.css('z-index')})  // TODO: This only supports images =(
 }
 
+function delete_page(page_id){
+    if (page_id == "index"){ alert ("You cannot delete index page"); return false; }
+    $.ajax({ url:'/delete_page/' + page_id, success: function(data){ document.location.href(data); }});
+}
+
 function create_page(blog_id){ 
     /*
         Create a new page in the blog
@@ -42,6 +47,7 @@ function create_page(blog_id){
         url:'/new_page/' + $('#new_page').val(), // Get page name
         success: function(data){ 
             assign_menu(blog_id); // Update the menu on page input. This requires static_html.js to be loaded
+            document.location.reload(true);
         } 
     })
 }
@@ -121,6 +127,7 @@ jQuery.fn.extend({
     function set_position(type, id, ui){ if ( rotating && type == "img" ){  return false; }; $.ajax({url: '/set_position/' + type + "/" + id + "?x=" + ui.position.top + "&y=" + ui.position.left }); }
 
     return this.each(function(){ 
+        console.debug(type);
         var element=$(this);
         if (element.children(type).length > 0){ 
             var id = element.children(type).attr('id').replace(/[a-z]/gi, '').replace('_','');
@@ -131,6 +138,7 @@ jQuery.fn.extend({
         if (element.parent().attr('id') == "filedrag" && type != "img"){ 
             element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }});
             element.data('id', $(this).attr('id'));
+            element.data('type', type);
             element.append($('#standard_tools_model').html());        
             $.getJSON('/get_position/' + type + "/" + id, function(where){
                 element.css('top',  where[0] + "px");
@@ -139,6 +147,7 @@ jQuery.fn.extend({
         } else {
             element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }});
             element.data('id', $(this).attr('id'));
+            element.data('type', type);
             element.parent().append($('#standard_tools_model').html());        
             $.getJSON('/get_position/' + type + "/" + id, function(where){
                 element.parent().css('top',  where[0] + "px");
@@ -176,8 +185,8 @@ function grasscms_startup(){
     });
 
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
-    $('.static_html.menu').persistent('div');
-    $('.static_html.video').persistent('div');
+    $('.static_html.menu').persistent('static_html');
+    $('.static_html.video').persistent('static_html');
     setup_standard_tools();
     ready_fake_files();
     setup_text(); // Make text editor persistent

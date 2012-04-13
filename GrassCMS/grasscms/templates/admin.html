@@ -33,12 +33,14 @@
         <li class="menu_button">
             <form style="width:42px" id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
                 <input style="width:0px;height:0px" type="file" id="files" class="files" name="files" >
-                <img title="Upload files" src="{{static('images/add.png')}}" id="fakefiles" />
+                <img title="Import any kind of file (videos, images, documents...)" src="{{static('images/add.png')}}" id="fakefiles" />
+
                 <div style="position:fixed; top:0px; left:-100px; width:0px;">
                     <input type="submit"/>
                 </div>
             </form>
         </li>
+
 
         <li class="menu_button">
                 <a onclick="get_blob('{{page.name}}'); return false" href="#">
@@ -63,6 +65,12 @@
             </form>
         </li>
 
+        <li class="menu_button">
+                <a onclick="delete_page('{{page.name}}'); return false" href="#">
+                <img title="Delete this entire page" src="{{static('img/delete.png')}}" />
+                </a>
+        </li>
+
     <div id="standard_tools_model" class="standard_tools" style="display:none">
         <div class="standard_tools" style="display:none">
             <div style="float:left;position:fixed; margin-top:-35px; margin-left:70px;">
@@ -71,14 +79,15 @@
             </div>
     
             <div style="float:left; margin-left:2px; margin-top:-20px; position:fixed">
-                <div><a href="#" onclick="increment_zindex($(this).parent().parent().parent().parent().children('.img'))"> <img style="width:16px" src="{{static('img/up.png')}}" /></a></div>
+                <div><a href="#" onclick="increment_zindex($(this).parent().parent().parent().parent().children($(this).parent().parent().parent().parent().data('type'))"> <img style="width:16px" src="{{static('img/up.png')}}" /></a></div>
             </div>
             <div style="float:left; margin-left:18px; margin-top:-20px; position:fixed; ">
-                <div><a href="#" onclick="downgrade_zindex($(this).parent().parent().parent().parent().children('.img'))"> <img style="width:16px" src="{{static('img/down.png')}}" /></a></div>
+                <div><a href="#" onclick="downgrade_zindex(
+$(this).parent().parent().parent().parent().children($(this).parent().parent().parent().parent().data('type'))"> <img style="width:16px" src="{{static('img/down.png')}}" /></a></div>
             </div>
     
             <div style="float:left; margin-left:34px; margin-top:-20px; position:fixed; ">
-                <div> <a href="#" onclick="delete_image($(this).parent().parent().parent().parent().children('img'));"> <img style="width:16px" src="{{static('img/delete.png')}}" /> </a></div>
+                <div> <a href="#" onclick="delete_(get_o(this));"> <img style="width:16px" src="{{static('img/delete.png')}}" /> </a></div>
             </div>
 
         </div>

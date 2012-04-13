@@ -18,15 +18,22 @@
 
     GrassCMS javascript functions.
 */
-
-function delete_image(image){ 
-    id_=$(image).attr('id').replace('img', '');
+function get_o(elem){ 
+    console.debug($(this).parent().parent().parent().parent().data('type'));
+    return $(elem).parent().parent().parent().parent().children($(this).parent().parent().parent().parent().data('type'))
+}
+function strStartsWith(str, prefix) {
+    return str.indexOf(prefix) === 0;
+}
+function delete_(element){
+    if ( strStartsWith($(element).attr('id'), 'mep') ){ id_=$(element).parent().attr('id').replace($(element).data('type'),'').replace('video',''); } else {id_=$(element).attr('id').replace(element.data('type'), '').replace('menu','');}
+    if (!element.data('type')){ element.data('type', element.parent().data('type')); }
     $.ajax({ 
-            url: '/delete_file/' + id_ + "/", 
+            url: '/delete_' + $(element).data('type').replace('.','') +'/' + id_ + "/", 
             type: "DELETE", method:"DELETE", 
             complete: function(data){ 
-                console.debug($('#img'+id_));
-                $('#img' + id_).parent().hide(); 
+                console.debug($(element).data('type') + id_);
+                $("#"+$(element).data('type') + id_).parent().hide(); 
             } 
         }); 
 }

@@ -144,21 +144,36 @@ def upload_(page, subdomain=False):
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
 @app.route('/delete_file/<id_>/', methods=['DELETE'])
-@app.route('/delete_file/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
+@app.route('/delete_file/<id_>/', methods=['DELETE'])
+@app.route('/delete_img/<id_>/', methods=['DELETE'])
+@app.route('/delete_img/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
 def delete_file(id_, subdomain=False):
     """
         Delete a file object
     """
-    db_session.delete(File.query.filter_by(id_ = id_).first())
+    db_session.delete(File.query.filter_by(id_ = id_, user=g.user.id).first())
     db_session.commit()
     return json.dumps(True)
+
+@app.route('/delete_page/<name>')
+@app.route('/delete_page/<name>', subdomain="<subdomain>")
+def delete_page(name, subdomain=False):
+    blog = Blog.query.filter_by(id=g.user.blog).first()
+    page = Page.query.filter_by(name = name, blog=blog.id).first()
+    if page:
+        db_session.delete(page)
+        db_session.commit()
+    else:
+        abort(404)
+    return "true"
 
 @app.route('/new_page/<name>')
 @app.route('/new_page/<name>', subdomain="<subdomain>")
 def new_page(name, subdomain=False):
-    page = Page.query.filter_by(name = name).first()
+    blog = Blog.query.filter_by(id=g.user.blog).first()
+    page = Page.query.filter_by(name = name, blog=blog.id).first()
     if not page:
-        blog = Blog.query.filter_by(id=g.user.blog).first()
+
         db_session.add(Page(g.user.blog, name))
         db_session.commit()
         return "/" +  blog.name + "/" + name
@@ -181,23 +196,27 @@ def get_menu(blog, subdomain=False):
         menu_blog.field_name = "menu"
         db_session.add(menu_blog)
         db_session.commit()
-        menu_blog.content='<div id="menu%s">%s</div>' %(menu_blog.id_, '\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
-            %(blog.name, a.name, a.name) for a in \
+        menu_blog.content='<div id="menu%s">%s</div>' %(menu_blog.id_, '\n'.join([ "<a href=\"http://%s.%s/%s\">%s</a>"\
+            %(blog.name.replace, app.config['SERVER_NAME'], a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)]) + "</div>")
     else:
         type_ = "menu_old"
-        menu_blog.content='<div id="%s">' %(menu_blog.id_) + '\n'.join([ "<a href=\"/%s/%s\">%s</a>"\
-            %(blog.name, a.name, a.name) for a in \
+        menu_blog.content='<div id="%s">' %(menu_blog.id_) + '\n'.join([ "<a href=\"http://%s.%s/%s\">%s</a>"\
+            %( blog.name.replace(' ', '_'), app.config['SERVER_NAME'], a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)])
+        app.logger.info(menu_blog.content)
         menu_blog.content += "</div>"
     db_session.commit()
     return render_html(menu_blog, type_, True)
        
-@app.route('/html/<blog>/<id_>', methods=['DELETE'])
-@app.route('/html/<blog>/<id_>', methods=['DELETE'], subdomain="<subdomain>")
-def delete_html(blog, id_, subdomain=False):
-    blog = Blog.query.filter_by(id = blog).first()
-    db_session.delete(Html.query.filter_by(blog=blog.id, id_=id_).first())
+@app.route('/delete_static_html/<id_>/', methods=['DELETE'])
+@app.route('/delete_static_html/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
+@app.route('/delete_div/<id_>/', methods=['DELETE'])
+@app.route('/delete_div/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
+@app.route('/delete_video/<id_>', methods=['DELETE'])
+@app.route('/delete_video/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
+def delete_html(id_, subdomain=False):
+    db_session.delete(Html.query.filter_by(user=g.user.id, id_=id_).first())
     db_session.commit()
     return "true"
 
