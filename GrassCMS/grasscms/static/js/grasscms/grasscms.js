@@ -149,6 +149,10 @@ jQuery.fn.extend({
         if (element.parent().attr('id') != "filedrag" ){ element=element.parent();}
         if (type == "img"){ element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); element=element.parent(); } else { element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }} ).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); }
 
+        if (type == "img"){ 
+            element.parent().data('id', id);
+            element.parent().data('type', type);
+        } 
         element.data('id', id);
         element.data('type', type);
         element.append($('#standard_tools_model').html());

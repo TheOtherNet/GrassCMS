@@ -26,7 +26,7 @@ function strStartsWith(str, prefix) {
     return str.indexOf(prefix) === 0;
 }
 function delete_(element){
-    if ( strStartsWith($(element).attr('id'), 'mep') ){ id_=$(element).parent().attr('id').replace($(element).data('type'),'').replace('video',''); } else {id_=$(element).attr('id').replace(element.data('type'), '').replace('menu','');}
+    if ( strStartsWith($(element).attr('id'), 'mep') ){ id_=$(element).parent().attr('id').replace(/[a-z]/gi, '').replace('_','');} else { id_=$(element).attr('id').replace(/[a-z]/gi, '').replace('_','');}
     if (!element.data('type')){ element.data('type', element.parent().data('type')); }
     $.ajax({ 
             url: '/delete_' + $(element).data('type').replace('.','') +'/' + id_ + "/", 
