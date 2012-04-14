@@ -9,14 +9,11 @@ from werkzeug import secure_filename
 
 def render_html(html, type_=False, is_ajax=False):
     if is_ajax:
-        if type_ == "menu_old":
-            return json.dumps([html.id_, html.content])
-        else:
-            return json.dumps(['', '<div class="static %s static_html" style="width:%spx; height:%spx; \
-                top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)])
+        return '<div class="static %s static_html" style="width:%spx; height:%spx; \
+            top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
     else:
-            return '<div class="static %s static_html" style="width:%spx; height:%spx; \
-                top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
+        return '<div class="static %s static_html" style="width:%spx; height:%spx; \
+           top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
 
 def render_text(text, is_ajax=False):
     if g.user_is_admin or is_ajax: 
