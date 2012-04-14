@@ -19,8 +19,7 @@
     GrassCMS javascript functions.
 */
 
-function show_standard_tools(e){ $(e).children('.standard_tools').show(); }
-function hide_standard_tools(e){ $(e).children('.standard_tools').hide(); }
+
 function ready_fake_files(){ $('#fakefiles').live('click', function () { $('#files').click(); }); }
 
 function increment_zindex(elem){ var target=$(elem); 
@@ -116,6 +115,18 @@ jQuery.fn.extend({
         } 
 }); 
 
+function update_object(element, what, properties, transform){
+        if (!transform){ transform="elem";}
+        $.ajax({ url: "/get/" + what + "/" + element.data('type') +"/" + element.data('id'),
+            complete: function(data){ 
+                $(properties).each(function(){ 
+
+                    element.css(this +"", transform.replace('elem', data.responseText));
+                });
+            }
+        }); 
+}
+
 jQuery.fn.extend({
     persistent: function(type){
     /*
@@ -126,101 +137,67 @@ jQuery.fn.extend({
     function set_dimensions(type, id, ui){ $.ajax({ url: '/set_dimensions/' + type + "/" + id + "?width=" + ui.size.width + "&height=" + ui.size.height });}
     function set_position(type, id, ui){ if ( rotating && type == "img" ){  return false; }; $.ajax({url: '/set_position/' + type + "/" + id + "?x=" + ui.position.top + "&y=" + ui.position.left }); }
 
+
     return this.each(function(){ 
-        var element=$(this);
+        var element=$(this); 
         if (element.children(type).length > 0){ 
             var id = element.children(type).attr('id').replace(/[a-z]/gi, '').replace('_','');
         } else {
             var id = element.attr('id').replace(/[a-z]/gi, '').replace('_','');
         }
+
         if (element.parent().attr('id') != "filedrag" ){ element=element.parent();}
+        if (type == "img"){ element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); element=element.parent(); } else { element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }} ).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); }
 
-        element.data('id', $(this).attr('id'));
+        element.data('id', id);
         element.data('type', type);
-
-        if (element.parent().attr('id') == "filedrag" && type != "img"){ 
-            element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }});
-        } else {
-            element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }});
-            element=element.parent()
-        }
-            
-        element.append($('#standard_tools_model').html());        
-        $.getJSON('/get_position/' + type + "/" + id, function(where){
-            element.css('top',  where[0] + "px");
-            element.css('left', where[1] + "px"); 
-        });
-
-        var element=$(this); 
-        id_=element.attr('id').replace('img','').replace($(element.data('type')), '');
-        
-        $.ajax({ url: "/get_zindex/" + element.data('type') +"/" + id_, complete: function(data){ 
-           zindex=$.parseJSON(data.responseText); 
-           element.css('z-index', zindex);
-        }});  // TODO: This only supports images =(
-
-        $.ajax({ url: "/get_opacity/" + element.data('type')+ "/" + id_, complete: function(data){ 
-           opacity=$.parseJSON(data.responseText); 
-           element.css('opacity', opacity);
-        }});  // TODO: This only supports images =(
-
-        $.ajax({ url: "/get_rotation/"+ element.data('type') +"/" + id_, complete: function(data){ 
-           degree=$.parseJSON(data.responseText); 
-           element.css('-moz-transform', 'rotate(' + degree + 'deg)');
-           element.css('-webkit-transform', 'rotate(' + degree + 'deg)');
-           element.css('-o-transform', 'rotate(' + degree + 'deg)');
-           element.css('-ms-transform', 'rotate(' + degree + 'deg)');
-        }});  // TODO: This only supports images =(
+        element.append($('#standard_tools_model').html());
+ 
+        update_object(element, 'zindex', Array('opacity'));
+        update_object(element, 'opacity', Array('opacity'));
+        update_object(element, 'rotation', Array('-moz-transform', '-webkit-transform', '-o-transform', '-ms-transform'), 'rotate(elem)');
+        update_object(element, 'x', Array('top'), 'elempx');
+        update_object(element, 'y', Array('left'), 'elempx');
     });
 }});
 
 function grasscms_startup(){
-    // Set up media element player
     $('video,audio').mediaelementplayer(/* Options */);
-    // Make stuff persistent
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
     $('.static_html.menu').persistent('static_html');
     $('.static_html.video').persistent('video');
-    // Setup standard tools
     setup_standard_tools();
-    // Get file upload button ready
     ready_fake_files();
-    // Setup text editor
     setup_text(); // Make text editor persistent
-    // Add x and y handles
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
-    // Disable selection on filedrag
     $('#filedrag').disableSelection();
 }
 
 function setup_standard_tools(){
-    return;
     $("#filedrag>div").hoverIntent({    
         timeout: 500, 
-        out: function(e){ hide_standard_tools($(e.currentTarget));},
-        over: function(e){ show_standard_tools($(e.currentTarget));},
+        out: function(e){ $(e.currentTarget).children('.standard_tools').hide(); }, 
+        over: function(e){ $(e.currentTarget).children('.standard_tools').show(); }
     });
+
     $('.slider').slider({ 
         min: 0, 
         max: 1, 
         step: 0.01, 
         value: 1,
         orientation: "horizontal",
-        slide: function(e,ui){
+        slide: function(e,ui){ // HOrrible hacks =(
             if ($(e.target).parent().parent().parent().parent().data('type') == "static_html"){
                 target=$(e.target).parent().parent().parent().parent();
             } else {
-                target=$(e.target).parent().parent().parent().parent().children('.'+$(e.target).data('type'));
+                target=$(e.target).parent().parent().parent().parent().children('.'+$(e.target).parent().parent().parent().parent().data('type'));
             }
             if ($(e.target).parent().parent().parent().data('type') == "video"){
                 target=$(e.target).parent().parent().parent();
             }
-
-            type = $(target).data('type');
-            id_=$(target).attr('id').replace($(target).data('type'), '').replace('menu','');
-
-            $.ajax({ url: "/set_opacity/" +type+"/" + id_ + "/" + ui.value })  // TODO: This only supports images =(
+            $.ajax({ url: "/set_opacity/" + target.parent().data('type')+"/" + target.parent().data('id') + "/" + ui.value })  // TODO: This only supports images =(
+            target.css('opacity', ui.value);
         }
     });
 }

@@ -262,11 +262,22 @@ def delete_text(id_, subdomain=False):
     return json.dumps("True")
 
 # Persistence handlers
+@app.route('/get/<what>/<type_>/<id_>', methods=['GET', 'POST'])
+@app.route('/get/<what>/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def get(what, type_, id_, subdomain=False):
+    element = get_element_by_id(id_, type_)
+    try:
+        return json.dumps(getattr(element, what)) 
+    except Exception, error:
+        app.logger.info(error)
+        return "False"
+
 @app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'])
 @app.route('/get_position/<type_>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def get_position(type_, id_, subdomain=False):
     id_ = id_.replace('menu', '')
     element = get_element_by_id(id_, type_)
+
     try:
         return json.dumps([element.x, element.y, element.width, element.height])
     except Exception, error:
