@@ -19,17 +19,21 @@
     GrassCMS javascript functions.
 */
 
-function assign_menu(blog_id){ 
+function assign_menu(){ 
     /*
         Assign / Update a menu to a blog.
         After successful creation, it reloads the page.
     */
     $.ajax({
-        url:'/update_menu/' + blog_id +'/', 
+        url:'/update_menu/', 
         type : 'POST', 
-        success: function(data_){
-            data_=$.parseJSON(data_);
-            if($("#menu"+data_[0]).html()){ $("#menu"+data_[0]).html(data_[1]); } else { $('#filedrag').append(data_[1]); persistent('.static_html', 'menu');
+        success: function(data_){ 
+            console.debug(data_);
+            if (!$('.menu')){
+                $('#filedrag').append(data_); 
+            } else {
+                $(".menu").html(data_); 
+                $('.static_html.menu').persistent('static_html');
             }
         } 
     }); 

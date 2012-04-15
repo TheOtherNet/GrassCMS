@@ -9,10 +9,10 @@ from werkzeug import secure_filename
 
 def render_html(html, type_=False, is_ajax=False):
     if is_ajax:
-        return '<div class="static %s static_html" style="width:%spx; height:%spx; \
+        return '<div class="static %s static_html" style="position:fixed; width:%spx; height:%spx; \
             top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
     else:
-        return '<div class="static %s static_html" style="width:%spx; height:%spx; \
+        return '<div class="static %s static_html" style="width:%spx; position:fixed; height:%spx; \
            top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
 
 def render_text(text, is_ajax=False):
@@ -97,7 +97,7 @@ def index(blog_name=False, page="index"):
             static_htmls=static_htmls, txt_blobs=txt_blobs )
     else:
         return render_template('admin.html', first_run=request.args.get('first_run'),
-            base_subdomain_url = "http://" + blog_name + "." + app.config['SERVER_NAME'],
+            base_subdomain_url = "http://" + blog_name.replace(' ','_') + "." + app.config['SERVER_NAME'],
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
                 page=page, static_htmls=static_htmls, txt_blobs=txt_blobs)
 
@@ -157,7 +157,7 @@ def delete_file(id_, subdomain=False):
 @app.route('/delete_page/<name>', subdomain="<subdomain>")
 def delete_page(name, subdomain=False):
     blog = Blog.query.filter_by(id=g.user.blog).first()
-    page = Page.query.filter_by(name = name, blog=blog.id).first()
+    page = Page.query.filter_by(name=name, blog=blog.id).first()
     if page:
         db_session.delete(page)
         db_session.commit()
@@ -183,10 +183,10 @@ def new_page(name, subdomain=False):
 def get_pagination(blog, page, subdomain=False):
     return "Not implemented"
 
-@app.route('/update_menu/<blog>/', methods=['POST'])
-@app.route('/update_menu/<blog>/', methods=['POST'], subdomain="<subdomain>")
-def get_menu(blog, subdomain=False):
-    blog = Blog.query.filter_by(id = blog).first()
+@app.route('/update_menu/', methods=['POST'])
+@app.route('/update_menu/', methods=['POST'], subdomain="<subdomain>")
+def get_menu(subdomain=False):
+    blog = Blog.query.filter_by(id=g.user.id).first()
     menu_blog = Html.query.filter_by(blog=blog.id, field_name="menu" ).first()
     if not menu_blog:
         type_ = "menu"

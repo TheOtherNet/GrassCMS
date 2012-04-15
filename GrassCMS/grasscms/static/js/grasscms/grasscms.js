@@ -40,7 +40,7 @@ function downgrade_zindex(elem){ target=$(elem);
 
 function delete_page(page_id){
     if (page_id == "index"){ alert ("You cannot delete index page"); return false; }
-    $.ajax({ url:'/delete_page/' + page_id, success: function(data){ document.location.href(data); }});
+    $.ajax({ url:'/delete_page/' + page_id, success: function(data){ assign_menu(); document.location.href="/"; }});
 }
 
 function create_page(blog_id){ 
@@ -51,8 +51,7 @@ function create_page(blog_id){
     $.ajax({
         url:'/new_page/' + $('#new_page').val(), // Get page name
         success: function(data){ 
-            assign_menu(blog_id); // Update the menu on page input. This requires static_html.js to be loaded
-            document.location.reload(true);
+            assign_menu(); // Update the menu on page input. This requires static_html.js to be loaded
         } 
     })
 }
