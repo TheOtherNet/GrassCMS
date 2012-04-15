@@ -31,8 +31,12 @@ function delete_(element){
     $.ajax({ 
             url: '/delete_' + $(element).data('type').replace('.','') +'/' + id_ + "/", 
             type: "DELETE", method:"DELETE", 
-            complete: function(data){ 
-                $("#"+$(element).data('type') + id_).parent().hide(); 
+            complete: function(data){ window.deleted=element;
+                if ($("#"+$(element).data('type') + id_).parent().attr('id') != "filedrag" ){ 
+                    $("#"+$(element).data('type') + id_).parent().hide(); 
+                } else {
+                    $("#"+$(element).data('type') + id_).hide(); 
+                }
             } 
         }); 
 }

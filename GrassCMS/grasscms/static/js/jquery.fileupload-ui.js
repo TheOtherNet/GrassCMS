@@ -105,7 +105,8 @@ function reset_html(id) {
                 console.debug("Reload me");
             },
             // Callback for failed (abort or error) uploads:
-            complete: function (e, data) {
+            complete: function (e, data) { 
+                document.location.reload(true);
                 $('#filedrag').append(e.responseText);
                 $('.img').persistent('img');
                 reset_html('fileupload');

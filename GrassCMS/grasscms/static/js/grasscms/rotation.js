@@ -1,8 +1,8 @@
 var rotating=false;
 
-function mouse(evt, img) {
+function mouse(evt, img) { img=$(img);
     if (evt.shiftKey && window.stoped != true){      
-        var offset = img.offset();        
+        var offset = img.offset(); console.debug(evt.target);        
         var center_x = (offset.left) + (img.width() / 2);
         var center_y = (offset.top) + (img.height() / 2);
         var mouse_x = evt.pageX;

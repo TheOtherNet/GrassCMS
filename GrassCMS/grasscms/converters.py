@@ -57,7 +57,8 @@ def do_conversion(filename, path):
         type_ = "image"
     elif type_[0] == "video":
         type_ = "video"
-        path = filename
+        os.system('avconv -i %s -s 960x540 -b 20000 -acodec libvorbis -ab 100k -f webm -y %s.webm' %(path, path));
+        path = filename + ".webm"
     elif type_[1] in odt_mimetypes:
         path = convert_odt(path)
         type_ = "text"

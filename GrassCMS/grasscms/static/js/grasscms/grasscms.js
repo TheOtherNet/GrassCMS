@@ -23,13 +23,19 @@
 function ready_fake_files(){ $('#fakefiles').live('click', function () { $('#files').click(); }); }
 
 function increment_zindex(elem){ var target=$(elem); 
+    var id = target.attr('id').replace(/[a-z]/gi, '').replace('_','');
+    var type = target.data('type');
+    if (target.css('z-index') == "auto" ){ target.css('z-index', 2); }
     target.css('z-index', parseInt(target.css('z-index'), 10) + 1 );
-    $.ajax({ url: "/set_zindex/img/" + target.attr('id').replace('img','') + "/" + target.css('z-index') })  // TODO: This only supports images =(
+    $.ajax({ url: "/set_zindex/" + type + "/" + id + "/" + target.css('z-index') })  // TODO: This only supports images =(
 }
             
 function downgrade_zindex(elem){ target=$(elem); 
+    var id = target.attr('id').replace(/[a-z]/gi, '').replace('_','');
+    var type = target.data('type');
+    if (target.css('z-index') == "auto" ){ target.css('z-index', 1); }
     target.css('z-index', parseInt(target.css('z-index'), 10) - 1 );
-    $.ajax({ url: "/set_zindex/img/" + target.attr('id').replace('img','') + "/" + target.css('z-index')})  // TODO: This only supports images =(
+    $.ajax({ url: "/set_zindex/" +type+"/" + id + "/" + target.css('z-index')})  // TODO: This only supports images =(
 }
 
 function delete_page(page_id){
@@ -176,6 +182,7 @@ function grasscms_startup(){
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
     $('#filedrag').disableSelection();
+    $(document).mousemove( mouse );
 }
 
 function setup_standard_tools(){

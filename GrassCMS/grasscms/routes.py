@@ -97,6 +97,7 @@ def index(blog_name=False, page="index"):
             static_htmls=static_htmls, txt_blobs=txt_blobs )
     else:
         return render_template('admin.html', first_run=request.args.get('first_run'),
+            base_subdomain_url = "http://" + blog_name + "." + app.config['SERVER_NAME'],
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
                 page=page, static_htmls=static_htmls, txt_blobs=txt_blobs)
 
@@ -193,12 +194,12 @@ def get_menu(blog, subdomain=False):
         menu_blog.field_name = "menu"
         db_session.add(menu_blog)
         db_session.commit()
-        menu_blog.content='<div id="menu%s">%s</div>' %(menu_blog.id_, '\n'.join([ "<a href=\"http://%s.%s/%s\">%s</a>"\
-            %(blog.name.replace, app.config['SERVER_NAME'], a.name, a.name) for a in \
+        menu_blog.content='<div id="menu%s">%s</div>' %(menu_blog.id_, '\n'.join([ "<a href=\"http://%s.%s/page/%s\">%s</a>"\
+            %(blog.name.replace(' ', '_'), app.config['SERVER_NAME'], a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)]) + "</div>")
     else:
         type_ = "menu_old"
-        menu_blog.content='<div id="%s">' %(menu_blog.id_) + '\n'.join([ "<a href=\"http://%s.%s/%s\">%s</a>"\
+        menu_blog.content='<div id="%s">' %(menu_blog.id_) + '\n'.join([ "<a href=\"http://%s.%s/page/%s\">%s</a>"\
             %( blog.name.replace(' ', '_'), app.config['SERVER_NAME'], a.name, a.name) for a in \
             Page.query.filter_by(blog = blog.id)])
         app.logger.info(menu_blog.content)
@@ -210,7 +211,7 @@ def get_menu(blog, subdomain=False):
 @app.route('/delete_static_html/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
 @app.route('/delete_div/<id_>/', methods=['DELETE'])
 @app.route('/delete_div/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
-@app.route('/delete_video/<id_>', methods=['DELETE'])
+@app.route('/delete_video/<id_>/', methods=['DELETE'])
 @app.route('/delete_video/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
 def delete_html(id_, subdomain=False):
     db_session.delete(Html.query.filter_by(user=g.user.id, id_=id_).first())
