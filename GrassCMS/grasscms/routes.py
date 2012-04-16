@@ -386,7 +386,7 @@ def get_path(filename):
     try:
         os.mkdir(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
     except:
-        pass
+        app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
     return os.path.join(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ), filename)
 
 def save_file(file_):
