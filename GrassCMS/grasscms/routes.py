@@ -54,7 +54,10 @@ def check_user():
 @app.route('/')
 def landing():
     user_page, user_blog = check_user()
-    main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+    if g.user:
+        main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+    else:
+        main_url = "http://grasscms.com"
     return render_template('landing.html', main_url=main_url, page=user_page, blog=user_blog)
 
 @app.route('/', subdomain="<blog_name>")
