@@ -8,7 +8,7 @@ import os, urlparse
 UPLOAD_FOLDER = data_dir + "/static/uploads"
 app = Flask(__name__)
 app.config.update(
-        DATABASE_URI = 'sqlite:////tmp/grasscms.db',
+        DATABASE_URI = 'sqlite:////home/grasscms/grasscms.db',
         SECRET_KEY = 'Foobar',
 	STATIC_ROOT =  'http://grasscms.com/static/',
 	SERVER_NAME = "grasscms.com",
