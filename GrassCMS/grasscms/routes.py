@@ -9,11 +9,11 @@ from werkzeug import secure_filename
 
 def render_html(html, type_=False, is_ajax=False):
     if is_ajax:
-        return '<div class="static %s static_html" style="position:fixed; width:%spx; height:%spx; \
-            top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
+        return '<div class="static %s static_html" style="position:fixed; opacity:%s width:%spx; height:%spx; \
+            top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.opacity, html.height, html.x, html.y, html.field_name, html.id_, html.content)
     else:
-        return '<div class="static %s static_html" style="width:%spx; position:fixed; height:%spx; \
-           top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.height, html.x, html.y, html.field_name, html.id_, html.content)
+        return '<div class="static %s static_html" style="width:%spx; opacity:%s; position:fixed; height:%spx; \
+           top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.opacity, html.height, html.x, html.y, html.field_name, html.id_, html.content)
 
 def render_text(text, is_ajax=False):
     if g.user_is_admin or is_ajax: 
@@ -54,9 +54,9 @@ def check_user():
 @app.route('/')
 def landing():
     user_page, user_blog = check_user()
-    return render_template('landing.html', page=user_page, blog=user_blog)
+    main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+    return render_template('landing.html', main_url=main_url, page=user_page, blog=user_blog)
 
-@app.route('/')
 @app.route('/', subdomain="<blog_name>")
 @app.route('/page/<page>', subdomain='<blog_name>')
 @app.route('/<blog_name>/<page>') 
@@ -79,12 +79,14 @@ def index(blog_name=False, page="index"):
         blog = user_blog
         pass
 
+    main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
 
     if page:
         txt_blobs = Text.query.filter_by(page=page.id)
         static_htmls = Html.query.filter_by(blog=blog.id)
     else:
-        return render_template('landing.html')
+        app.logger.info(main_url)
+        return render_template('landing.html', main_url=main_url)
 
     g.requested_blog=tmp_blog
 
@@ -92,12 +94,13 @@ def index(blog_name=False, page="index"):
         g.user_is_admin = True
 
     if not g.user_is_admin:
-        return render_template( 'index.html',
+        return render_template( 'index.html', main_url=main_url,
             imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog, 
             static_htmls=static_htmls, txt_blobs=txt_blobs )
     else:
+
         return render_template('admin.html', first_run=request.args.get('first_run'),
-            base_subdomain_url = "http://" + blog_name.replace(' ','_') + "." + app.config['SERVER_NAME'],
+            main_url=main_url,
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
                 page=page, static_htmls=static_htmls, txt_blobs=txt_blobs)
 
