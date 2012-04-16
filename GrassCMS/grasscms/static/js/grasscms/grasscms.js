@@ -43,7 +43,7 @@ function delete_page(page_id){
     $.ajax({ url:'/delete_page/' + page_id, success: function(data){ assign_menu(); document.location.href="/"; }});
 }
 
-function create_page(blog_id){ 
+function create_page(){ 
     /*
         Create a new page in the blog
         @param blog_id: Sadly, this has to be passed on, this should be considered a bug!
@@ -123,10 +123,9 @@ jQuery.fn.extend({
 function update_object(element, what, properties, transform){
         if (!transform){ transform="elem";}
         $.ajax({ url: "/get/" + what + "/" + element.data('type') +"/" + element.data('id'),
-            complete: function(data){ 
+            success: function(data){ 
                 $(properties).each(function(){ 
-
-                    element.css(this +"", transform.replace('elem', data.responseText));
+                    element.css(this +"", transform.replace('elem', data));
                 });
             }
         }); 

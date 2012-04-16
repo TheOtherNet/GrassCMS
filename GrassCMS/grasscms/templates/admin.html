@@ -49,7 +49,7 @@
         </li>
 
         <li class="menu_button">
-            <form id="newpage" action="#" onsubmit="create_page('{{blog.id}}'); return false">
+            <form id="newpage" action="#" onsubmit="create_page(); return false">
 
                 <img title="Add new page" src="{{static('images/page.png')}}" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" />
 
@@ -101,7 +101,6 @@
         {%endblock%}
 
         {% if static_htmls %}{%for static_html in static_htmls %}{{ static_html|html|safe }}{%endfor%}{%endif%}
-
         {% if imgs %} {% for img in imgs %} {{ img|image|safe }}{%endfor%}{%endif%}
         {% if txt_blobs %} {% for txt in txt_blobs %} {{txt|text|safe }} {%endfor%} {%endif%}
 
