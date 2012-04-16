@@ -60,6 +60,12 @@ def create_or_login(resp):
     if user is not None:
         flash(u'Successfully signed in')
         g.user = user
+        try:
+            os.mkdir(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
+        except Exception, error:
+            app.logger.info("FOOOOOOO")
+            app.logger.info(error)
+
         return redirect(oid.get_next_url())
     return redirect(url_for('create_profile', next=oid.get_next_url(),
                             name=resp.fullname or resp.nickname,

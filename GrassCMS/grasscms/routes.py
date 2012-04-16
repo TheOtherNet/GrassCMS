@@ -383,10 +383,7 @@ def get_path(filename):
     """
         Return the full path of a file in local.
     """
-    try:
-        os.mkdir(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
-    except:
-        app.logger.info(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
+
     return os.path.join(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ), filename)
 
 def save_file(file_):
