@@ -82,7 +82,8 @@ def index(blog_name=False, page="index"):
         blog = user_blog
         pass
 
-    main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+    if g.user:
+        main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
 
     if page:
         txt_blobs = Text.query.filter_by(page=page.id)
