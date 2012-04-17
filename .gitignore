@@ -1,2 +1,6 @@
+*/*/*/uploads/*
+.*.sw?
 *.pyc
-build/*
+*/build/*
+*/dist
+*/GrassCMS.egg-info/
