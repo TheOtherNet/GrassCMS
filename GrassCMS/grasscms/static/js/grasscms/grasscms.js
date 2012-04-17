@@ -125,6 +125,7 @@ function update_object(element, what, properties, transform){
         $.ajax({ url: "/get/" + what + "/" + element.data('type') +"/" + element.data('id'),
             success: function(data){ 
                 $(properties).each(function(){ 
+                    element.children('.img').css('top', "auto").css('left', 'auto');
                     element.css(this +"", transform.replace('elem', data));
                 });
             }

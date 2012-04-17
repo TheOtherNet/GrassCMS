@@ -106,7 +106,7 @@ function reset_html(id) {
             },
             // Callback for failed (abort or error) uploads:
             complete: function (e, data) { 
-                document.location.reload(true);
+                document.location=document.location;
                 $('#filedrag').append(e.responseText);
                 $('.img').persistent('img');
                 reset_html('fileupload');
