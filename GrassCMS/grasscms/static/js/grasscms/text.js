@@ -34,34 +34,11 @@ function get_txt_pos(obj) {
 }
 
 function setup_editor(editor){
-    editor=CKEDITOR.instances[$(editor).attr('id')];
-    get_txt_stored_dimensions(editor);
-    editor.on( 'saveSnapshot', function(e) { save(e.editor); });
-
-    editor.on("blur", function(event) { 
-            $('.container').css('height','auto');
-            $("#handler_" + event.editor.name ).toggle(); 
-            $("#cke_top_" + event.editor.name ).toggle(); 
-
-        $('#standard_tools').hide();
-            $("#cke_bottom_" + event.editor.name ).toggle(); 
-            save(event.editor)
-    });
-
-    editor.on("focus", function(event) { 
-        $('.container').css('height','5em');
-        $("#handler_" + event.editor.name ).toggle(); 
-        $("#cke_top_" + event.editor.name ).toggle(); 
-        $('#standard_tools').data('id', event.editor.name);
-        $('#standard_tools').show();
-        $("#cke_bottom_" + event.editor.name ).toggle(); 
-        save(event.editor);
-    });
+    return;
 }
 
 function setup_text(){
     $('.draggable').draggable({handle: '.handler', stop: function(ev, ui){ $.ajax({ url: '/set_position/text/' + get_txt_pos(this, ui)});}});
-    $('.CKeditor_blob').ckeditor(setup_editor);
 }
 
 
@@ -76,7 +53,7 @@ function get_blob(page_name){
 
 function update_blob(obj, page_id, id){
     $.ajax({
-        url:'/text_blob/' + page_id + "/" +  id ,
+        url:'/text_blob/' + page_id +"/" +  id  ,
         method: 'POST',
         type: 'POST',
         data: { 

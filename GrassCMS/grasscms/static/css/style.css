@@ -5,7 +5,8 @@
 .handler{ background:black; height:13px; border-radius:2px; margin-bottom:-4px; margin-left:2px; }
 
 .menu_button form{ margin:0px!important; }
-.ToolBar { display:none; width: 668px!important; position: fixed!important;top: 7px!important;z-index: 2000!important;left: 430px!important; }
+.wysihtml5-toolbar{ display:none; width: 500px!important; position: fixed!important;top: 7px!important;z-index: 2000!important;
+left: 330px!important; }
 textarea, iframe { border:0px!important; }
 .cke_toolbox_collapser { display:none; }
 

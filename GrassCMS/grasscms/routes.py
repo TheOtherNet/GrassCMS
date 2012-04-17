@@ -17,15 +17,10 @@ def render_html(html, type_=False, is_ajax=False):
 
 def render_text(text, is_ajax=False):
     if g.user_is_admin or is_ajax: 
-        return '<div class="text_blob draggable texts" style="top:%spx; left:%spx;" id="%s" > \
-                <div class="handler" style="display:none;" id="handler_text_%s" > \
-                    <a style="color:white; margin-left:3px;" onclick="delete_text(this); return false;">X</a> </div> \
-                <div>\
-                    <textarea  style="min-width:1em; min-height:1em;"  \
-                        id="text_%s" class="CKeditor_blob editor"> \
-                            %s</textarea>\
-                </div>\
-            </div>' %(text.x, text.y, text.id_, text.id_, text.id_, text.content)
+        return ' <div class="static_html text_editor" style="top:%spx; left:%spx; position:fixed;" id="%s"> \
+                    <textarea style="min-width:1em; min-height:1em;"  \
+                        id="text_%s" class=""> \
+                            %s</textarea></div>' %(text.x, text.y, text.id_, text.id_, text.content)
     else:
         return '<div class="text_blob" style="position:fixed; top:%spx; left:%spx; width:%spx; height:%spx; overflow:auto; opacity:%s; rotation:%s;">%s</div>' %(text.x, text.y, text.width, text.height, text.opacity, text.rotation, text.content)
 
@@ -145,6 +140,8 @@ def upload_(page, subdomain=False):
             db_session.commit()
             object_.content = "<video width='100%%' height='100%%' id='video%s'><source src='%suploads/%s/%s'></source></video>" %(object_.id_, app.config['STATIC_ROOT'], g.user.id, filename.decode('utf-8'))
             object_.field_name="video"
+            object_.width=300
+            object_.height=300
             db_session.commit()
             result = render_html(object_, is_ajax=True)
         else: 

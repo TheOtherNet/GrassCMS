@@ -9,23 +9,20 @@
     <script src="{{static('js/grasscms/static_html.js')}}"></script>
     <script src="{{static('js/grasscms/grasscms.js')}}"></script>
     <script src="{{static('js/jquery.hoverIntent.minified.js')}}"></script>
-    <script src="{{static('ckeditor/ckeditor.js')}}"></script>
-    <script src="{{static('ckeditor/adapters/jquery.js')}}"></script>
+    <script src="{{static('js/wysihtml5.js')}}"></script>
+    <script src="{{static('js/bootstrap-wysihtml5.js')}}"> </script>
     <script src="{{static('js/mediaelement-and-player.min.js')}}"></script>
-    <link rel="stylesheet" href="{{static('css/mediaelementplayer.css')}}" /></code>
-    <script>
-        function save(editor){ 
-            if(editor.checkDirty()){ update_blob( editor.getData(), '{{ page.name }}', editor.name); }
-            var curr_dime = get_txt_current_dimensions(editor.name)
-            $.ajax({ url: '/set_dimensions/text/' + editor.name.replace('text_',''), data: { width:curr_dime[0], height:curr_dime[1] } });
-        }
-        $(function(){
-            grasscms_startup();
+    <script src="{{static('js/mediaelement-and-player.min.js')}}"></script>
+    <script src="{{static('js/mediaelement-and-player.min.js')}}"></script>
 
-    {% if first_run == "true" %}
-        $('#first').modal('toggle');
-    {%endif%}
- });
+    <link rel="stylesheet" href="{{static('css/mediaelementplayer.css')}}" /></code>
+    <link rel="stylesheet" href="{{static('css/bootstrap-wysihtml5.css')}}" /></code>
+
+    <script>
+        $(function(){ grasscms_startup(); 
+
+
+{% if first_run == "true" %} $('#first').modal('toggle'); {%endif%} });
     </script>
 {%endblock%}
 

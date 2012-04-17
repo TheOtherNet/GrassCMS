@@ -173,11 +173,27 @@ jQuery.fn.extend({
 function grasscms_startup(){
     $('video,audio').mediaelementplayer(/* Options */);
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
-    $('.static_html.menu').persistent('static_html');
+
+
+    $('textarea').wysihtml5({
+        "events": {
+            "focus": function(el) { 
+            $(this.toolbar.container).show();
+        },
+        "blur": function() { 
+            $(this.toolbar.container).hide();
+        },
+        "change": function() { console.debug("CHANGED"); 
+            update_blob(this.composer.doc.body.innerHTML, "{{ page.name }}", $(this.textarea.element).attr('id') ); 
+        }
+        
+    }
+});
+$('.wysihtml5-toolbar').hide();
+    $('.static_html').persistent('static_html');
     $('.static_html.video').persistent('video');
     setup_standard_tools();
     ready_fake_files();
-    setup_text(); // Make text editor persistent
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
     $('#filedrag').disableSelection();
