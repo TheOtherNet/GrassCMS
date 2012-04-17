@@ -123,7 +123,11 @@ def upload_(page, subdomain=False):
     page = Page.query.filter_by(name=page, blog=blog.id).first()
     for i in request.files.keys():
         filename, path = save_file(request.files[i])
-        type_, filename = do_conversion(filename, path)
+        try:
+           type_, filename = do_conversion(filename, path)
+        except:
+            flash('Error converting video file, unsupported format (microsoft ASF?)')
+            result=""
         if type_ == "image":
             object_ = File(user=g.user, page=page.id, content="%suploads/%s/%s" %(app.config['STATIC_ROOT'], g.user.id, filename))
             object_.type_="image"

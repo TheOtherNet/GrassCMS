@@ -55,12 +55,14 @@ def do_conversion(filename, path):
     if type_[0] == "image":
         path = filename
         type_ = "image"
-    elif type_[0] == "video":
-        type_ = "video"
-        os.system('avconv -i %s -s 960x540 -b 20000 -acodec libvorbis -ab 100k -f webm -y %s.webm' %(path, path));
-        path = filename + ".webm"
-    elif type_[1] in odt_mimetypes:
-        path = convert_odt(path)
+    elif type_[0] == "video" or type_[1] == "ogg":
+        try:
+            type_ = "video"
+            os.system('avconv -i %s -s 960x540 -b 20000 -acodec libvorbis -ab 100k -f webm -y %s.webm' %(path, path));
+            path = filename + ".webm"
+        except Exception, error:
+            flash('Error converting video')
+            raise Exception('avconv', error)
         type_ = "text"
     elif type_[1] in docx_mimetypes:
         path = convert_docx(path)

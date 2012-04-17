@@ -38,7 +38,7 @@ def login(subdomain=False):
         to start the OpenID machinery.
     """
     if g.user is not None:
-        return redirect(oid.get_next_url())
+        return redirect("http://" + g.user.name.replace(' ', '_') + "." + app.config['SERVER_NAME'])
         
     if request.method == 'POST':
         openid = request.form.get('openid_identifier')
@@ -63,10 +63,9 @@ def create_or_login(resp):
         try:
             os.mkdir(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
         except Exception, error:
-            app.logger.info("FOOOOOOO")
             app.logger.info(error)
-
-        return redirect(oid.get_next_url())
+        return redirect("http://" + g.user.name.replace(' ', '_') + "." + app.config['SERVER_NAME'])
+        
     return redirect(url_for('create_profile', next=oid.get_next_url(),
                             name=resp.fullname or resp.nickname,
                             email=resp.email))
