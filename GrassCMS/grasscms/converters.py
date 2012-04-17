@@ -63,7 +63,6 @@ def do_conversion(filename, path):
         except Exception, error:
             flash('Error converting video')
             raise Exception('avconv', error)
-        type_ = "text"
     elif type_[1] in docx_mimetypes:
         path = convert_docx(path)
         type_ = "text"
