@@ -15,15 +15,6 @@ def render_html(html, type_=False, is_ajax=False):
         return '<div class="static %s static_html" style="width:%spx; opacity:%s; position:fixed; height:%spx; \
            top:%spx; left:%spx;" id="%s%s"> %s </div>' %(html.field_name, html.width, html.opacity, html.height, html.x, html.y, html.field_name, html.id_, html.content)
 
-def render_text(text, is_ajax=False):
-    if g.user_is_admin or is_ajax: 
-        return ' <div class="static_html text_editor" style="top:%spx; left:%spx; position:fixed;" id="%s"> \
-                    <textarea style="min-width:1em; min-height:1em;"  \
-                        id="text_%s" class=""> \
-                            %s</textarea></div>' %(text.x, text.y, text.id_, text.id_, text.content)
-    else:
-        return '<div class="text_blob" style="position:fixed; top:%spx; left:%spx; width:%spx; height:%spx; overflow:auto; opacity:%s; rotation:%s;">%s</div>' %(text.x, text.y, text.width, text.height, text.opacity, text.rotation, text.content)
-
 def render_image(image, is_ajax=False):
     if g.user_is_admin or is_ajax:
         return '<img class="img" style="z-index:%s; opacity:%s; -moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg); -o-transform(%sdeg); -ms-transform(%sdeg); width:%spx;height:%spx; top:%spx; left:%spx" id="img%s" \
@@ -33,7 +24,6 @@ def render_image(image, is_ajax=False):
            src="%s" />' %(image.zindex, image.x, image.y, image.opacity, image.rotation, image.rotation, image.rotation, image.rotation, image.width, image.height, image.id_, image.content)
 
 app.jinja_env.filters['html'] = render_html
-app.jinja_env.filters['text'] = render_text
 app.jinja_env.filters['image'] = render_image
 
 
@@ -83,7 +73,6 @@ def index(blog_name=False, page="index"):
         main_url = ""
 
     if page:
-        txt_blobs = Text.query.filter_by(page=page.id)
         static_htmls = Html.query.filter_by(blog=blog.id)
     else:
         app.logger.info(main_url)
@@ -93,17 +82,24 @@ def index(blog_name=False, page="index"):
 
     if g.requested_blog == user_blog and g.user:
         g.user_is_admin = True
+# TODO Get users current page.
+# TODO Delete image objects and use just Html
+# TODO Rename html objects to just metaobject or something like that
+# TODO Make only one setter and one getter function
+# TODO Drop the fucking text stuff out
+# TODO Make the textarea and that stuff in the javascript.
+# TODO All static elements (so almost all elements) dont respect pagination of any kind!
 
     if not g.user_is_admin:
         return render_template( 'index.html', main_url=main_url,
             imgs=File.query.filter_by(page=page.id, type_="image"), page=page, blog=user_blog, 
-            static_htmls=static_htmls, txt_blobs=txt_blobs )
+            static_htmls=static_htmls)
     else:
 
         return render_template('admin.html', first_run=request.args.get('first_run'),
             main_url=main_url,
             imgs=File.query.filter_by(page=page.id, type_="image"), blog=user_blog,
-                page=page, static_htmls=static_htmls, txt_blobs=txt_blobs)
+                page=page, static_htmls=static_htmls)
 
 @app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
 @app.route("/upload/<page>", methods=("GET", "POST"))
@@ -247,19 +243,19 @@ def text(page, id_=False, subdomain=False):
     user_blog = Blog.query.filter_by(id=g.user.blog).first()
     page = get_page(page).id
     if not id_:
-        text = Text("Insert your text here", g.user, page, user_blog.id)
+        text = Html("<div class='handler'></div><textarea>Insert your text here</textarea>", g.user, page, user_blog.id)
         db_session.add(text)
-        result = render_text(text, is_ajax=True)
+        result = render_html(text, is_ajax=True)
     else:
-        text = Text.query.filter_by(id_=int(id_.replace('text_', '')), 
+        text = Html.query.filter_by(id_=int(id_.replace('text_', '')), 
             page=page).first()
         if not text:
             abort(500) # Nope.
         text.content = request.form['text']
-        result = render_text(text, is_ajax=True)
+        result = render_html(text, is_ajax=True)
 
     db_session.commit()
-    return render_text(text, is_ajax=True)
+    return render_html(text, is_ajax=True)
 
 @app.route('/delete_text_blob/<id_>', methods=['DELETE'])
 @app.route('/delete_text_blob/<id_>', methods=['DELETE'], subdomain="<subdomain>")

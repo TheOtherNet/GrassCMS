@@ -1,8 +1,9 @@
 /* HTML5 Boilerplate  */
+textarea{ margin-left:3px!important; margin-top: 4px!important; width:97%!important; resize:none!important; height:85%!important; margin-top:10px; }
 .draggable{ z-index:2000; }
 .menu_button a{ padding-top:4px!important; padding-bottom:4px!important;}
 .menu_button { display:inline;}
-.handler{ background:black; height:13px; border-radius:2px; margin-bottom:-4px; margin-left:2px; }
+.handler{ background:black; height:13px; border-radius:2px; margin-bottom:-4px; margin-left:2px; display:none; }
 
 .menu_button form{ margin:0px!important; }
 .wysihtml5-toolbar{ display:none; width: 500px!important; position: fixed!important;top: 7px!important;z-index: 2000!important;

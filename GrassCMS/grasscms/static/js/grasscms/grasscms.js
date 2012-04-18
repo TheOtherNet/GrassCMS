@@ -145,6 +145,7 @@ jQuery.fn.extend({
 
     return this.each(function(){ 
         var element=$(this); 
+        console.debug(element);
         if (element.children(type).length > 0){ 
             var id = element.children(type).attr('id').replace(/[a-z]/gi, '').replace('_','');
         } else {
@@ -152,7 +153,7 @@ jQuery.fn.extend({
         }
 
         if (element.parent().attr('id') != "filedrag" ){ element=element.parent();}
-        if (type == "img"){ element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); element=element.parent(); } else { element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }} ).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); }
+        if (type == "img"){ element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); element=element.parent(); } else { element.resizable({ alsoResize: element.children('textarea'), stop: function(ev, ui){ set_dimensions(type, id, ui); }} ).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); }
 
         if (type == "img"){ 
             element.parent().data('id', id);
@@ -170,27 +171,23 @@ jQuery.fn.extend({
     });
 }});
 
-function grasscms_startup(){
+function grasscms_startup(){ 
     $('video,audio').mediaelementplayer(/* Options */);
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
 
-
-    $('textarea').wysihtml5({
-        "events": {
-            "focus": function(el) { 
+    $('.static_html').persistent('static_html');
+    $('textarea').each(function(){ id=$(this).parent().attr('id') + "_textarea"; $(this).attr('id', id); $('#'+id).wysihtml5({"events": {
+        "focus": function(el) { 
+            $(this.textareaElement.parentNode).children('.handler').show()
             $(this.toolbar.container).show();
         },
         "blur": function() { 
+            $(this.textareaElement.parentNode).children('.handler').hide()
             $(this.toolbar.container).hide();
         },
         "change": function() { console.debug("CHANGED"); 
             update_blob(this.composer.doc.body.innerHTML, "{{ page.name }}", $(this.textarea.element).attr('id') ); 
-        }
-        
-    }
-});
-$('.wysihtml5-toolbar').hide();
-    $('.static_html').persistent('static_html');
+        }}} ); });
     $('.static_html.video').persistent('video');
     setup_standard_tools();
     ready_fake_files();
