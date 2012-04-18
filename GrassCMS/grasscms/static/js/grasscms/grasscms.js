@@ -171,7 +171,18 @@ jQuery.fn.extend({
     });
 }});
 
+function get_current_page(){
+    a=location.pathname.match(/\/page\/(.*)/)[1];
+    if (!a){ return "index"; }
+    return a
+}
+
+function get_number(id){
+    return id.replace(/[a-z]/gi, '').replace('_','');
+}
+
 function grasscms_startup(){ 
+    console.debug(get_current_page());
     $('video,audio').mediaelementplayer(/* Options */);
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
 
@@ -186,7 +197,7 @@ function grasscms_startup(){
             $(this.toolbar.container).hide();
         },
         "change": function() { console.debug("CHANGED"); 
-            update_blob(this.composer.doc.body.innerHTML, "{{ page.name }}", $(this.textarea.element).attr('id') ); 
+            update_blob(this.composer.doc.body.innerHTML, get_current_page(), get_number($(this.textarea.element).attr('id')) ); 
         }}} ); });
     $('.static_html.video').persistent('video');
     setup_standard_tools();
