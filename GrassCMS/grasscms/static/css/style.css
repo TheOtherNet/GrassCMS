@@ -15,6 +15,7 @@ textarea, iframe { border:0px!important; }
     position:absolute;
     z-index:3010;
     display:none;
+    top:20px;
 }
 
 .cke_top{

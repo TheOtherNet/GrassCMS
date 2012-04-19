@@ -84,7 +84,7 @@ def new(type_, page, subdomain=False):
     
 @app.route('/delete/<id_>/<is_page>', methods=['DELETE'], subdomain="<subdomain>")
 @app.route('/delete/<id_>', methods=['DELETE'], subdomain="<subdomain>")
-def delete(id_, is_page=False):
+def delete(id_, is_page=False, subdomain=False):
     if is_page:
         blog = Blog.query.filter_by(id=g.user.blog).first()
         page = Page.query.filter_by(name=name, blog=blog.id).first()
@@ -120,4 +120,3 @@ def set(what, id_, result, subdomain=False):
     except Exception, error:
         app.logger.info(error)
         return "False"
-

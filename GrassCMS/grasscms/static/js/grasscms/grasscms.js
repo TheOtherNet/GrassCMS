@@ -20,7 +20,7 @@
 */
 
 function get_current_page(){
-    a=location.pathname.match(/\/page\/(.*)/);
+    a=location.pathname.match(/\/(.*)/);
     if (!a){ return "index"; }
     return a[1];
 }
@@ -47,29 +47,26 @@ function downgrade_zindex(elem){ target=$(elem);
     $.ajax({ url: "/set/zindex/" +type+"/" + id + "/" + target.css('z-index')})  // TODO: This only supports images =(
 }
 
-function delete_page(page_id){
+function delete_page(){
     if (page_id == "index"){ alert ("You cannot delete index page"); return false; }
-    $.ajax({ url:'/delete_page/' + page_id, success: function(data){ assign_menu(); document.location.href="/"; }});
+    $.ajax({ url:'/delete/page/' + get_current_page(), 
+        success: function(data){ 
+            new_object('menu', get_current_page()); 
+            document.location.href="/"; 
+    }});
 }
 
 function create_page(){ 
-    /*
-        Create a new page in the blog
-        @param blog_id: Sadly, this has to be passed on, this should be considered a bug!
-    */
-    $.ajax({
-        url:'/new_page/' + $('#new_page').val(), // Get page name
-        success: function(data){ 
-            assign_menu(); // Update the menu on page input. This requires static_html.js to be loaded
-        } 
-    })
+    new_object('page', $('#new_page').val());
+    new_object('menu', get_current_page());
 }
 
 function grasscms_startup(){ 
     $('video,audio').mediaelementplayer(/* Options */);
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
-    $('.static_html').persistent('static_html');
+
+
     $('textarea').each(function(){ 
         id=$(this).parent().attr('id') + "_textarea"; 
         $(this).attr('id', id); 
@@ -82,21 +79,35 @@ function grasscms_startup(){
                 $(this.textareaElement.parentNode).children('.handler').hide()
                 $(this.toolbar.container).hide();
             },
-            "change": function() { console.debug("CHANGED"); 
+            "change": function() { 
                 update_blob(this.composer.doc.body.innerHTML, 
                     get_current_page(), 
                     get_number($(this.textarea.element).attr('id')) ); 
             }
         }}); 
     });
+
+    $('.static_html').persistent('static_html');
+
     setup_standard_tools();
     ready_fake_files();
-
     $('#filedrag').disableSelection();
-    $(document).mousemove( mouse );
 }
 
 function setup_standard_tools(){
+
+    $("#filedrag>div>img").hoverIntent({    
+        timeout: 500, 
+        out: function(e){ $('.standard_tools').hide(); }, 
+        over: function(e){ $(e.currentTarget).parent().children('.standard_tools').show(); }
+    });
+
+    $("#filedrag>div>textarea").hoverIntent({    
+        timeout: 500, 
+        out: function(e){ $(e.currentTarget).children('.standard_tools').parent().hide(); }, 
+        over: function(e){ $(e.currentTarget).children('.standard_tools').parent().show(); }
+    });
+
     $("#filedrag>div").hoverIntent({    
         timeout: 500, 
         out: function(e){ $(e.currentTarget).children('.standard_tools').hide(); }, 
@@ -110,31 +121,40 @@ function setup_standard_tools(){
         value: 1,
         orientation: "horizontal",
         slide: function(e,ui){ // HOrrible hacks =(
-            target = $(e.target).parent().parent().parent().parent();
+            target = get_o(e.target);
             $.ajax({ url: "/set/opacity/" + target.attr('id') + "/" + ui.value }) 
-            target.css('opacity', ui.value);
+            $(e.target).css('opacity', ui.value);
         }
     });
 }
 
+function get_o(object){ return $(object).parent().parent().parent().parent();}
 function assign_menu(){ new_object('menu'); }
 
-function new_object(type){
+function delete_(object){
+    $.ajax({
+        url:'/delete/' + object.attr('id'),
+        type : 'DELETE', 
+        success: function(data_){ object.hide(); }
+    });
+}
+
+function new_object(type, page){
     /*
         Assign / Update a menu to a blog.
         After successful creation, it reloads the page.
     */
+    if (!page){ page=get_current_page(); }
     $.ajax({
-        url:'/new/' + type +'/' + get_current_page(), 
+        url:'/new/' + type +'/' + page,
         type : 'POST', 
         success: function(data_){ 
-            console.debug(data_);
             if ( type == "menu"  && $('.menu')){ 
                 $(".menu").html(data_); 
                 $('.static_html').persistent('static_html'); // TODO
             } else {
                 $('#filedrag').append(data_); 
-            } 
+           } 
         }
     }); 
 }
