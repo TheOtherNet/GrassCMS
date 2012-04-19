@@ -110,15 +110,8 @@ function setup_standard_tools(){
         value: 1,
         orientation: "horizontal",
         slide: function(e,ui){ // HOrrible hacks =(
-            if ($(e.target).parent().parent().parent().parent().data('type') == "static_html"){
-                target=$(e.target).parent().parent().parent().parent();
-            } else {
-                target=$(e.target).parent().parent().parent().parent().children('.'+$(e.target).parent().parent().parent().parent().data('type'));
-            }
-            if ($(e.target).parent().parent().parent().data('type') == "video"){
-                target=$(e.target).parent().parent().parent();
-            }
-            $.ajax({ url: "/set/opacity/" + target.parent().data('type')+"/" + target.parent().data('id') + "/" + ui.value })  // TODO: This only supports images =(
+            target = $(e.target).parent().parent().parent().parent();
+            $.ajax({ url: "/set/opacity/" + target.attr('id') + "/" + ui.value }) 
             target.css('opacity', ui.value);
         }
     });
