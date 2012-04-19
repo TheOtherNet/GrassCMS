@@ -36,7 +36,7 @@ function increment_zindex(elem){ var target=$(elem);
     var type = target.data('type');
     if (target.css('z-index') == "auto" ){ target.css('z-index', 2); }
     target.css('z-index', parseInt(target.css('z-index'), 10) + 1 );
-    $.ajax({ url: "/set_zindex/" + type + "/" + id + "/" + target.css('z-index') })  // TODO: This only supports images =(
+    $.ajax({ url: "/set/zindex/" + type + "/" + id + "/" + target.css('z-index') })  // TODO: This only supports images =(
 }
             
 function downgrade_zindex(elem){ target=$(elem); 
@@ -44,7 +44,7 @@ function downgrade_zindex(elem){ target=$(elem);
     var type = target.data('type');
     if (target.css('z-index') == "auto" ){ target.css('z-index', 1); }
     target.css('z-index', parseInt(target.css('z-index'), 10) - 1 );
-    $.ajax({ url: "/set_zindex/" +type+"/" + id + "/" + target.css('z-index')})  // TODO: This only supports images =(
+    $.ajax({ url: "/set/zindex/" +type+"/" + id + "/" + target.css('z-index')})  // TODO: This only supports images =(
 }
 
 function delete_page(page_id){
@@ -118,7 +118,7 @@ function makeGuideX(dom_element) {
 
 function update_object(element, what, properties, transform){
         if (!transform){ transform="elem";}
-        $.ajax({ url: "/get/" + what + "/" + element.data('type') +"/" + element.data('id'),
+        $.ajax({ url: "/get/" + what + "/" + element.data('id'),
             success: function(data){ 
                 $(properties).each(function(){ 
                     element.children('.img').css('top', "auto").css('left', 'auto');
@@ -128,40 +128,6 @@ function update_object(element, what, properties, transform){
         }); 
 }
 
-jQuery.fn.extend({
-    persistent: function(type){
-    /*
-        Make an object transparently persistent in size and position.
-        @param type: Type, how to identify this kind of object in the server 
-    */
-
-    function set_dimensions(type, id, ui){ $.ajax({ url: '/set_dimensions/' + type + "/" + id + "?width=" + ui.size.width + "&height=" + ui.size.height });}
-    function set_position(type, id, ui){ if ( rotating && type == "img" ){  return false; }; $.ajax({url: '/set_position/' + type + "/" + id + "?x=" + ui.position.top + "&y=" + ui.position.left }); }
-
-    return this.each(function(){ 
-        var element=$(this); 
-        console.debug(element);
-        if (element.children(type).length > 0){ var id = get_number(element.children(type).attr('id'))}
-        else { var id = get_number(element.attr('id')) }
-        if (element.parent().attr('id') != "filedrag" ){ element=element.parent();}
-
-        if (type == "img"){ element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); element=element.parent(); } else { element.resizable({ alsoResize: element.children('.alsoResizable'), stop: function(ev, ui){ set_dimensions(type, id, ui); }} ).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); }
-
-        if (type == "img"){ 
-            element.parent().data('id', id);
-            element.parent().data('type', type);
-        } 
-        element.data('id', id);
-        element.data('type', type);
-        element.append($('#standard_tools_model').html());
- 
-        update_object(element, 'zindex', Array('opacity'));
-        update_object(element, 'opacity', Array('opacity'));
-        update_object(element, 'rotation', Array('-moz-transform', '-webkit-transform', '-o-transform', '-ms-transform'), 'rotate(elem)');
-        update_object(element, 'x', Array('top'), 'elempx');
-        update_object(element, 'y', Array('left'), 'elempx');
-    });
-}});
 
 
 function grasscms_startup(){ 
@@ -218,8 +184,44 @@ function setup_standard_tools(){
             if ($(e.target).parent().parent().parent().data('type') == "video"){
                 target=$(e.target).parent().parent().parent();
             }
-            $.ajax({ url: "/set_opacity/" + target.parent().data('type')+"/" + target.parent().data('id') + "/" + ui.value })  // TODO: This only supports images =(
+            $.ajax({ url: "/set/opacity/" + target.parent().data('type')+"/" + target.parent().data('id') + "/" + ui.value })  // TODO: This only supports images =(
             target.css('opacity', ui.value);
         }
     });
+}
+
+function assign_menu(){ new_object('menu'); }
+
+function new_object(type){
+    /*
+        Assign / Update a menu to a blog.
+        After successful creation, it reloads the page.
+    */
+    $.ajax({
+        url:'/new/' + type +'/' + get_current_page(), 
+        type : 'POST', 
+        success: function(data_){ 
+            console.debug(data_);
+            if ( type == "menu"  && $('.menu')){ 
+                $(".menu").html(data_); 
+                $('.static_html.menu').persistent('static_html'); // TODO
+            } else {
+                $('#filedrag').append(data_); 
+            } 
+        }
+    }); 
+}
+ 
+function delete_static_html(blog_id, id_){ 
+    /*
+        Delete a menu
+        After successful creation, it reloads the page.
+    */
+    $.ajax({
+        url:'/html/' + blog_id +'/' + id_, 
+        type : 'DELETE',
+        success: function(data_){
+            $('#'+id_).remove();
+        } 
+    }); 
 }

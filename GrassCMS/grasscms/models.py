@@ -11,6 +11,7 @@ class BaseWidget(object):
     rotation = Column(String(60))
     opacity = Column(String(60))
     zindex = Column(String(60))
+    field_name = Column(String(60))
 
     @declared_attr
     def blog(cls):
@@ -24,7 +25,7 @@ class BaseWidget(object):
     def user(cls):
         return Column(Integer, ForeignKey('users.id'))
 
-    def __init__(self, content=False, user=False, page=False, blog=False, x=100, y=100, width=100, height=100):
+    def __init__(self, content=False, field_name=False, user=False, page=False, blog=False, x=100, y=100, width=100, height=100):
         self.user = user.id
         self.page = page
         self.content = content
@@ -35,18 +36,12 @@ class BaseWidget(object):
         self.height = height
         self.rotation = 0
         self.opacity = 1
-        self.zindex=1;
-
-class Text(BaseWidget, Base):
-    __tablename__ = "Text"
+        self.zindex=1
+        self.field_name = field_name
 
 class Html(BaseWidget, Base):
     __tablename__ = "Html"
-    field_name = Column(String(60))
 
-class File(BaseWidget, Base):
-    __tablename__ = "File"
-    type_ = Column(String(20))
 
 class Blog(Base):
     __tablename__ = "blogs"
