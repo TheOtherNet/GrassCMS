@@ -1,15 +1,17 @@
 from grasscms.models import Blog, Page, Html
-
 from grasscms.forms import *
 from grasscms.openid_login import *
 from grasscms.converters import *
-from grasscms.helpers import *
-from grasscms.objects import Objects, render_html
-
-import json, os, urllib
+from grasscms.objects import *
 from werkzeug import secure_filename
-
+import json, os, urllib
 app.jinja_env.filters['html'] = render_html
+
+def save_file(file_):
+    file_secure_name = secure_filename(file_.filename)
+    path = get_path(file_secure_name)
+    file_.save(path)
+    return (file_secure_name, path)
 
 def get_element_by_id(id_):
     return Html.query.filter_by(id_=id_, user=g.user.id).first()
@@ -53,8 +55,7 @@ def page(blog_name=False, page="index", main_url=False):
 
     if blog == user_blog and g.user:
         g.user_is_admin = True
-    static_htmls = Html.query.filter_by(blog=blog.id)
-
+    static_htmls = Html.query.filter_by(blog=blog.id, page=page.id)
     if not g.user_is_admin:
         return render_template( 'index.html', main_url=main_url, page=page, 
             blog=user_blog, static_htmls=static_htmls)
@@ -66,28 +67,19 @@ def page(blog_name=False, page="index", main_url=False):
 @app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
 @app.route("/upload/<page>", methods=("GET", "POST"))
 def upload_(page, subdomain=False):
-    object_base = Objects(g.user, db_session)
+    object_base = Objects()
     for i in request.files.keys():
         filename, path = save_file(request.files[i])
         try:
            field_name, content = do_conversion(filename, path)
         except:
             return flash('Error file, unsupported format')
-        if field_name == "image":
-            content = "<img src='%suploads/%s/%s' class='alsoResizable' />" \
-                %(app.config['STATIC_ROOT'], g.user.id, filename)
-        elif type_ == "text":
-            content = filename.decode('utf-8')
-        elif type_ == "video":
-            content = "<video width='100%%' height='100%%' class='alsoResizable'><source src='%suploads/%s/%s'></source></video>" %(app.config['STATIC_ROOT'], g.user.id, filename.decode('utf-8'))
-        else: 
-            abort(500)
         return getattr(object_base, field_name)(page, content)
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
 @app.route('/new/<type_>/<page>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def new(type_, page, subdomain=False):
-    object_base = Objects(g.user, db_session)
+    object_base = Objects()
     return getattr(object_base, type_)(page)
     
 @app.route('/delete/<id_>/<is_page>', methods=['DELETE'], subdomain="<subdomain>")

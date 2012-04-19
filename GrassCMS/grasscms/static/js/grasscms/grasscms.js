@@ -65,74 +65,10 @@ function create_page(){
     })
 }
 
-function makeGuideY(dom_element) {
-    $(dom_element).draggable({
-        axis: "y",
-        containment: "#filedrag",
-        drag: function() {
-            var position = $(this).position();
-            var yPos = $(this).css('top');
-            $(this).find($('.pos')).text('Y: ' + yPos);
-        },
-        start: function() {
-            $(this).find($('.pos')).css('display', 'block');
-        },
-        stop: function() {
-            $(this).find($('.pos')).css('display', 'none');
-
-            if ($(this).hasClass("draggable-y-newest")) {
-                $(this).removeClass("draggable-y-newest");
-                $("#filedrag .y-guide").clone().removeClass("y-guide").addClass("draggable-y-newest").appendTo("#filedrag").each(function() {
-                    makeGuideY(this);
-                });
-            }
-        }
-    });
-}
-
-function makeGuideX(dom_element) {
-    $(dom_element).draggable({
-        axis: "x",
-        containment: "#filedrag",
-        drag: function() {
-            var position = $(this).position();
-            var xPos = $(this).css('left');
-            $(this).find($('.pos')).text('X: ' + xPos);
-        },
-        start: function() {
-            $(this).find($('.pos')).css('display', 'block');
-        },
-        stop: function() {
-            $(this).find($('.pos')).css('display', 'none');
-
-            if ($(this).hasClass("draggable-x-newest")) {
-                $(this).removeClass("draggable-x-newest");
-                $("#filedrag .x-guide").clone().removeClass("x-guide").addClass("draggable-x-newest").appendTo("#filedrag").each(function() {
-                    makeGuideX(this);
-                });
-            }
-        }
-    });
-}
-
-
-function update_object(element, what, properties, transform){
-        if (!transform){ transform="elem";}
-        $.ajax({ url: "/get/" + what + "/" + element.data('id'),
-            success: function(data){ 
-                $(properties).each(function(){ 
-                    element.children('.img').css('top', "auto").css('left', 'auto');
-                    element.css(this +"", transform.replace('elem', data));
-                });
-            }
-        }); 
-}
-
-
-
 function grasscms_startup(){ 
     $('video,audio').mediaelementplayer(/* Options */);
-    $('.img').persistent('img'); // Make widgets and static html widgets persistent
+    $(".draggable-x-handle").each(function() { makeGuideX(this); });
+    $(".draggable-y-handle").each(function() { makeGuideY(this); });
     $('.static_html').persistent('static_html');
     $('textarea').each(function(){ 
         id=$(this).parent().attr('id') + "_textarea"; 
@@ -153,11 +89,9 @@ function grasscms_startup(){
             }
         }}); 
     });
-    $('.static_html.video').persistent('video');
     setup_standard_tools();
     ready_fake_files();
-    $(".draggable-x-handle").each(function() { makeGuideX(this); });
-    $(".draggable-y-handle").each(function() { makeGuideY(this); });
+
     $('#filedrag').disableSelection();
     $(document).mousemove( mouse );
 }
@@ -204,24 +138,10 @@ function new_object(type){
             console.debug(data_);
             if ( type == "menu"  && $('.menu')){ 
                 $(".menu").html(data_); 
-                $('.static_html.menu').persistent('static_html'); // TODO
+                $('.static_html').persistent('static_html'); // TODO
             } else {
                 $('#filedrag').append(data_); 
             } 
         }
-    }); 
-}
- 
-function delete_static_html(blog_id, id_){ 
-    /*
-        Delete a menu
-        After successful creation, it reloads the page.
-    */
-    $.ajax({
-        url:'/html/' + blog_id +'/' + id_, 
-        type : 'DELETE',
-        success: function(data_){
-            $('#'+id_).remove();
-        } 
     }); 
 }
