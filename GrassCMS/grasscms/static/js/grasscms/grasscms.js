@@ -19,6 +19,15 @@
     GrassCMS javascript functions.
 */
 
+function get_current_page(){
+    a=location.pathname.match(/\/page\/(.*)/);
+    if (!a){ return "index"; }
+    return a[1];
+}
+
+function get_number(id){
+    return id.replace(/[a-z]/gi, '').replace('_','');
+}
 
 function ready_fake_files(){ $('#fakefiles').live('click', function () { $('#files').click(); }); }
 
@@ -106,19 +115,6 @@ function makeGuideX(dom_element) {
     });
 }
 
-jQuery.fn.extend({ 
-        disableSelection : function() { 
-                return this.each(function() { 
-                        this.onselectstart = function() { return false; }; 
-                        this.unselectable = "on"; 
-                        jQuery(this).css('user-select', 'none'); 
-                        jQuery(this).css('-o-user-select', 'none'); 
-                        jQuery(this).css('-moz-user-select', 'none'); 
-                        jQuery(this).css('-khtml-user-select', 'none'); 
-                        jQuery(this).css('-webkit-user-select', 'none'); 
-                }); 
-        } 
-}); 
 
 function update_object(element, what, properties, transform){
         if (!transform){ transform="elem";}
@@ -142,18 +138,14 @@ jQuery.fn.extend({
     function set_dimensions(type, id, ui){ $.ajax({ url: '/set_dimensions/' + type + "/" + id + "?width=" + ui.size.width + "&height=" + ui.size.height });}
     function set_position(type, id, ui){ if ( rotating && type == "img" ){  return false; }; $.ajax({url: '/set_position/' + type + "/" + id + "?x=" + ui.position.top + "&y=" + ui.position.left }); }
 
-
     return this.each(function(){ 
         var element=$(this); 
         console.debug(element);
-        if (element.children(type).length > 0){ 
-            var id = element.children(type).attr('id').replace(/[a-z]/gi, '').replace('_','');
-        } else {
-            var id = element.attr('id').replace(/[a-z]/gi, '').replace('_','');
-        }
-
+        if (element.children(type).length > 0){ var id = get_number(element.children(type).attr('id'))}
+        else { var id = get_number(element.attr('id')) }
         if (element.parent().attr('id') != "filedrag" ){ element=element.parent();}
-        if (type == "img"){ element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); element=element.parent(); } else { element.resizable({ alsoResize: element.children('textarea'), stop: function(ev, ui){ set_dimensions(type, id, ui); }} ).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); }
+
+        if (type == "img"){ element.resizable({ stop: function(ev, ui){ set_dimensions(type, id, ui); }}).parent().draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); element=element.parent(); } else { element.resizable({ alsoResize: element.children('.alsoResizable'), stop: function(ev, ui){ set_dimensions(type, id, ui); }} ).draggable({ stop:function(ev, ui){ set_position(type, id, ui); }} ); }
 
         if (type == "img"){ 
             element.parent().data('id', id);
@@ -171,34 +163,30 @@ jQuery.fn.extend({
     });
 }});
 
-function get_current_page(){
-    a=location.pathname.match(/\/page\/(.*)/)[1];
-    if (!a){ return "index"; }
-    return a
-}
-
-function get_number(id){
-    return id.replace(/[a-z]/gi, '').replace('_','');
-}
 
 function grasscms_startup(){ 
-    console.debug(get_current_page());
     $('video,audio').mediaelementplayer(/* Options */);
     $('.img').persistent('img'); // Make widgets and static html widgets persistent
-
     $('.static_html').persistent('static_html');
-    $('textarea').each(function(){ id=$(this).parent().attr('id') + "_textarea"; $(this).attr('id', id); $('#'+id).wysihtml5({"events": {
-        "focus": function(el) { 
-            $(this.textareaElement.parentNode).children('.handler').show()
-            $(this.toolbar.container).show();
-        },
-        "blur": function() { 
-            $(this.textareaElement.parentNode).children('.handler').hide()
-            $(this.toolbar.container).hide();
-        },
-        "change": function() { console.debug("CHANGED"); 
-            update_blob(this.composer.doc.body.innerHTML, get_current_page(), get_number($(this.textarea.element).attr('id')) ); 
-        }}} ); });
+    $('textarea').each(function(){ 
+        id=$(this).parent().attr('id') + "_textarea"; 
+        $(this).attr('id', id); 
+        $('#'+id).wysihtml5({"events": {
+            "focus": function(el) { 
+                $(this.textareaElement.parentNode).children('.handler').show()
+                $(this.toolbar.container).show();
+            },
+            "blur": function() { 
+                $(this.textareaElement.parentNode).children('.handler').hide()
+                $(this.toolbar.container).hide();
+            },
+            "change": function() { console.debug("CHANGED"); 
+                update_blob(this.composer.doc.body.innerHTML, 
+                    get_current_page(), 
+                    get_number($(this.textarea.element).attr('id')) ); 
+            }
+        }}); 
+    });
     $('.static_html.video').persistent('video');
     setup_standard_tools();
     ready_fake_files();

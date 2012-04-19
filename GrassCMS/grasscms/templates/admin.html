@@ -91,7 +91,6 @@
             <div class="draggable-y-handle draggable-y draggable-y-newest"> <span class="pos"></span></div>
         {%endblock%}
         {% if static_htmls %}{%for static_html in static_htmls %}{{ static_html|html|safe }}{%endfor%}{%endif%}
-        {% if imgs %} {% for img in imgs %} {{ img|image|safe }}{%endfor%}{%endif%}
     </div>
 
     <div class="modal" id="first" style="display:none">
