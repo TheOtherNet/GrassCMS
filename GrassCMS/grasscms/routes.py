@@ -1,5 +1,4 @@
 from grasscms.models import Blog, Page, Html
-from grasscms.forms import *
 from grasscms.openid_login import *
 from grasscms.converters import *
 from grasscms.objects import *

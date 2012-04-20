@@ -10,8 +10,8 @@ app = Flask(__name__)
 app.config.update(
         DATABASE_URI = 'sqlite:////home/grasscms/grasscms.db',
         SECRET_KEY = 'Foobar',
-	STATIC_ROOT =  'http://grasscms.com/static/',
-	SERVER_NAME = "grasscms.com",
+    	STATIC_ROOT =  'http://grasscms.com/static/',
+	    SERVER_NAME = "grasscms.com",
         UPLOAD_FOLDER = UPLOAD_FOLDER,
         DEBUG = True )
 

@@ -21,30 +21,24 @@
 
 function get_current_page(){
     a=location.pathname.match(/\/(.*)/);
-    if (!a){ return "index"; }
+    if (a == ""){ return "index"; }
     return a[1];
+}
+
+function get_o(object){ 
+    return $(object).parent().parent().parent().parent();
 }
 
 function get_number(id){
     return id.replace(/[a-z]/gi, '').replace('_','');
 }
 
-function ready_fake_files(){ $('#fakefiles').live('click', function () { $('#files').click(); }); }
-
-function increment_zindex(elem){ var target=$(elem); 
-    var id = target.attr('id').replace(/[a-z]/gi, '').replace('_','');
-    var type = target.data('type');
-    if (target.css('z-index') == "auto" ){ target.css('z-index', 2); }
-    target.css('z-index', parseInt(target.css('z-index'), 10) + 1 );
-    $.ajax({ url: "/set/zindex/" + type + "/" + id + "/" + target.css('z-index') })  // TODO: This only supports images =(
+function increment_zindex(target){ 
+    $(target).persistentcss('z-index', parseInt(target.css('z-index'), 10) + 1 );
 }
             
-function downgrade_zindex(elem){ target=$(elem); 
-    var id = target.attr('id').replace(/[a-z]/gi, '').replace('_','');
-    var type = target.data('type');
-    if (target.css('z-index') == "auto" ){ target.css('z-index', 1); }
-    target.css('z-index', parseInt(target.css('z-index'), 10) - 1 );
-    $.ajax({ url: "/set/zindex/" +type+"/" + id + "/" + target.css('z-index')})  // TODO: This only supports images =(
+function downgrade_zindex(target){
+    $(target).persistentcss('z-index', parseInt(target.css('z-index'), 10) - 1 );
 }
 
 function delete_page(){
@@ -61,11 +55,39 @@ function create_page(){
     new_object('menu', get_current_page());
 }
 
+function delete_(object){
+    $.ajax({
+        url:'/delete/' + object.attr('id'),
+        type : 'DELETE', 
+        success: function(data_){ object.hide(); }
+    });
+}
+
+function new_object(type, page){
+    /*
+        Assign / Update a menu to a blog.
+        After successful creation, it reloads the page.
+    */
+    if (!page || page == ""){ page=get_current_page(); }
+    if (!page || page == ""){ page="index"; }
+    $.ajax({
+        url:'/new/' + type +'/' + page,
+        type : 'POST', 
+        success: function(data_){ 
+            if ( type == "menu"  && $('.menu')[0]){ 
+                $(".menu").html(data_); 
+                $('.static_html').persistent('static_html'); // TODO
+            } else {
+                $('#filedrag').append(data_); 
+           } 
+        }
+    }); 
+}
+
 function grasscms_startup(){ 
     $('video,audio').mediaelementplayer(/* Options */);
     $(".draggable-x-handle").each(function() { makeGuideX(this); });
     $(".draggable-y-handle").each(function() { makeGuideY(this); });
-
 
     $('textarea').each(function(){ 
         id=$(this).parent().attr('id') + "_textarea"; 
@@ -87,15 +109,13 @@ function grasscms_startup(){
         }}); 
     });
 
-    $('.static_html').persistent('static_html');
-
     setup_standard_tools();
-    ready_fake_files();
+    $('#fakefiles').live('click', function () { $('#files').click(); }); 
     $('#filedrag').disableSelection();
+    $('.static_html').persistent('static_html');
 }
 
 function setup_standard_tools(){
-
     $("#filedrag>div>img").hoverIntent({    
         timeout: 500, 
         out: function(e){ $('.standard_tools').hide(); }, 
@@ -118,43 +138,10 @@ function setup_standard_tools(){
         min: 0, 
         max: 1, 
         step: 0.01, 
-        value: 1,
+        value: 1, // TODO This should NOT be one, clearly.
         orientation: "horizontal",
-        slide: function(e,ui){ // HOrrible hacks =(
-            target = get_o(e.target);
-            $.ajax({ url: "/set/opacity/" + target.attr('id') + "/" + ui.value }) 
-            $(e.target).css('opacity', ui.value);
+        slide: function(e,ui){
+            $(e.target).persistentcss('opacity', ui.value);
         }
     });
-}
-
-function get_o(object){ return $(object).parent().parent().parent().parent();}
-function assign_menu(){ new_object('menu'); }
-
-function delete_(object){
-    $.ajax({
-        url:'/delete/' + object.attr('id'),
-        type : 'DELETE', 
-        success: function(data_){ object.hide(); }
-    });
-}
-
-function new_object(type, page){
-    /*
-        Assign / Update a menu to a blog.
-        After successful creation, it reloads the page.
-    */
-    if (!page){ page=get_current_page(); }
-    $.ajax({
-        url:'/new/' + type +'/' + page,
-        type : 'POST', 
-        success: function(data_){ 
-            if ( type == "menu"  && $('.menu')){ 
-                $(".menu").html(data_); 
-                $('.static_html').persistent('static_html'); // TODO
-            } else {
-                $('#filedrag').append(data_); 
-           } 
-        }
-    }); 
 }
