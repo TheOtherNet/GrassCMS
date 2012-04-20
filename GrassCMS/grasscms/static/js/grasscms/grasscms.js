@@ -77,8 +77,10 @@ function new_object(type, page){
             if ( type == "menu"  && $('.menu')[0]){ 
                 $(".menu").html(data_); 
                 $('.static_html').persistent('static_html'); // TODO
+                document.location.reload();
             } else {
                 $('#filedrag').append(data_); 
+                document.location.reload();
            } 
         }
     }); 

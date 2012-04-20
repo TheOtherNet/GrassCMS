@@ -1,10 +1,13 @@
 {% extends "layout.html" %}
+{% block title%} {{title}}{%endblock%}
+
+{%block head%}
+    <meta name="description" content="{{description}}" />
+{%endblock%}
+
 {% block body %}
     <div>
         <div class="warn">{{ messages }}</div>
         {% if static_htmls %} {% for html_ in static_htmls %} {{ html_|html|safe }}{%endfor%}{%endif%}
-        {% if imgs %} {% for img in imgs %} {{ img|image|safe }}{%endfor%}{%endif%}
-        {% if txt_blobs %} {% for txt in txt_blobs %} {{txt|text|safe }} {%endfor%} {%endif%}
-
     </div>
 {% endblock %}

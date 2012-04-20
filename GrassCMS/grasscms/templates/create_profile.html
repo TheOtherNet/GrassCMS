@@ -13,10 +13,25 @@
         </div>
 
         <div class="control-group">
+            <label class="control-label" for="subdomain">Subdomain</label>
+            <div class="controls">
+                <input type="text" id="subdomain" name="subdomain" value="{{ request.values.name.replace(' ', '') }}" required />
+                <p class="help-block"> GrassCMS provides free subdomains under grasscms.com, choose yours </p> 
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label" for="page">Page</label>
             <div class="controls">
                 <input type="text" id="page" name="page" value="{{ request.values.name }}" required />
                 <p class="help-block"> This will be your page name, you would not be able to change it so be careful </p>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="description">Description</label>
+            <div class="controls">
+                <textarea id="description" name="description" placeholder="Insert a short description of your site" required></textarea>
             </div>
         </div>
 

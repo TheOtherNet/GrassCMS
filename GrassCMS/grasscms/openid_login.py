@@ -4,8 +4,8 @@ from grasscms.models import Page, User, Blog
 from flaskext.openid import OpenID
 oid = OpenID(app)
 
-def check_form(name, email, page_name):
-    possible_blog = Blog.query.filter_by(name=page_name).first()
+def check_form(name, email, page_name, subdomain):
+    possible_blog = Blog.query.filter_by(subdomain=subdomain).first()
     if not name:
         flash(u'Error: you have to provide a name')
     elif '@' not in email: # TODO: Do this with wtf forms.
@@ -38,7 +38,8 @@ def login(subdomain=False):
         to start the OpenID machinery.
     """
     if g.user is not None:
-        return redirect("http://" + g.user.name.replace(' ', '_') + "." + app.config['SERVER_NAME'])
+        blog = Blog.query.filter_by(id=g.user.blog).first()
+        return redirect("http://" + blog.subdomain + "." + app.config['SERVER_NAME'])
         
     if request.method == 'POST':
         openid = request.form.get('openid_identifier')
@@ -64,7 +65,8 @@ def create_or_login(resp):
             os.mkdir(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ))
         except Exception, error:
             app.logger.info(error)
-        return redirect("http://" + g.user.name.replace(' ', '_') + "." + app.config['SERVER_NAME'])
+        blog = Blog.query.filter_by(id=g.user.blog).first()
+        return redirect("http://" + blog.subdomain + "." + app.config['SERVER_NAME'])
         
     return redirect(url_for('create_profile', next=oid.get_next_url(),
                             name=resp.fullname or resp.nickname,
@@ -83,9 +85,11 @@ def create_profile():
         form['name'] = request.form['name']
         form['email'] = request.form['email']
         form['page_name'] = request.form['page']
-        if check_form(form['name'], form['email'], form['page_name']):
+        form['subdomain'] = request.form['subdomain'].lower()
+        form['description'] = request.form['description']
+        if check_form(form['name'], form['email'], form['page_name'], form['subdomain']):
             flash(u'Profile successfully created')
-            blog = Blog(form['page_name'])
+            blog = Blog(form['page_name'], form['subdomain'], form['description'])
             db_session.add(blog) # Create a blog with that name
             db_session.commit()
 
@@ -93,9 +97,10 @@ def create_profile():
             db_session.add(page)
             db_session.commit()
 
-            db_session.add(User(form['name'], form['email'], session['openid'], blog.id, page.id)) # Add a user with that blog referenced
+            db_session.add(User(form['name'], form['email'], 
+                session['openid'], blog.id, page.id)) 
             db_session.commit()
-            return redirect("http://" + form['page_name'].replace(' ', '_') + "." + app.config['SERVER_NAME'] + "?first_run=true")
+            return redirect("http://" + form['subdomain'] + "." + app.config['SERVER_NAME'] + "?first_run=true")
     return render_template('create_profile.html', next_url=oid.get_next_url())
 
 @app.route('/delete-profile', methods=['DELETE'])

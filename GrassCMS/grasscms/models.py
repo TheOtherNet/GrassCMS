@@ -47,8 +47,12 @@ class Blog(Base):
     __tablename__ = "blogs"
     id = Column(Integer, primary_key=True)
     name = Column(String(60))
-    def __init__(self, blog):
+    subdomain = Column(String(60))
+    description = Column(String(60))
+    def __init__(self, blog, subdomain, description):
         self.name = blog
+        self.subdomain = subdomain
+        self.description = description
 
 class Page(Base):
     __tablename__ = "pages"

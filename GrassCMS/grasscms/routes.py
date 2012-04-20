@@ -39,28 +39,39 @@ def landing():
 @app.route('/<page>', subdomain='<blog_name>')
 @app.route('/', subdomain='<blog_name>')
 def page(blog_name=False, page="index", main_url=False):
+    blog_name=blog_name.lower()
     user_blog, user_page = check_user()
     try:
-        blog = Blog.query.filter("UPPER(%s) LIKE '%s%s%s'" %("name", '%', urllib.unquote(blog_name).upper(), '%')).first()
+        blog = Blog.query.filter_by(subdomain=blog_name).first()
         page = Page.query.filter_by(blog=blog.id, name = page).first()
     except AttributeError, error:
-        page = user_page
-        blog = user_blog
-    
-    if not page:
+        pass
+
+    if not blog:
+        return render_template('start_your_blog.html', url=app.config['SERVER_NAME'])
+    elif not page:
         abort(404)
+
     if g.user:
-        main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+        main_url = "http://" + user_blog.subdomain + "." + app.config['SERVER_NAME'] 
 
     if blog == user_blog and g.user:
         g.user_is_admin = True
+
     static_htmls = Html.query.filter_by(blog=blog.id, page=page.id)
+
+    # In a future, each page must have a full title.
+    title=page.name
+    if title == "index": 
+        title = blog.name
+
     if not g.user_is_admin:
         return render_template( 'index.html', main_url=main_url, page=page, 
-            blog=user_blog, static_htmls=static_htmls)
+            blog=user_blog, static_htmls=static_htmls, 
+            description=blog.description, title=title)
     else:
         return render_template( 'admin.html', main_url=main_url, page=page,
-            blog=user_blog, static_htmls=static_htmls, 
+            blog=user_blog, static_htmls=static_htmls, title=title, 
             first_run=request.args.get('first_run'))
 
 @app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")

@@ -4,13 +4,11 @@
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
-    <title>GrassCMS</title>
+    <title>{%block title%}{%endblock%}</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="description" content="Create webpages easily in seconds">
-    <meta name="author" content="David Francos Cuartero. Dario Ferrer Ferruz. Francisco Sanz Garcia">
     <meta name="viewport" content="width=device-width">
-
+    <meta name="generator" content="grasscms" />
     <link rel="stylesheet" href="{{static('css/style.css')}}">
     <link rel="stylesheet" href="{{static('css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{static('css/bootstrap-responsive.min.css')}}">
@@ -20,6 +18,8 @@
     <script src="{{static('js/plugins.js')}}"></script>
     <script src="{{static('js/bootstrap.min.js')}}"></script>
     <script src="{{static('js/script.js')}}"></script>
+    {% block head %}
+    {% endblock %}
     <!--
     <script>
         var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
@@ -31,7 +31,8 @@
     <!--[if lt IE 9]>
         <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    {%block head %} {%endblock%}
+
+
 </head>
 
 <body style="padding-top:90px; position:relative;" >
