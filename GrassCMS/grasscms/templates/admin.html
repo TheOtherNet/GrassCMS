@@ -57,6 +57,12 @@
         </li>
 
         <li class="menu_button">
+                <a onclick="new_object('menu'); return false" href="#">
+                <img title="Insert a global menu here" src="{{static('images/menu.png')}}" />
+                </a>
+        </li>
+
+        <li class="menu_button">
                 <a onclick="delete_page('{{page.name}}'); return false" href="#">
                 <img title="Delete this entire page" src="{{static('img/delete.png')}}" />
                 </a>
