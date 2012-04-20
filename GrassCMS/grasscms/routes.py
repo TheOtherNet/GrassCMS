@@ -124,6 +124,8 @@ def get(what, id_, subdomain=False):
 @app.route('/set/<what>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set(what, id_, result, subdomain=False):
     element = get_element_by_id(id_)
+    if result == "in_post":
+        result = request.form['result']
     try:
         setattr(element, what, result)
         db_session.commit()

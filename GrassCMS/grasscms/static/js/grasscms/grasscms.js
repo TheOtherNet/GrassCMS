@@ -59,7 +59,7 @@ function create_page(){
 
 function delete_(object){
     $.ajax({
-        url:'/delete/' + $(object).attr('id') + "/" + is_page,
+        url:'/delete/' + $(object).attr('id') + "/", 
         type : 'DELETE', 
         success: function(data_){ $(object).hide(); }
     });
@@ -106,9 +106,7 @@ function grasscms_startup(){
                 $(this.toolbar.container).hide();
             },
             "change": function() { 
-                update_blob(this.composer.doc.body.innerHTML, 
-                    get_current_page(), 
-                    get_number($(this.textarea.element).attr('id')) ); 
+                $(this.textarea.element).persistentdata('content', this.composer.doc.body.innerHTML);
             }
         }}); 
     });
