@@ -92,13 +92,12 @@ def new(type_, page, subdomain=False):
     object_base = Objects()
     return getattr(object_base, type_)(page)
     
-@app.route('/delete/<id_>/<is_page>', methods=['DELETE'], subdomain="<subdomain>")
-@app.route('/delete/<id_>', methods=['DELETE'], subdomain="<subdomain>")
-def delete(id_, is_page=False, subdomain=False):
-    if is_page:
+@app.route('/delete/<id_>/<name>', methods=['DELETE'], subdomain="<subdomain>")
+@app.route('/delete/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
+def delete(id_, name=False, subdomain=False):
+    if name:
         blog = Blog.query.filter_by(id=g.user.blog).first()
         page = Page.query.filter_by(name=name, blog=blog.id).first()
-
         if page:
             db_session.delete(page)
             db_session.commit()
@@ -114,6 +113,8 @@ def delete(id_, is_page=False, subdomain=False):
 @app.route('/get/<what>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def get(what, id_, subdomain=False):
     element = get_element_by_id(id_)
+    if id_ == "undefined":
+        abort(404)
     try:
         return json.dumps(getattr(element, what)) 
     except Exception, error:

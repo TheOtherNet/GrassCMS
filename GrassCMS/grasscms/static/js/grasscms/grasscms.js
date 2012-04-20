@@ -42,12 +42,13 @@ function downgrade_zindex(target){
 }
 
 function delete_page(){
-    if (page_id == "index"){ alert ("You cannot delete index page"); return false; }
-    $.ajax({ url:'/delete/page/' + get_current_page(), 
-        success: function(data){ 
-            new_object('menu', get_current_page()); 
-            document.location.href="/"; 
-    }});
+    if (get_current_page() == "index"){ alert ("You cannot delete index page"); return false; }
+    $.ajax({
+        url:'/delete/page/' + get_current_page(),
+        type : 'DELETE', 
+    });
+    new_object('menu', 'index'); 
+    document.location.href="/"; 
 }
 
 function create_page(){ 
@@ -55,11 +56,12 @@ function create_page(){
     new_object('menu', get_current_page());
 }
 
+
 function delete_(object){
     $.ajax({
-        url:'/delete/' + object.attr('id'),
+        url:'/delete/' + $(object).attr('id') + "/" + is_page,
         type : 'DELETE', 
-        success: function(data_){ object.hide(); }
+        success: function(data_){ $(object).hide(); }
     });
 }
 
