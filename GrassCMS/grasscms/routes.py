@@ -125,7 +125,7 @@ def get(what, id_, subdomain=False):
 def set(what, id_, result, subdomain=False):
     element = get_element_by_id(id_)
     if result == "in_post":
-        result = request.form['result']
+        result ="<div class='handler'></div><textarea class='alsoResizable'>%s</textarea>" %(request.form['result'])
     try:
         setattr(element, what, result)
         db_session.commit()

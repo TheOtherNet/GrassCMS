@@ -19,6 +19,13 @@
     GrassCMS javascript functions.
 */
 
+jQuery.fn.outerHTML = function(s) {
+    return s
+        ? this.before(s).remove()
+        : jQuery("<p>").append(this.eq(0).clone()).html();
+};
+
+
 function get_current_page(){
     a=location.pathname.match(/\/(.*)/);
     if (a == ""){ return "index"; }
@@ -105,8 +112,8 @@ function grasscms_startup(){
                 $(this.textareaElement.parentNode).children('.handler').hide()
                 $(this.toolbar.container).hide();
             },
-            "change": function() { 
-                $(this.textarea.element).persistentdata('content', this.composer.doc.body.innerHTML);
+            "change": function() { window.foo=this;
+                $(this.textareaElement).persistentdata('content', this.composer.doc.body.innerHTML);
             }
         }}); 
     });
