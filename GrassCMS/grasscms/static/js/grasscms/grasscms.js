@@ -124,7 +124,7 @@ function grasscms_startup(){
     $('#fakefiles').live('click', function () { $('#files').click(); }); 
     $('#filedrag').disableSelection();
     $('.static_html').persistent('static_html');
-
+    $('.static_html>img').each(function(){ $(this).rotatable();});
     $('.slider').each(function(){
         $(this).slider({ 
             min: 0, 
@@ -139,6 +139,12 @@ function grasscms_startup(){
             }
         });
     });
+    options={placement:'bottom'}; 
+    $('#addpage').tooltip(options); 
+    $('#addmenu').tooltip(options);
+    $('#addtext').tooltip(options);
+    $('#fakefiles').tooltip(options);
+    $('#delpage').tooltip(options);
 
 }
 

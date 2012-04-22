@@ -40,7 +40,6 @@ jQuery.fn.extend({
     }
 
     function set_position(type, id, ui){ 
-        if ( rotating && type == "img" ){  return false; }
         set_data(id, 'x', ui.position.top);
         set_data(id, 'y', ui.position.left);
     }

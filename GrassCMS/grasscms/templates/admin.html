@@ -4,7 +4,7 @@
 
 {% block head %}
     <script src="{{static('js/jquery-ui.min.js')}}"></script>
-    <script src="{{static('js/grasscms/jquery.rotation.js')}}"></script>
+    <script src="{{static('js/jquery.rotate.js')}}"></script>
     <script src="{{static('js/grasscms/jquery.persistence.js')}}"></script>
     <script src="{{static('js/grasscms/jquery.guides.js')}}"></script>
     <script src="{{static('js/grasscms/grasscms.js')}}"></script>
@@ -14,10 +14,8 @@
     <script src="{{static('js/mediaelement-and-player.min.js')}}"></script>
     <link rel="stylesheet" href="{{static('css/mediaelementplayer.css')}}" /></code>
     <link rel="stylesheet" href="{{static('css/bootstrap-wysihtml5.css')}}" /></code>
-
-    <script>
-        $(function(){ grasscms_startup(); {% if first_run == "true" %} $('#first').modal('toggle'); {%endif%} });
-    </script>
+    {% if first_run == "true" %} <script src="{{static('js/grasscms/firstrun.js')}}"></script> {%endif%}
+    <script> $(function(){ grasscms_startup(); }); </script>
 {%endblock%}
 
 {% block admin_menu %}
@@ -35,14 +33,14 @@
 
         <li class="menu_button">
                 <a onclick="new_object('text'); return false" href="#">
-                    <img title="Add new text" src="{{static('images/text.png')}}" />
+                    <img title="Add new text" src="{{static('images/text.png')}}" id="addtext" />
                 </a>
         </li>
 
         <li class="menu_button">
             <form id="newpage" action="#" onsubmit="create_page(); return false">
 
-                <img title="Add new page" src="{{static('images/page.png')}}" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" />
+                <img title="Add new page" src="{{static('images/page.png')}}" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" id="addpage" />
 
                 <div id="new_page_div" style="display:inline; display:none; ">
                     <input type="text" id="new_page" name="page" placeholder="Page name" required />
@@ -58,13 +56,13 @@
 
         <li class="menu_button">
                 <a onclick="new_object('menu'); return false" href="#">
-                <img title="Insert a global menu here" src="{{static('images/menu.png')}}" />
+                <img id="addmenu" title="Insert a global menu here" src="{{static('images/menu.png')}}" />
                 </a>
         </li>
 
         <li class="menu_button">
                 <a onclick="delete_page('{{page.name}}'); return false" href="#">
-                <img title="Delete this entire page" src="{{static('img/delete.png')}}" />
+                <img id="delpage" title="Delete this entire page" src="{{static('img/delete.png')}}" />
                 </a>
         </li>
 
@@ -105,7 +103,12 @@
             <h3>Welcome to GrassCMS</h3>
         </div>
         <div class="modal-body">
-            <p>Here should go a video</p>
+            <p> Now you'll be able to edit your page, note that:</p>
+            <ul>
+                <li>Use the add button to import almost any kind of files</li>
+                <li>Drag&Drop stuff, edit, everything will be exactly like you leave it</li>
+                <li>You can add more pages, menus, delete them, import videos, play with transparency... just do it!</li>
+            </ul>
         </div>
         <div class="modal-footer">
             <a data-dismiss="modal" href="#" class="btn">Close</a>

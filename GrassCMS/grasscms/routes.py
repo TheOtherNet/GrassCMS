@@ -37,8 +37,9 @@ def landing():
     return render_template('landing.html', main_url=main_url, page=user_page, blog=user_blog)
 
 @app.route('/<page>', subdomain='<blog_name>')
+@app.route('/<page>/<subpage>', subdomain='<blog_name>')
 @app.route('/', subdomain='<blog_name>')
-def page(blog_name=False, page="index", main_url=False):
+def page(blog_name=False, page="index", subpage=0, main_url=False):
     blog_name=blog_name.lower()
     user_blog, user_page = check_user()
     try:
