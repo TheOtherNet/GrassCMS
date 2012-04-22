@@ -1,5 +1,6 @@
 /* HTML5 Boilerplate  */
 textarea{ border:0px!important; margin-left:3px!important; margin-top: 4px!important; width:97%!important; resize:none!important; height:85%!important; margin-top:10px; }
+
 .draggable{ z-index:2000; }
 .menu_button a{ padding-top:4px!important; padding-bottom:4px!important;}
 .menu_button { display:inline;}
@@ -8,7 +9,10 @@ textarea{ border:0px!important; margin-left:3px!important; margin-top: 4px!impor
 .menu_button form{ margin:0px!important; }
 .wysihtml5-toolbar{ display:none; width: 500px!important; position: fixed!important;top: 7px!important;z-index: 2000!important;
 left: 380px!important; }
-iframe { border:0px!important; width:100%!important; height:100%!important; }
+iframe { border:0px!important; width:95%!important; height:90%!important; box-shadow:none!important; -webkit-box-shadow:0px!important; }
+
+.with_shadow{ box-shadow:rgba(0,0,0,1) 1px 1px 1px !important; -webkit-box-shadow: rgba(0,0,0,1) 1px 1px 1px !important; }
+
 .cke_toolbox_collapser { display:none; }
 
 .standard_tools{
