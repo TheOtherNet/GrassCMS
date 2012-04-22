@@ -133,7 +133,9 @@ function grasscms_startup(){
             value: $(this).parent().parent().parent().css('opacity'), // TODO This should NOT be one, clearly.
             orientation: "horizontal",
             slide: function(e,ui){
-                $(e.target).parent().parent().parent().parent().persistentcss('opacity', ui.value);
+                if ($(e.target).parent().parent().parent().parent().attr('id') != "filedrag"){
+                    $(e.target).parent().parent().parent().parent().persistentcss('opacity', ui.value);
+                }
             }
         });
     });

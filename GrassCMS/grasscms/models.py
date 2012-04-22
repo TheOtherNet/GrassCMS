@@ -36,7 +36,7 @@ class BaseWidget(object):
         self.height = height
         self.rotation = 0
         self.opacity = 1
-        self.zindex=1
+        self.zindex=1003
         self.field_name = field_name
 
 class Html(BaseWidget, Base):

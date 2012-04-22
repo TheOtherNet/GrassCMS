@@ -2,10 +2,6 @@ from grasscms.models import Html, Page, Blog
 from grasscms.main import *
 
 def render_html(object_, type_=False, is_ajax=False):
-    if object_.field_name == "text":
-        zindex="1100"
-    else:
-        zindex=object_.zindex
     if object_.rotation != "0":
         rotation = "-moz-transform: rotate(%sdeg); -webkit-transform:rotate(%sdeg);\
                 -o-transform(%sdeg); -ms-transform(%sdeg); " %( object_.rotation, 
@@ -14,7 +10,7 @@ def render_html(object_, type_=False, is_ajax=False):
         rotation = ""
     return '<div style="z-index:%s; position:fixed; display:block; opacity:%s;\
             width:%spx; height:%spx; top:%spx;left:%spx;%s" class="static_html"\
-            id="%s"> %s </div>' %(zindex, object_.opacity, object_.width,
+            id="%s"> %s </div>' %(object_.zindex, object_.opacity, object_.width,
             object_.height, object_.x, object_.y, rotation,
              object_.id_, object_.content)
 
