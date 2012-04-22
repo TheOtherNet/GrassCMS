@@ -27,6 +27,11 @@ def check_user():
         user_blog = False
     return (user_blog, user_page)
 
+@app.route('/image/edit', subdomain="<subdomain>")
+def svgedit(subdomain=False):
+    user_page, user_blog = check_user()
+    return render_template('svg-editor.html', page=request.args.get('page'))
+
 @app.route('/')
 def landing():
     user_page, user_blog = check_user()
@@ -75,6 +80,12 @@ def page(blog_name=False, page="index", subpage=0, main_url=False):
             blog=user_blog, static_htmls=static_htmls, title=title, 
             first_run=request.args.get('first_run'))
 
+@app.route('/svgicons.svg', subdomain="<subdomain>")
+@app.route('/svgicons.svg')
+def icons(subdomain=False):
+    with open(data_dir + "/static/svg-edit/images/svg_edit_icons.svg") as f:
+        return f.read()
+
 @app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
 @app.route("/upload/<page>", methods=("GET", "POST"))
 def upload_(page, subdomain=False):
@@ -91,7 +102,11 @@ def upload_(page, subdomain=False):
 @app.route('/new/<type_>/<page>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def new(type_, page, subdomain=False):
     object_base = Objects()
-    return getattr(object_base, type_)(page)
+    try:
+        result = request.form['result']
+    except KeyError, err:
+        result = ""
+    return getattr(object_base, type_)(page, result)
     
 @app.route('/delete/<id_>/<name>', methods=['DELETE'], subdomain="<subdomain>")
 @app.route('/delete/<id_>/', methods=['DELETE'], subdomain="<subdomain>")

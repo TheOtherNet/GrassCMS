@@ -34,8 +34,8 @@ class Objects(object):
     def image(self, page, content):
         blog, page = self.get_blog_and_page(page)
         object_ = Html(field_name="image", 
-            content = "<img src='%suploads/%s/%s' class='alsoResizable' />" \
-                %(app.config['STATIC_ROOT'], g.user.id, content),
+            content = "<img src='%s' class='alsoResizable' />" \
+                %(content),
             user=g.user, page=page, blog=blog.id)
         db_session.add(object_)
         db_session.commit()
@@ -54,7 +54,7 @@ class Objects(object):
         db_session.commit()
         return render_html(object_, is_ajax=True)
     
-    def page(self, page):
+    def page(self, page, content=False):
         blog = Blog.query.filter_by(id=g.user.blog).first()
         page_ = Page.query.filter_by(blog = blog.id, name = page).first()
         if not page_:
@@ -65,7 +65,7 @@ class Objects(object):
         else:
             abort(401)
     
-    def menu(self, page):
+    def menu(self, page, content=False):
         blog, page = self.get_blog_and_page(page)
         menu_blog = Html.query.filter_by(blog=blog.id, page=page, field_name="menu" ).first()
         if not menu_blog:

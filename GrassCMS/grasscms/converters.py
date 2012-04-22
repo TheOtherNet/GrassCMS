@@ -53,7 +53,7 @@ def do_conversion(filename, path):
     """
     type_ = get_type(path)
     if type_[0] == "image":
-        path = filename
+        path = '%suploads/%s/%s' %(app.config['STATIC_ROOT'], g.user.id, filename),
         type_ = "image"
     elif type_[0] == "video" or type_[1] == "ogg":
         try:
