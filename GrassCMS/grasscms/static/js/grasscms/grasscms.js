@@ -128,11 +128,11 @@ function grasscms_startup(){
     $('.slider').slider({ 
         min: 0, 
         max: 1, 
-        step: 0.01, 
+        step: 0.1, 
         value: 1, // TODO This should NOT be one, clearly.
         orientation: "horizontal",
         slide: function(e,ui){
-            $(e.target).persistentcss('opacity', ui.value);
+            $(e.target).parent().parent().parent().parent().persistentcss('opacity', ui.value);
         }
     });
 }
