@@ -124,7 +124,7 @@ function grasscms_startup(){
     $('#fakefiles').live('click', function () { $('#files').click(); }); 
     $('#filedrag').disableSelection();
     $('.static_html').persistent('static_html');
-    $('.static_html>img').each(function(){ $(this).rotatable();});
+    $('.static_html').each(function(){ $('#'+$(this).attr('id')).rotatable(); });
     $('.slider').each(function(){
         $(this).slider({ 
             min: 0, 
