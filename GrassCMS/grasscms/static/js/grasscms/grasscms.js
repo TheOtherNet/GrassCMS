@@ -106,9 +106,11 @@ function grasscms_startup(){
         $('#'+id).wysihtml5({"events": {
             "focus": function(el) { 
                 $(this.textareaElement.parentNode).children('.handler').show()
+                $(this.textareaElement.parentNode).children('iframe').toggleClass('with_shadow');
                 $(this.toolbar.container).show();
             },
             "blur": function() { 
+                $(this.textareaElement.parentNode).children('iframe').toggleClass('with_shadow');
                 $(this.textareaElement.parentNode).children('.handler').hide()
                 $(this.toolbar.container).hide();
             },
@@ -122,6 +124,17 @@ function grasscms_startup(){
     $('#fakefiles').live('click', function () { $('#files').click(); }); 
     $('#filedrag').disableSelection();
     $('.static_html').persistent('static_html');
+
+    $('.slider').slider({ 
+        min: 0, 
+        max: 1, 
+        step: 0.01, 
+        value: 1, // TODO This should NOT be one, clearly.
+        orientation: "horizontal",
+        slide: function(e,ui){
+            $(e.target).persistentcss('opacity', ui.value);
+        }
+    });
 }
 
 function setup_standard_tools(){
@@ -143,14 +156,5 @@ function setup_standard_tools(){
         over: function(e){ $(e.currentTarget).children('.standard_tools').show(); }
     });
 
-    $('.slider').slider({ 
-        min: 0, 
-        max: 1, 
-        step: 0.01, 
-        value: 1, // TODO This should NOT be one, clearly.
-        orientation: "horizontal",
-        slide: function(e,ui){
-            $(e.target).persistentcss('opacity', ui.value);
-        }
-    });
+
 }
