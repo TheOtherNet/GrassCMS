@@ -125,30 +125,22 @@ function grasscms_startup(){
     $('#filedrag').disableSelection();
     $('.static_html').persistent('static_html');
 
-    $('.slider').slider({ 
-        min: 0, 
-        max: 1, 
-        step: 0.1, 
-        value: 1, // TODO This should NOT be one, clearly.
-        orientation: "horizontal",
-        slide: function(e,ui){
-            $(e.target).parent().parent().parent().parent().persistentcss('opacity', ui.value);
-        }
+    $('.slider').each(function(){
+        $(this).slider({ 
+            min: 0, 
+            max: 1, 
+            step: 0.1, 
+            value: $(this).parent().parent().parent().css('opacity'), // TODO This should NOT be one, clearly.
+            orientation: "horizontal",
+            slide: function(e,ui){
+                $(e.target).parent().parent().parent().parent().persistentcss('opacity', ui.value);
+            }
+        });
     });
+
 }
 
 function setup_standard_tools(){
-    $("#filedrag>div>img").hoverIntent({    
-        timeout: 500, 
-        out: function(e){ $('.standard_tools').hide(); }, 
-        over: function(e){ $(e.currentTarget).parent().children('.standard_tools').show(); }
-    });
-
-    $("#filedrag>div>textarea").hoverIntent({    
-        timeout: 500, 
-        out: function(e){ $(e.currentTarget).children('.standard_tools').parent().hide(); }, 
-        over: function(e){ $(e.currentTarget).children('.standard_tools').parent().show(); }
-    });
 
     $("#filedrag>div").hoverIntent({    
         timeout: 500, 
