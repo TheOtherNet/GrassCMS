@@ -95,8 +95,12 @@ def upload_(page, subdomain=False):
         try:
            field_name, content = do_conversion(filename, path)
         except:
-            return flash('Error file, unsupported format')
-        return getattr(object_base, field_name)(page, content)
+            flash('Error file, unsupported format')
+            return ""
+        result = getattr(object_base, field_name)(page, content)
+        if not result:
+            result = ""
+        return result
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
 @app.route('/new/<type_>/<page>', methods=['GET', 'POST'], subdomain="<subdomain>")
