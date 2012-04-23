@@ -47,13 +47,13 @@ def convert_docx(path):
     os.unlink(path)
     return '\n'.join([ unicode(a.decode('utf-8')) for a in file_contents])
 
-def do_conversion(filename, path):
+def do_conversion(filename, path, static_root=False, user=False):
     """
         Automatically convert convertable files
     """
     type_ = get_type(path)
     if type_[0] == "image":
-        path = '%suploads/%s/%s' %(app.config['STATIC_ROOT'], g.user.id, filename),
+        path = '%suploads/%s/%s' %(static_root, user, filename),
         type_ = "image"
     elif type_[0] == "video" or type_[1] == "ogg":
         try:

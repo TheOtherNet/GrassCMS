@@ -93,10 +93,14 @@ def upload_(page, subdomain=False):
     for i in request.files.keys():
         filename, path = save_file(request.files[i])
         try:
-           field_name, content = do_conversion(filename, path)
-        except:
-            return flash('Error file, unsupported format')
-        return getattr(object_base, field_name)(page, content)
+           field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
+        except Exception, error:
+            flash('Error file, unsupported format, reason: %s' %(error))
+            return ""
+        result = getattr(object_base, field_name)(page, content)
+        if not result:
+            result = ""
+        return result
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
 @app.route('/new/<type_>/<page>', methods=['GET', 'POST'], subdomain="<subdomain>")
