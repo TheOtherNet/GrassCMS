@@ -94,8 +94,8 @@ def upload_(page, subdomain=False):
         filename, path = save_file(request.files[i])
         try:
            field_name, content = do_conversion(filename, path)
-        except:
-            flash('Error file, unsupported format')
+        except Exception, error:
+            flash('Error file, unsupported format, reason: %s' %(error))
             return ""
         result = getattr(object_base, field_name)(page, content)
         if not result:
