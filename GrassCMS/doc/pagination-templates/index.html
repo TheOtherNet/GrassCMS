@@ -27,26 +27,71 @@
     </script>
     
     <style>
-    .sortable { list-style-type: none; margin: 0; padding: 0; }
+
+    .nosortable { list-style-type: none; margin: 0; padding: 0;}
+    .nosortable li { 
+        margin: 3px 3px 3px 0;
+        padding: 1px;
+        float: left;
+        width: 120px;
+        height: 170px;
+        font-size: 4em;
+        text-align: center; 
+        border:2px solid rgba(0,0,0,0.3);
+        border-radius:7px;
+    }
+    .foo{ float:left; list-style:none; } 
+    .foo li{ float:left; list-style:none; }
+
+    .sortable { list-style-type: none; margin: 0; padding: 0; width:100%; min-height:170px; }
     .sortable li { 
         margin: 3px 3px 3px 0;
         padding: 1px;
         float: left;
         width: 120px;
-        height: 100px;
+        height: 170px;
         font-size: 4em;
         text-align: center; 
         border:2px solid rgba(0,0,0,0.3);
-        padding-top:70px;
         border-radius:7px;
     }
+
     </style>
     <script>
-    $(function() {
-        $( "#sortable" ).sortable({  items: "li:not(.ui-state-disabled)"  });
-        $( "#sortable" ).disableSelection();
-        $( "#droppable" ).droppable({drop: function( event, ui ) { $(event.srcElement).remove();} });
+$(function() {
+    $("#sortable1").sortable({
+        helper:"clone",
+        connectWith: "#sortable2",
+        start:function(event,ui){
+            $(ui.item).show();
+            clone = $(ui.item).clone();
+            before = $(ui.item).prev();
+        },
+        stop:function(event, ui){
+            $('#sortable1').append(before.after(clone));
+        }
+    }).disableSelection();
+
+    $("#sortable2").sortable({
+        helper:"clone",
+        connectWith: "#sortable1",
+        start: function(event, ui){
+            $(ui.item).show();
+            clone = $(ui.item).clone();
+            before = $(ui.item).prev();
+        },
+        stop:function(event, ui){
+            $('#sortable2').append(before.after(clone));
+        }
+    }).disableSelection();
+
+    $( "#droppable" ).droppable({
+            drop: function( event, ui ) { 
+                $(event.srcElement).parents('li').remove(); 
+            } 
     });
+        
+}); // TODO: Templates must be unique, also, names for pages must be unique too.
     </script>
 
     <!--[if lt IE 9]>
@@ -55,20 +100,66 @@
 </head>
 
 <body>
-    <div style="width:100%" class="btn btn-danger" id="droppable"> Delete </div> 
+   <ul style="display:none" id=page_model>
+       <li class="ui-state-default">
+           <div style="float:left">
+                <img src="foo.png" style="width:120px;top: 35px;margin-top: 20px;">
+           </div>
+           <div style="margin-top: 110px;">
+                <input type="text" value="name" size="10" name="foo" style="width: 8em;">
+           </div>
+       </li>
+    </ul>
+
+    <div style="width:98%" class="btn btn-danger" id="droppable"> Delete </div> 
+
     <div role="main" style="margin-top:20px" class="container-fluid"> 
-            <ul class="sortable"> <li class="ui-state-disabled"><a href="#" onclick="$('#sortable').prepend('<li class=ui-state-default>X</li>');"> <img src="img/add.png" style="margin-top:-50px" /></a></li> </ul>
-            <ul id="sortable" class="sortable">
-                <li class="ui-state-default">X</li>
-                <li class="ui-state-default">X</li>
-                <li class="ui-state-default">X</li>
-                <li class="ui-state-default">X</li>
-                <li class="ui-state-default">X</li>
-                <li class="ui-state-default">X</li>
-                <li class="ui-state-default">X</li>
-                <li class="ui-state-default">X</li>
+    <ul class="foo">
+        <li>
+            <ul class="nosortable">
+                <li class="ui-state-disabled">
+                    <a href="#" onclick="$('#sortable1').prepend($('#page_model').html());">
+                        <img src="img/add.png" style="margin-top:20px" />
+                    </a>
+                </li>
+            </ul> 
+        </li>
+        <li>
+            <ul class="sortable" id="sortable1">
+                <li class="ui-state-default" contenteditable="false">
+                    <div style="float:left"><img src="foo.png" style="width:120px;top: 35px;margin-top: 20px;"> </div>
+                    <div style="margin-top: 110px;">
+                        <input type="text" value="name" style="width:8em;" />
+                    </div>
+                </li>
             </ul>
-            <ul class="sortable"> <li class="ui-state-disabled"><a href="#" onclick="$('#sortable').append('<li class=ui-state-default>X</li>');"> <img src="img/add.png" style="margin-top:-50px" /></a></li> </ul>
+        </li>
+        <li>
+            <ul class="nosortable" >
+                <li class="ui-state-disabled">
+                    <a href="#" onclick="$('#main_pages').append($('#page_model').html());">
+                        <img src="img/add.png" style="margin-top:20px" />
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </div>
+
+    <div style="width:97%; margin-top:30px" > 
+        <div  style="margin-left:auto; margin-right:auto; width:50%">
+            <h1> Templates available for page Foo </h1>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <ul class="sortable" id="sortable2">
+            <li class="ui-state-default" contenteditable="false">
+                <div style="float:left"><img src="foo.png" style="width:120px;top: 35px;margin-top: 20px;"> </div>
+                <div style="margin-top: 110px;">
+                    <input type="text" value="name" style="width:8em;" />
+                </div>
+            </li>
+        </ul>
     </div>
 </body>
 </html>
