@@ -32,6 +32,15 @@ def svgedit(subdomain=False):
     user_page, user_blog = check_user()
     return render_template('svg-editor.html', page=request.args.get('page'))
 
+@app.route('/page-admin/<page>')
+def landing(page=False):
+    user_page, user_blog = check_user()
+    if g.user:
+        main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+    else:
+        main_url = "http://grasscms.com"
+    return render_template('pages.html', main_url=main_url, page=user_page, blog=user_blog)
+
 @app.route('/')
 def landing():
     user_page, user_blog = check_user()
