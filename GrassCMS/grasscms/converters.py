@@ -28,7 +28,7 @@ def extract_odt_images(path):
         images = [ image for image in zipf.infolist() \
             if "Pictures" in image.filename  ]
         for image in images:
-            zipf.extract(image, get_path(''))
+            zipf.extract(image, '')
 
 def convert_odt(path):
     """
@@ -37,7 +37,7 @@ def convert_odt(path):
     result = odt_converter.convert(path)
     extract_odt_images(path)
     os.unlink(path)
-    return result
+    return result.decode('utf-8')
 
 def convert_docx(path):
     """
@@ -63,8 +63,8 @@ def do_conversion(filename, path, static_root=False, user=False):
         except Exception, error:
             flash('Error converting video')
             raise Exception('avconv', error)
-    elif type_[1] in docx_mimetypes:
-        path = convert_docx(path)
+    elif type_[1] in odt_mimetypes:
+        path = convert_odt(path)
         type_ = "text"
     return (type_, path)
 

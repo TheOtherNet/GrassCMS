@@ -103,10 +103,11 @@ def upload_(page, subdomain=False):
         filename, path = save_file(request.files[i])
         try:
            field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
+           result = getattr(object_base, field_name)(page, content)
         except Exception, error:
             flash('Error file, unsupported format, reason: %s' %(error))
+            app.logger.info(error)
             return ""
-        result = getattr(object_base, field_name)(page, content)
         if not result:
             result = ""
         return result
