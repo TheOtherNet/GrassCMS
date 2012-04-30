@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="{{static('css/bootstrap-wysihtml5.css')}}" /></code>
     {% if first_run == "true" %} <script src="{{static('js/grasscms/firstrun.js')}}"></script> {%endif%}
     <script> $(function(){ grasscms_startup(); }); </script>
+    <style>
+        .text{ overflow:hidden!important; }
+    </style>
 {%endblock%}
 
 {% block admin_menu %}
@@ -55,7 +58,7 @@
         </li>
 
         <li class="menu_button">
-            <a href="http://davidfrancos.grasstest.com/image/edit?page={{page.name}}">
+            <a href="/image/edit?page={{page.name}}">
                 <img id="editimage" title="Draw your own image" src="{{static('images/draw.png')}}" />
             </a>
         </li>

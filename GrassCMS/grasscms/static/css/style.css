@@ -1,6 +1,6 @@
 /* HTML5 Boilerplate  */
 textarea{ border:0px!important; margin-left:3px!important; margin-top: 4px!important; width:97%!important; resize:none!important; height:85%!important; margin-top:10px; }
-.static_html{ overflow:auto!important; }
+.text{ overflow:auto!important; }
 .draggable{ z-index:2000; }
 .menu_button a{ padding-top:4px!important; padding-bottom:4px!important;}
 .menu_button { display:inline;}
