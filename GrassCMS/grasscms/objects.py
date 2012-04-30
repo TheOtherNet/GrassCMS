@@ -33,9 +33,9 @@ class Objects(object):
     
     def image(self, page, content):
         blog, page = self.get_blog_and_page(page)
-        object_ = Html(field_name="image", 
+        object_ = Html(field_name="image", height=content[1], width=content[2],
             content = "<img src='%s' class='alsoResizable' />" \
-                %(content),
+                %(content[0]),
             user=g.user, page=page, blog=blog.id)
         db_session.add(object_)
         db_session.commit()

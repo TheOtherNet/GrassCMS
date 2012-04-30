@@ -6,6 +6,7 @@
 
 from grasscms.odt2html import Odt2html, quick_xsl
 import json, os, mimetypes, zipfile
+from PIL import Image
 
 odt_mimetypes = [ 'vnd.oasis.opendocument.text' ]
 docx_mimetypes = [
@@ -53,7 +54,8 @@ def do_conversion(filename, path, static_root=False, user=False):
     """
     type_ = get_type(path)
     if type_[0] == "image":
-        path = '%suploads/%s/%s' %(static_root, user, filename),
+        width, height = Image.open(path).size
+        path = ( '%suploads/%s/%s' %(static_root, user, filename), width, height )
         type_ = "image"
     elif type_[0] == "video" or type_[1] == "ogg":
         try:

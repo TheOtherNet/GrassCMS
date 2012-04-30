@@ -102,8 +102,9 @@ def upload_(page, subdomain=False):
     for i in request.files.keys():
         filename, path = save_file(request.files[i])
         try:
-           field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
-           result = getattr(object_base, field_name)(page, content)
+            field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
+            app.logger.info(content)
+            result = getattr(object_base, field_name)(page, content)
         except Exception, error:
             flash('Error file, unsupported format, reason: %s' %(error))
             app.logger.info(error)
