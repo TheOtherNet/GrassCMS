@@ -514,7 +514,15 @@
 				show_save_warning = false;
                 var svg="data:image/svg+xml;base64," + Utils.encode64('<?xml version="1.0"?>\n' + svg);
                 if (!window.page_){ window.page_ = "index"; }
-                $.ajax({ type: 'POST', url: "/new/image/" + window.page_, data:{ 'result': svg } }); 
+                $.ajax({
+                    type: 'POST',
+                    url: "/new/image/" + window.page_,
+                    data:{ 'result': svg },
+                    complete: function(){ 
+                        console.debug("FOO");
+                        setTimeout("history.back();", 3000);
+                    } 
+                }); 
 
 			};
 			

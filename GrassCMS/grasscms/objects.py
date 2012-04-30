@@ -33,6 +33,8 @@ class Objects(object):
     
     def image(self, page, content):
         blog, page = self.get_blog_and_page(page)
+        if isinstance(content, basestring):
+            content = (content, 100, 100)
         object_ = Html(field_name="image", height=content[1], width=content[2],
             content = "<img src='%s' class='alsoResizable' />" \
                 %(content[0]),
