@@ -32,8 +32,8 @@ def svgedit(subdomain=False):
     user_page, user_blog = check_user()
     return render_template('svg-editor.html', page=request.args.get('page'))
 
-@app.route('/page-admin/<page>')
-def landing(page=False):
+@app.route('/page-admin/<page>', subdomain="<subdomain>")
+def pageadmin(page=False, subdomain=False):
     user_page, user_blog = check_user()
     if g.user:
         main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
