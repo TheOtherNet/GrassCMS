@@ -9,9 +9,9 @@ def render_html(object_, type_=False, is_ajax=False):
     else:
         rotation = ""
     return '<div style="z-index:%s; position:fixed; display:block; opacity:%s;\
-            width:%spx; height:%spx; top:%spx;left:%spx;%s" class="static_html"\
+            width:%spx; height:%spx; top:%spx;left:%spx;%s" class="static_html %s"\
             id="%s"> %s </div>' %(object_.zindex, object_.opacity, object_.width,
-            object_.height, object_.x, object_.y, rotation,
+            object_.height, object_.x, object_.y, rotation, object_.field_name,
              object_.id_, object_.content)
 
 class Objects(object):
@@ -33,9 +33,11 @@ class Objects(object):
     
     def image(self, page, content):
         blog, page = self.get_blog_and_page(page)
-        object_ = Html(field_name="image", 
+        if isinstance(content, basestring):
+            content = (content, 100, 100)
+        object_ = Html(field_name="image", height=content[1], width=content[2],
             content = "<img src='%s' class='alsoResizable' />" \
-                %(content),
+                %(content[0]),
             user=g.user, page=page, blog=blog.id)
         db_session.add(object_)
         db_session.commit()

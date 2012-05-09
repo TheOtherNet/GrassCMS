@@ -3,6 +3,13 @@
 
 {%block head%}
     <meta name="description" content="{{description}}" />
+    <script>
+        $(document).ready(function () {
+            $('textarea').each(function(){
+                $(this).parent().html($(this).val());
+            });  
+        });
+    </script>
 {%endblock%}
 
 {% block body %}

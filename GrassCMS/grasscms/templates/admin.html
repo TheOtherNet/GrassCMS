@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="{{static('css/bootstrap-wysihtml5.css')}}" /></code>
     {% if first_run == "true" %} <script src="{{static('js/grasscms/firstrun.js')}}"></script> {%endif%}
     <script> $(function(){ grasscms_startup(); }); </script>
+    <style>
+        .text{ overflow:hidden!important; }
+    </style>
 {%endblock%}
 
 {% block admin_menu %}
@@ -55,15 +58,15 @@
         </li>
 
         <li class="menu_button">
-                <a onclick="new_object('menu'); return false" href="#">
-                <img id="addmenu" title="Insert a global menu here" src="{{static('images/menu.png')}}" />
-                </a>
+            <a href="/image/edit?page={{page.name}}">
+                <img id="editimage" title="Draw your own image" src="{{static('images/draw.png')}}" />
+            </a>
         </li>
 
         <li class="menu_button">
-                <a onclick="delete_page('{{page.name}}'); return false" href="#">
+            <a onclick="delete_page('{{page.name}}'); return false" href="#">
                 <img id="delpage" title="Delete this entire page" src="{{static('img/delete.png')}}" />
-                </a>
+            </a>
         </li>
 
     <div id="standard_tools_model" class="standard_tools" style="display:none">

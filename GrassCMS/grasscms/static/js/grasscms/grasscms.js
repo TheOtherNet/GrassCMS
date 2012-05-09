@@ -141,6 +141,7 @@ function grasscms_startup(){
     });
     options={placement:'bottom'}; 
     $('#addpage').tooltip(options); 
+    $('#editimage').tooltip(options); 
     $('#addmenu').tooltip(options);
     $('#addtext').tooltip(options);
     $('#fakefiles').tooltip(options);

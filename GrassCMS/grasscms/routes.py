@@ -32,10 +32,14 @@ def svgedit(subdomain=False):
     user_page, user_blog = check_user()
     return render_template('svg-editor.html', page=request.args.get('page'))
 
-@app.route('/page_admin/<page>/')
-def page_admin(page=False):
+@app.route('/page-admin/<page>', subdomain="<subdomain>")
+def pageadmin(page=False, subdomain=False):
     user_page, user_blog = check_user()
-    return render_template('pages.html')
+    if g.user:
+        main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+    else:
+        main_url = "http://grasscms.com"
+    return render_template('pages.html', main_url=main_url, page=user_page, blog=user_blog)
 
 @app.route('/')
 def landing():
@@ -98,11 +102,13 @@ def upload_(page, subdomain=False):
     for i in request.files.keys():
         filename, path = save_file(request.files[i])
         try:
-           field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
+            field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
+            app.logger.info(content)
+            result = getattr(object_base, field_name)(page, content)
         except Exception, error:
             flash('Error file, unsupported format, reason: %s' %(error))
+            app.logger.info(error)
             return ""
-        result = getattr(object_base, field_name)(page, content)
         if not result:
             result = ""
         return result
