@@ -32,6 +32,11 @@ def svgedit(subdomain=False):
     user_page, user_blog = check_user()
     return render_template('svg-editor.html', page=request.args.get('page'))
 
+@app.route('/page_admin/<page>/')
+def page_admin(page=False):
+    user_page, user_blog = check_user()
+    return render_template('pages.html')
+
 @app.route('/')
 def landing():
     user_page, user_blog = check_user()
