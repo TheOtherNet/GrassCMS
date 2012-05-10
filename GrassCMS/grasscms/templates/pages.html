@@ -1,12 +1,14 @@
 {%extends "layout.html"%}
-{% block header %}
+{% block head %}
     <script src="{{static('js/jquery-ui.min.js')}}"></script>
     <style>
         .nosortable { list-style-type: none; margin: 0; padding: 0;}
         .nosortable li { margin: 3px 3px 3px 0;  padding: 1px; float: left; width: 120px; height: 170px; font-size: 4em; text-align: center; border:2px solid rgba(0,0,0,0.3);border-radius:7px; }
         .sortable { list-style-type: none; margin: 0; padding: 0; width:100%; min-height:170px; }
         .sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 120px; height: 170px; font-size: 4em;  text-align: center;  border:2px solid rgba(0,0,0,0.3);  border-radius:7px; }
+        li { list-style: none; }
     </style>
+
     <script>
     $(function() {
         $("#sortable1").sortable({
@@ -48,10 +50,12 @@
     <!--[if lt IE 9]>
         <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-{%endblock%}
+    </head>
 
-{%block body%}
-   <ul style="display:none" id=page_model>
+    <body style="padding-top:40px">
+
+    <div style="width:98%" class="btn btn-danger" id="droppable"> Delete </div> 
+    <ul style="display:none" id=page_model>
        <li class="ui-state-default">
            <div style="float:left">
                 <img src="foo.png" style="width:120px;top: 35px;margin-top: 20px;">
@@ -62,15 +66,13 @@
        </li>
     </ul>
 
-    <div style="width:98%" class="btn btn-danger" id="droppable"> Delete </div> 
 
-    <div role="main" style="margin-top:20px" class="container-fluid"> 
     <ul class="foo">
         <li>
             <ul class="nosortable">
                 <li class="ui-state-disabled">
                     <a href="#" onclick="$('#sortable1').prepend($('#page_model').html());">
-                        <img src="img/add.png" style="margin-top:20px" />
+                        <img src="http://grasscms.com/static/img/add.png" style="margin-top:20px" />
                     </a>
                 </li>
             </ul> 
@@ -93,7 +95,7 @@
             <ul class="nosortable" >
                 <li class="ui-state-disabled">
                     <a href="#" onclick="$('#main_pages').append($('#page_model').html());">
-                        <img src="img/add.png" style="margin-top:20px" />
+                        <img src="http://grasscms.com/static/img/add.png" style="margin-top:20px" />
                     </a>
                 </li>
             </ul>
