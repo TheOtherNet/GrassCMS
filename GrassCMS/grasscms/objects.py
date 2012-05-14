@@ -8,7 +8,7 @@ def render_html(object_, type_=False, is_ajax=False):
                 object_.rotation, object_.rotation, object_.rotation)
     else:
         rotation = ""
-    return '<div style="z-index:%s; position:fixed; display:block; opacity:%s;\
+    return '<div style="z-index:%s; position:relative!important; display:block; opacity:%s;\
             width:%spx; height:%spx; top:%spx;left:%spx;%s" class="static_html %s"\
             id="%s"> %s </div>' %(object_.zindex, object_.opacity, object_.width,
             object_.height, object_.x, object_.y, rotation, object_.field_name,

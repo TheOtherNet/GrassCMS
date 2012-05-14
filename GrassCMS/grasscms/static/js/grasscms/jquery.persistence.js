@@ -64,8 +64,14 @@ jQuery.fn.extend({
                 ww=$(window).width();     
                 this_h=ui.position.top;
                 this_w=ui.position.left;
-                if ((wh - this_h - 100) < 0 ){ $('#filedrag').height(this_h); }
-                if ((ww - this_w - 100) < 0 ){ $('#filedrag').width(this_w); }
+                if ((wh - this_h - 100) < 0 ){ 
+                    $('#filedrag').height(this_h); 
+                    $('body').height(this_h); 
+                }
+                if ((ww - this_w - 100) < 0 ){ 
+                    $('#filedrag').width(this_w); 
+                    $('body').width(this_w); 
+                }
             },
             stop: function(ev, ui){ 
                 set_position(type, id, ui); }} 
