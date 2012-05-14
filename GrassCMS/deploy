@@ -1,0 +1,16 @@
+rm -rf /tmp/grasscms-update
+mkdir /tmp/grasscms-update
+
+for i in /usr/local/lib/python2.7/dist-packages/GrassCMS-*; do 
+    cp -r $i/grasscms/static/uploads/* /tmp/grasscms-update
+done
+
+python setup.py install
+
+for i in /usr/local/lib/python2.7/dist-packages/GrassCMS-*; do 
+    cp -r /tmp/grasscms-update/* $i/grasscms/static/uploads/
+done
+
+chown -R grasscms:grasscms /usr/local/lib/python2.7/dist-packages/GrassCMS-*/grasscms/static/uploads/
+invoke-rc.d apache2 restart
+
