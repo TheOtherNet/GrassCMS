@@ -44,6 +44,20 @@ jQuery.fn.extend({
         set_data(id, 'y', ui.position.left);
     }
 
+    function set_page(elemen, data){
+        $.ajax({ url: "/set_page/" + page[1] + "/" + page[2] +"/" + elemen + "/" + data , method:"POST", type:"POST",
+            success: function(data){ 
+                if (elem == "width"){
+                    $('#filedrag').width(data); 
+                    $('body').width(data); 
+                } else {
+                    $('#filedrag').height(data); 
+                    $('body').height(data); 
+                }
+            }
+        });
+    }
+
     return this.each(function(){ var element=$(this); 
         element.bind('cssModified', function(event, what, value, data) { 
             set_data($(event.currentTarget).attr('id'), what, value, data);
@@ -65,12 +79,10 @@ jQuery.fn.extend({
                 this_h=ui.position.top;
                 this_w=ui.position.left;
                 if ((wh - this_h - 100) < 0 ){ 
-                    $('#filedrag').height(this_h); 
-                    $('body').height(this_h); 
+                    set_page('height', this_h);
                 }
                 if ((ww - this_w - 100) < 0 ){ 
-                    $('#filedrag').width(this_w); 
-                    $('body').width(this_w); 
+                    set_page('width', this_w);
                 }
             },
             stop: function(ev, ui){ 

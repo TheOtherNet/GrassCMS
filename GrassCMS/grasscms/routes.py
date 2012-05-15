@@ -15,6 +15,9 @@ def save_file(file_):
 def get_element_by_id(id_):
     return Html.query.filter_by(id_=id_, user=g.user.id).first()
 
+def get_page_by_id(name, id_=0):
+    return Page.query.filter_by(name=name, id_=id_, user=g.user.id).first()
+
 def get_path(filename):
     return os.path.join(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ), filename)
 
@@ -58,7 +61,7 @@ def page(blog_name=False, page="index", subpage=0, main_url=False):
     user_blog, user_page = check_user()
     try:
         blog = Blog.query.filter_by(subdomain=blog_name).first()
-        page = Page.query.filter_by(blog=blog.id, name = page).first()
+        page = get_page_by_id(name, subpage)
     except AttributeError, error:
         pass
 
@@ -147,6 +150,17 @@ def get(what, id_, subdomain=False):
     if id_ == "undefined":
         abort(404)
     try:
+        return json.dumps(getattr(element, what)) 
+    except Exception, error:
+        app.logger.info(error)
+        return "False"
+
+@app.route('/page_set/<what>/<name_>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def set(what, name_, id_, result, subdomain=False):
+    element = get_page_by_id(name_, id_)
+    try:
+        setattr(element, what, result)
+        db_session.commit()
         return json.dumps(getattr(element, what)) 
     except Exception, error:
         app.logger.info(error)

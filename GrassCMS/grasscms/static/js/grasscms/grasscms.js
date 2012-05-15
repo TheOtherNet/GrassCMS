@@ -24,11 +24,22 @@ jQuery.fn.outerHTML = function(s) {
         ? this.before(s).remove()
         : jQuery("<p>").append(this.eq(0).clone()).html();
 };
+function get_page(){
+    a=location.pathname.match(/\/(.*)/(.*)/);
+    if ( a != "") { if (!a[2]){
+        a=location.pathname.match(/\/(.*)/);
+    }
+    if (a == ""){ return "index"; }
+    return a;
+}
 
+function get_current_subpage(){
+    a=get_page();
+    return a[2]
+}
 
 function get_current_page(){
-    a=location.pathname.match(/\/(.*)/);
-    if (a == ""){ return "index"; }
+    a=get_page();
     return a[1];
 }
 

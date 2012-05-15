@@ -79,7 +79,7 @@
 {%endblock%} 
 
 {% block body %}
-    <div id="filedrag" style="position:relative; top:0px; left:0px; width:100%; height:100%;"> 
+    <div id="filedrag" style="position:relative; top:0px; left:0px; width:{{page.width}}px; height:{{page.height}}px;"> 
         {%block admin_body%} 
             <div class="x-guide draggable-x">  <span class="pos"></span> </div>
             <div class="y-guide draggable-y"> <span class="pos"></span>  </div>
