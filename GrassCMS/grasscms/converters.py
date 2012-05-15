@@ -5,7 +5,7 @@
 """
 
 from grasscms.odt2html import Odt2html, quick_xsl
-import json, os, mimetypes, zipfile
+import os, mimetypes, zipfile
 from PIL import Image
 
 odt_mimetypes = [ 'vnd.oasis.opendocument.text' ]
@@ -39,14 +39,6 @@ def convert_odt(path):
     extract_odt_images(path)
     os.unlink(path)
     return result.decode('utf-8')
-
-def convert_docx(path):
-    """
-        Convert from docx
-    """
-    file_contents = docx.getdocumenttext(docx.opendocx(path))
-    os.unlink(path)
-    return '\n'.join([ unicode(a.decode('utf-8')) for a in file_contents])
 
 def do_conversion(filename, path, static_root=False, user=False):
     """

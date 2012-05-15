@@ -3,7 +3,7 @@ from grasscms.openid_login import *
 from grasscms.converters import *
 from grasscms.objects import *
 from werkzeug import secure_filename
-import json, os, urllib
+import json, os
 app.jinja_env.filters['html'] = render_html
 
 def save_file(file_):
@@ -39,39 +39,45 @@ def svgedit(subdomain=False):
 def pageadmin(page=False, subdomain=False):
     user_page, user_blog = check_user()
     if g.user:
-        main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+        main_url = "http://" + g.user.name.replace(' ','_') + "." +\
+         app.config['SERVER_NAME']
     else:
         main_url = "http://grasscms.com"
-    return render_template('pages.html', main_url=main_url, page=user_page, blog=user_blog)
+    return render_template('pages.html', main_url=main_url, page=user_page, 
+        blog=user_blog)
 
 @app.route('/')
 def landing():
     user_page, user_blog = check_user()
     if g.user:
-        main_url = "http://" + g.user.name.replace(' ','_') + "." + app.config['SERVER_NAME'] 
+        main_url = "http://" + g.user.name.replace(' ','_') + "." +\
+        app.config['SERVER_NAME'] 
     else:
         main_url = "http://grasscms.com"
-    return render_template('landing.html', main_url=main_url, page=user_page, blog=user_blog)
+    return render_template('landing.html', main_url=main_url, page=user_page,
+        blog=user_blog)
 
 @app.route('/<page>', subdomain='<blog_name>')
 @app.route('/<page>/<subpage>', subdomain='<blog_name>')
 @app.route('/', subdomain='<blog_name>')
 def page(blog_name=False, page="index", subpage=0, main_url=False):
-    blog_name=blog_name.lower()
+    blog_name = blog_name.lower()
     user_blog, user_page = check_user()
     try:
         blog = Blog.query.filter_by(subdomain=blog_name).first()
-        page = get_page_by_id(name, subpage)
+        page = get_page_by_id(page, subpage)
     except AttributeError, error:
-        pass
+        app.logger.info(error)
 
     if not blog:
-        return render_template('start_your_blog.html', url=app.config['SERVER_NAME'])
+        return render_template('start_your_blog.html',
+            url = app.config['SERVER_NAME'])
     elif not page:
         abort(404)
 
     if g.user:
-        main_url = "http://" + user_blog.subdomain + "." + app.config['SERVER_NAME'] 
+        main_url = "http://" + user_blog.subdomain + "." + \
+        app.config['SERVER_NAME'] 
 
     if blog == user_blog and g.user:
         g.user_is_admin = True
@@ -79,7 +85,7 @@ def page(blog_name=False, page="index", subpage=0, main_url=False):
     static_htmls = Html.query.filter_by(blog=blog.id, page=page.id)
 
     # In a future, each page must have a full title.
-    title=page.name
+    title = page.name
     if title == "index": 
         title = blog.name
 
@@ -124,6 +130,7 @@ def new(type_, page, subdomain=False):
         result = request.form['result']
     except KeyError, err:
         result = ""
+        app.logger.error(err)
     return getattr(object_base, type_)(page, result)
     
 @app.route('/delete/<id_>/<name>', methods=['DELETE'], subdomain="<subdomain>")
@@ -156,7 +163,7 @@ def get(what, id_, subdomain=False):
         return "False"
 
 @app.route('/page_set/<what>/<name_>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
-def set(what, name_, id_, result, subdomain=False):
+def set_page(what, name_, id_, result, subdomain=False):
     element = get_page_by_id(name_, id_)
     try:
         setattr(element, what, result)
