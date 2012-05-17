@@ -16,7 +16,7 @@ def get_element_by_id(id_):
     return Html.query.filter_by(id_=id_, user=g.user.id).first()
 
 def get_page_by_id(name, id_=0):
-    return Page.query.filter_by(name=name, id_=id_, user=g.user.id).first()
+    return Page.query.filter_by(name=name, id_=id_).first()
 
 def get_path(filename):
     return os.path.join(os.path.join(app.config['UPLOAD_FOLDER'], str(g.user.id) ), filename)
@@ -57,15 +57,18 @@ def landing():
     return render_template('landing.html', main_url=main_url, page=user_page,
         blog=user_blog)
 
-@app.route('/<page>', subdomain='<blog_name>')
-@app.route('/<page>/<subpage>', subdomain='<blog_name>')
+@app.route('/<page_>', subdomain='<blog_name>')
+@app.route('/<page_>/<subpage>', subdomain='<blog_name>')
 @app.route('/', subdomain='<blog_name>')
-def page(blog_name=False, page="index", subpage=0, main_url=False):
+def page(blog_name=False, page_="index", subpage=0, main_url=False):
     blog_name = blog_name.lower()
     user_blog, user_page = check_user()
     try:
         blog = Blog.query.filter_by(subdomain=blog_name).first()
-        page = get_page_by_id(page, subpage)
+        page = Page.query.filter_by(blog=blog.id, name=page_, id_=subpage).first()
+        app.logger.info(page)
+        if not page:
+            page = Page.query.filter_by(name=page_, blog=blog.id).first()
     except AttributeError, error:
         app.logger.info(error)
 
