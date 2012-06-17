@@ -86,10 +86,11 @@ function new_object(type, page){
         Assign / Update a menu to a blog.
         After successful creation, it reloads the page.
     */
-    if (!page || page == ""){ page=get_current_page(); }
-    if (!page || page == ""){ page="index"; }
+    if (!page || page == ""){ page=get_current_page()[0]; }
+    if (!page || page == ""  || page == "/"){ page="index"; }
+    console.debug(page);
     $.ajax({
-        url:'/new/' + type +'/' + page,
+        url:'/new/' + type +'/' + page ,
         type : 'POST', 
         success: function(data_){ 
             if ( type == "menu"  && $('.menu')[0]){ 
