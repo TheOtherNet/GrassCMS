@@ -6,34 +6,33 @@
         .nosortable li { margin: 3px 3px 3px 0;  padding: 1px; float: left; width: 120px; height: 170px; font-size: 4em; text-align: center; border:2px solid rgba(0,0,0,0.3);border-radius:7px; }
         .sortable { list-style-type: none; margin: 0; padding: 0; width:100%; min-height:170px; }
         .sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 120px; height: 170px; font-size: 4em;  text-align: center;  border:2px solid rgba(0,0,0,0.3);  border-radius:7px; }
-        li { list-style: none; }
+        li { list-style: none; display:inline-block; }
     </style>
 
     <script>
     $(function() {
-        $("#sortable1").sortable({
-            helper:"clone",
+        $("#main_pages").sortable({
             connectWith: "#sortable2",
             start:function(event,ui){
-                $(ui.item).show();
-                clone = $(ui.item).clone();
-                before = $(ui.item).prev();
+                    parent_=$(ui.item.context.parentElement);
+                    child=$(ui.item).clone();
             },
             stop:function(event, ui){
-                $('#sortable1').append(before.after(clone));
+                console.debug(parent_);
+                if ($(ui.item.context.parentElement).attr('id') != $(parent_).attr('id')){
+                    $(parent_).append(child);
+                }
             }
         }).disableSelection();
 
         $("#sortable2").sortable({
-            helper:"clone",
-            connectWith: "#sortable1",
+            connectWith: "#main_pages",
             start: function(event, ui){
-                $(ui.item).show();
-                clone = $(ui.item).clone();
-                before = $(ui.item).prev();
+                console.debug($(ui));
             },
             stop:function(event, ui){
-                $('#sortable2').append(before.after(clone));
+                console.debug("STOP");
+                console.debug(ui);
             }
         }).disableSelection();
 
@@ -54,24 +53,23 @@
 
     <body style="padding-top:40px">
 
+            
     <div style="width:98%" class="btn btn-danger" id="droppable"> Delete </div> 
-    <ul style="display:none" id=page_model>
-       <li class="ui-state-default">
-           <div style="float:left">
-                <img src="foo.png" style="width:120px;top: 35px;margin-top: 20px;">
-           </div>
-           <div style="margin-top: 110px;">
-                <input type="text" value="name" size="10" name="foo" style="width: 8em;">
-           </div>
-       </li>
-    </ul>
 
+       <li class="ui-state-default" style="display:none" id="page_model">
+            <div style="float:left">
+               <img src="{{page.thumb}}" style="width:120px;top: 35px;margin-top: 20px;" />
+            </div>
+            <div style="margin-top: 110px;">
+                <input type="text" value="name" size="10" name="foo" style="width: 8em;" />
+            </div>
+       </li>
 
     <ul class="foo">
         <li>
             <ul class="nosortable">
                 <li class="ui-state-disabled">
-                    <a href="#" onclick="$('#sortable1').prepend($('#page_model').html());">
+                    <a href="#" onclick="$('#main_pages').prepend($('#page_model').clone().css('display','inline-block'));">
                         <img src="http://grasscms.com/static/img/add.png" style="margin-top:20px" />
                     </a>
                 </li>
@@ -79,7 +77,7 @@
         </li>
 
         <li> <!-- TODO Make the sortables persistent -->
-            <ul class="sortable" id="sortable1">
+            <ul class="sortable" id="main_pages">
                 {% for page in pages %}
                    <li class="ui-state-default" contenteditable="false">
                        <div style="float:left"><img src="{{page.thumb}}" style="width:120px;top: 35px;margin-top: 20px;"> </div>
@@ -94,7 +92,7 @@
         <li>
             <ul class="nosortable" >
                 <li class="ui-state-disabled">
-                    <a href="#" onclick="$('#main_pages').append($('#page_model').html());">
+                    <a href="#" onclick="$('#main_pages').append($('#page_model').clone().css('display','inline-block'));">
                         <img src="http://grasscms.com/static/img/add.png" style="margin-top:20px" />
                     </a>
                 </li>

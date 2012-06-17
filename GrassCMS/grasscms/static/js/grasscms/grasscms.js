@@ -25,12 +25,10 @@ jQuery.fn.outerHTML = function(s) {
         : jQuery("<p>").append(this.eq(0).clone()).html();
 };
 function get_page(){
-    a=location.pathname.match(/\/(.*)/(.*)/);
-    if ( a != "") { if (!a[2]){
-        a=location.pathname.match(/\/(.*)/);
-    }
-    if (a == ""){ return "index"; }
-    return a;
+    // TODO This does not support subpages =(
+    a = location.pathname.match(/\/(.*)/)
+    if (a == ""){ a="index"; }
+    return Array( 0, a);
 }
 
 function get_current_subpage(){

@@ -45,6 +45,7 @@ jQuery.fn.extend({
     }
 
     function set_page(elemen, data){
+        page = get_page();
         $.ajax({ url: "/set_page/" + page[1] + "/" + page[2] +"/" + elemen + "/" + data , method:"POST", type:"POST",
             success: function(data){ 
                 if (elem == "width"){
