@@ -42,7 +42,6 @@ class BaseWidget(object):
 class Html(BaseWidget, Base):
     __tablename__ = "Html"
 
-
 class Blog(Base):
     __tablename__ = "blogs"
     id = Column(Integer, primary_key=True)
@@ -61,7 +60,7 @@ class Page(Base):
     name = Column(String(60))
     blog = Column(Integer, ForeignKey('blogs.id'))
     width = Column (Integer)
-    Height = Column (Integer)
+    height = Column (Integer)
 
     def __init__(self, blog, name):
         self.name = name
