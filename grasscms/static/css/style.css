@@ -19,7 +19,7 @@ iframe { border:0px!important; width:95%!important; height:90%!important; box-sh
     position:absolute;
     z-index:3010;
     display:none;
-    top:20px;
+    bottom:3px;
 }
 
 .cke_top{
@@ -32,14 +32,14 @@ iframe { border:0px!important; width:95%!important; height:90%!important; box-sh
     width:800px!important;
 }
 
-.cke_skin_kama { border:none!important;} 
+.cke_skin_kama { border:none!important;}
 .cke_skin_kama .cke_wrapper{
- background:none!important; 
- background-image:none!important; 
- background-color:transparent!important; 
+ background:none!important;
+ background-image:none!important;
+ background-color:transparent!important;
 }
 .cke_bottom{ display:none; }
-.texts{ position:fixed;} 
+.texts{ position:fixed;}
 .icons { display:none; position:absolute; }
 article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block; }
 audio, canvas, video { display: inline-block; *display: inline; *zoom: 1; }
@@ -114,7 +114,7 @@ td { vertical-align: top; }
 
 
 @media only screen and (min-width: 35em) {
-  
+
 
 }
 
@@ -132,13 +132,13 @@ td { vertical-align: top; }
 .draggable-y{ cursor:row-resize; top:0px; left:0px; height:4px; width:100%; position:fixed; border-top:1px solid #70DBFF; z-index:20000; }
 .draggable-x{ cursor:col-resize; top:0px; left:0px; width:4px; height:100%; position:fixed; border-left:1px solid #70DBFF; z-index:20000; }
 @media print {
-  * { background: transparent !important; color: black !important; box-shadow:none !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; } 
+  * { background: transparent !important; color: black !important; box-shadow:none !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; }
   a, a:visited { text-decoration: underline; }
   a[href]:after { content: " (" attr(href) ")"; }
   abbr[title]:after { content: " (" attr(title) ")"; }
-  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; } 
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
   pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
-  thead { display: table-header-group; } 
+  thead { display: table-header-group; }
   tr, img { page-break-inside: avoid; }
   img { max-width: 100% !important; }
   @page { margin: 0.5cm; }
