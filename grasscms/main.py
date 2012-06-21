@@ -8,12 +8,12 @@ import os, urlparse
 UPLOAD_FOLDER = data_dir + "/static/uploads"
 app = Flask(__name__)
 app.config.update(
-        DATABASE_URI = 'sqlite:////home/grasscms/grasscms.db',
+	DATABASE_URI = 'mysql://root:root@localhost/grasscms
         SECRET_KEY = 'Foobar',
     	STATIC_ROOT =  'http://grasscms.com/static/',
 	    SERVER_NAME = "grasscms.com",
         UPLOAD_FOLDER = UPLOAD_FOLDER,
-        DEBUG = True )
+        DEBUG = False )
 
 engine = create_engine(app.config['DATABASE_URI'])
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
