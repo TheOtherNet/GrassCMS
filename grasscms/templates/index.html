@@ -1,6 +1,47 @@
 {% extends "layout.html" %}
 {% block title%} {{title}}{%endblock%}
 
+{% block body_start %}
+	{%if blog.paid_this_month %}
+		<body style="position:relative; padding-top:0px">
+	{%else%}
+<body style="padding-top:40px; position:relative;" >
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container" style="width: auto;">
+                <a class="brand" href="#">GrassCMS</a>
+                <ul class="nav" style="margin-top:2px">
+                    {% block admin_menu %} {%endblock%}
+                </ul>
+                <ul class="nav pull-right" style="margin-top:2px">
+                    {% if g.user %}
+                    <li>
+                        <img src="{{ g.user.email | gravatar(size=32) }}" style="margin-right:10px" /> 
+                    </li>
+                    <li>
+                        <div class="btn-group">          
+                            <a class="btn " href="{{main_url}}"> <i class="icon-user"></i> {{ g.user.name }}</a>
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li> <a href="{{ url_for('edit_profile') }}"><i class="icon-edit"></i> Edit profile </a> </li>
+                                <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                <li class="divider"></li>
+                                <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
+                           </ul>        
+                        </div>
+                    </li>
+                    {% else %}
+                        <li> <a onclick="open_login(this); return false;" title="Sign in" href="{{url_for('login')}}"> Sign in </a> </li> 
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+	{%endif%}
+
+{%endblock%}
+
 {%block head%}
     <meta name="description" content="{{description}}" />
     <script>

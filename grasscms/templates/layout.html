@@ -35,43 +35,12 @@
 
 </head>
 
-<body style="padding-top:90px; position:relative;" >
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container" style="width: auto;">
-                <a class="brand" href="#">GrassCMS</a>
-                <ul class="nav" style="margin-top:2px">
-                    {% block admin_menu %} {%endblock%}
-                </ul>
-                <ul class="nav pull-right" style="margin-top:2px">
-                    {% if g.user %}
-                    <li>
-                        <img src="{{ g.user.email | gravatar(size=32) }}" style="margin-right:10px" /> 
-                    </li>
-                    <li>
-                        <div class="btn-group">          
-                            <a class="btn " href="{{main_url}}"> <i class="icon-user"></i> {{ g.user.name }}</a>
-                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li> <a href="{{ url_for('edit_profile') }}"><i class="icon-edit"></i> Edit profile </a> </li>
-                                <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                                <li class="divider"></li>
-                                <li> <a href="{{ url_for('logout') }}"> Sign out </a> </li>
-                           </ul>        
-                        </div>
-                    </li>
-                    {% else %}
-                        <li> <a onclick="open_login(this); return false;" title="Sign in" href="{{url_for('login')}}"> Sign in </a> </li> 
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </div>
-    
+{%block body_start %}{%endblock%}
     <header>
         {% block header %} {%endblock%}
         {% for message in get_flashed_messages() %} <div style="z-index:10000; position:fixed; bottom:0px;" class="alert" ><a class="close" data-dismiss="alert" href="#">&times;</a><p> {{ message }} </p></div> {% endfor %}
     </header>
+
 
     <div role="main" class="container">
         {% block body %}{% endblock %}

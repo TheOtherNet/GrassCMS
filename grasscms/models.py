@@ -48,6 +48,7 @@ class Blog(Base):
     name = Column(String(60))
     subdomain = Column(String(60))
     description = Column(String(60))
+    paid_this_month = Column(Integer)
     def __init__(self, blog, subdomain, description):
         self.name = blog
         self.subdomain = subdomain
