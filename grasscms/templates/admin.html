@@ -28,7 +28,70 @@
             <div class="container" style="width: auto;">
                 <a class="brand" href="#">GrassCMS</a>
                 <ul class="nav" style="margin-top:2px">
-                    {% block admin_menu %} {%endblock%}
+			        <li class="menu_button">
+			            <form style="width:42px" id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
+			                <input style="width:0px;height:0px" type="file" accept="image/*,video/*,application/*" id="files" class="files" name="files" >
+			                <img title="Import any kind of file (videos, images, documents...)" src="{{static('images/add.png')}}" id="fakefiles" />
+		
+			                <div style="position:fixed; top:0px; left:-100px; width:0px;">
+			                    <input type="submit"/>
+			                </div>
+			            </form>
+			        </li>
+
+			
+			        <li class="menu_button">
+			                <a onclick="new_object('text'); return false" href="#">
+			                    <img title="Add new text" src="{{static('images/text.png')}}" id="addtext" />
+			                </a>
+			        </li>
+				<li class="menu_button">
+				        <form id="newpage" action="#" onsubmit="create_page(); return false">
+	
+				            <img src="http://grasscms.com/static/images/page.png" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" id="addpage" data-original-title="Add new page">
+
+			                <div id="new_page_div" style="display: none; ">
+			                    <input type="text" id="new_page" name="page" placeholder="Page name" required="">
+			                    <span><a href="#" onclick="create_page('1')">Create page</a></span>
+			                </div>
+	
+				            <div style="position:fixed; top:0px; left:-100px; width:0px;">
+			                    <input type="submit">
+			                </div>
+
+			            </form>
+		        </li>
+
+	        <li class="menu_button">
+		        <a href="/image/edit?page={{page.name}}">
+			        <img id="editimage" title="Draw your own image" src="{{static('images/draw.png')}}" />
+	            </a>
+		    </li>
+	
+		    <li class="menu_button">
+			    <a onclick="delete_page('{{page.name}}'); return false" href="#">
+				    <img id="delpage" title="Delete this entire page" src="{{static('img/delete.png')}}" />
+	            </a>
+		    </li>
+
+    <div id="standard_tools_model" class="standard_tools" style="display:none">
+        <div class="standard_tools" style="display:none">
+            <div style="float:left; margin-top:-55px; margin-left:70px;">
+                <div><p style="color:white; font-size:small; width:60px; text-align:center; margin-bottom:0px;">Opacity</p></div>
+                <div class="slider" data-wjs-element="box" style="width:60px;"></div>
+            </div>
+    
+            <div style="float:left; margin-left:2px; margin-top:-40px; ">
+                <div><a href="#" onclick="increment_zindex(get_o(this));"> <img style="width:16px" src="{{static('img/up.png')}}" /></a></div>
+            </div>
+            <div style="float:left; margin-left:18px; margin-top:-40px; ">
+                <div><a href="#" onclick="downgrade_zindex(get_o(this))"> <img style="width:16px" src="{{static('img/down.png')}}" /></a></div>
+            </div>
+    
+            <div style="float:left; margin-left:34px; margin-top:-40px; ">
+                <div> <a href="#" onclick="delete_(get_o(this));"> <img style="width:16px" src="{{static('img/delete.png')}}" /> </a></div>
+            </div>
+
                 </ul>
                 <ul class="nav pull-right" style="margin-top:2px">
                     {% if g.user %}
@@ -56,72 +119,6 @@
     </div>
     
 {%endblock%}
-{% block admin_menu %}
-        <li class="menu_button">
-            <form style="width:42px" id="fileupload" action="/upload/{{page.name}}" method="POST" enctype="multipart/form-data">
-                <input style="width:0px;height:0px" type="file" accept="image/*,video/*,application/*" id="files" class="files" name="files" >
-                <img title="Import any kind of file (videos, images, documents...)" src="{{static('images/add.png')}}" id="fakefiles" />
-
-                <div style="position:fixed; top:0px; left:-100px; width:0px;">
-                    <input type="submit"/>
-                </div>
-            </form>
-        </li>
-
-
-        <li class="menu_button">
-                <a onclick="new_object('text'); return false" href="#">
-                    <img title="Add new text" src="{{static('images/text.png')}}" id="addtext" />
-                </a>
-        </li>
-<li class="menu_button">
-            <form id="newpage" action="#" onsubmit="create_page(); return false">
-
-                <img src="http://grasscms.com/static/images/page.png" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" id="addpage" data-original-title="Add new page">
-
-                <div id="new_page_div" style="display: none; ">
-                    <input type="text" id="new_page" name="page" placeholder="Page name" required="">
-                    <span><a href="#" onclick="create_page('1')">Create page</a></span>
-                </div>
-
-                <div style="position:fixed; top:0px; left:-100px; width:0px;">
-                    <input type="submit">
-                </div>
-
-            </form>
-        </li>
-
-        <li class="menu_button">
-            <a href="/image/edit?page={{page.name}}">
-                <img id="editimage" title="Draw your own image" src="{{static('images/draw.png')}}" />
-            </a>
-        </li>
-
-        <li class="menu_button">
-            <a onclick="delete_page('{{page.name}}'); return false" href="#">
-                <img id="delpage" title="Delete this entire page" src="{{static('img/delete.png')}}" />
-            </a>
-        </li>
-
-    <div id="standard_tools_model" class="standard_tools" style="display:none">
-        <div class="standard_tools" style="display:none">
-            <div style="float:left; margin-top:-55px; margin-left:70px;">
-                <div><p style="color:white; font-size:small; width:60px; text-align:center; margin-bottom:0px;">Opacity</p></div>
-                <div class="slider" data-wjs-element="box" style="width:60px;"></div>
-            </div>
-    
-            <div style="float:left; margin-left:2px; margin-top:-40px; ">
-                <div><a href="#" onclick="increment_zindex(get_o(this));"> <img style="width:16px" src="{{static('img/up.png')}}" /></a></div>
-            </div>
-            <div style="float:left; margin-left:18px; margin-top:-40px; ">
-                <div><a href="#" onclick="downgrade_zindex(get_o(this))"> <img style="width:16px" src="{{static('img/down.png')}}" /></a></div>
-            </div>
-    
-            <div style="float:left; margin-left:34px; margin-top:-40px; ">
-                <div> <a href="#" onclick="delete_(get_o(this));"> <img style="width:16px" src="{{static('img/delete.png')}}" /> </a></div>
-            </div>
-
-{%endblock%} 
 
 {% block body %}
 	<div id="filedrag" style="position:relative; top:0px; left:0px; width:{%if page.width%} {{page.width}}{%else%} 1024{%endif%}px;
