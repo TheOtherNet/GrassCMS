@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, g, session, flash, redirect, 
 from grasscms import data_dir
 import os, urlparse
 
-UPLOAD_FOLDER =  "/static/uploads"
+UPLOAD_FOLDER =  "/var/www/grasscms.com/static/uploads"
 app = Flask(__name__)
 app.config.update(
 	DATABASE_URI = 'mysql://root:root@localhost/grasscms',
