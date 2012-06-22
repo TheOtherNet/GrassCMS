@@ -2,45 +2,75 @@
 {% block title%} GrassCMS {%endblock%}
 {% block head%}
     <meta name="description" content="Create webpages easily in seconds">
-    <meta name="author" content="David Francos Cuartero. Dario Ferrer Ferruz. Francisco Sanz Garcia">
+	<meta name="author" content="David Francos Cuartero."/>
+	<meta name="author" content="Dario Ferrer Ferruz."/>
+	<meta name="author" content="Francisco Sanz Garcia" />
+	<link rel="stylesheet" href="/static/css/bootstrap.united.css">
 {%endblock%}
 
 {% block header %}
     <h1> GrassCMS </h1>
     <p class="lead">
-        Welcome to GrassCMS test page. 
+		The ultimate resource for your personalised site
     </p>
 {%endblock%}
 
 {% block body %}
-<div class="span6">
-    <h5> What is GrassCMS?</h5>
-    <ul>
-        <li>Create your page in seconds</li>
-        <li>Tired of your familiars asking for help with their pages? Send them GrassCMS!</li>
-    </ul> 
 </div>
-
-<div style="margin-left:30px" class="span4">
-    <h5> Please, have in account the following rules</h2>
-    <ul>
-        <li> No illegal content is allowed here </li>
-        <li> All pages are deleted each time a version is updated </li>
-        <li> Don't use this for actual use webpages, this is a test page </li>
-    </ul> 
+<div class="container-fluid">
+	<div class="span13">
+		<div class="span4">
+			<div class="well">
+				<h5> What is GrassCMS? </h5>
+				<p> GrassCMS is the ultimate page edition system, but it's
+					much more! <br/>
+					With grasscms you can do everything from a 
+					family photo album (checkout this) to a corporate 
+					website.<br/>
+					It's also the perfect tool for web designers, to make
+					sketches in real time, your client will be impressed!
+				</p>
+			</div>
+		</div>
+		<div class="span4">
+			<div class="well">
+				<h5>
+					How does it work?
+				</h5>
+				<p>
+					By using the lastest javascript and html5 technologies, 
+					and a powerful convertion system, grasscms allows you to
+					create and import any number of elements on your page
+					and modify them to your fits (resize, move, opacity...)
+					on a complete and intuitive wisiwig interface.
+				</p>
+			</div>
+		</div>
+	<div class="span4">
+		<div class="well">
+			<h5> Please, have in account the following rules</h2>
+			<ul>
+			    <li> No illegal content is allowed here </li>
+				<li> You've got to be 14 or older to use this service </li>
+				<li> By signing in, you accept the terms of service </li> 
+			</ul> 
+		</div>
+	</div>
+		<div class="span12">
+			<div class="span6">
+				<h3> You have to try it! It's free! </h3>
+				<ul>
+					<li>
+						With your free account of grasscms you'll get a free
+						.grasscms.com subdomain.<br/>
+					</li>
+					<li> Login is as easy as it can be, with openid </li>
+					<li>Paid users won't have ads of any kind. </li>
+				</ul>
+			</div>
+	</div>
 </div>
-
-
-<div class="span12">
-<form onsubmit="document.location = '/' + $('#page').val(); return false" action="">
-    <div style="margin-left:auto; margin-right:auto;width:30%; margin-top:130px;">
-        <ul style="list-style:none; width:100%">
-            <li style="text-align:center; width:100%"><label for="page"><h2> Enter user page</h2> </label></li>
-            <li><input type="text" name="page" placeholder="SiteFoobar" style="width:30em" id="page"></li>
-            <li><button style="width:30em" type=submit>Go</button></li>
-        </ul>
-        <input type="submit" style="display:none;">
-    </div>
-</form>
+<div class="span4" style="float:none">
+	<h1><a href="#"> Start here </a></h1>
 </div>
 {% endblock %}

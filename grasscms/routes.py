@@ -43,7 +43,7 @@ def pageadmin(page=False, subdomain=False):
          app.config['SERVER_NAME']
     else:
         main_url = "http://grasscms.com"
-    return render_template('pages.html', main_url=main_url, page=user_page, 
+    return render_template('pages.html', main_url=main_url, page=user_page,
         blog=user_blog)
 
 @app.route('/')
@@ -51,7 +51,7 @@ def landing():
     user_page, user_blog = check_user()
     if g.user:
         main_url = "http://" + g.user.name.replace(' ','_') + "." +\
-        app.config['SERVER_NAME'] 
+        app.config['SERVER_NAME']
     else:
         main_url = "http://grasscms.com"
     return render_template('landing.html', main_url=main_url, page=user_page,
@@ -80,7 +80,7 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
 
     if g.user:
         main_url = "http://" + user_blog.subdomain + "." + \
-        app.config['SERVER_NAME'] 
+        app.config['SERVER_NAME']
 
     if blog == user_blog and g.user:
         g.user_is_admin = True
@@ -89,23 +89,25 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
 
     # In a future, each page must have a full title.
     title = page.name
-    if title == "index": 
+    if title == "index":
         title = blog.name
 
     if not g.user_is_admin:
-        return render_template( 'index.html', main_url=main_url, page=page, 
-            blog=user_blog, static_htmls=static_htmls, 
+        return render_template( 'index.html', main_url=main_url, page=page,
+            blog=user_blog, static_htmls=static_htmls,
             description=blog.description, title=title)
     else:
         return render_template( 'admin.html', main_url=main_url, page=page,
-            blog=user_blog, static_htmls=static_htmls, title=title, 
+            blog=user_blog, static_htmls=static_htmls, title=title,
             first_run=request.args.get('first_run'))
 
-@app.route('/svgicons.svg', subdomain="<subdomain>")
-@app.route('/svgicons.svg')
-def icons(subdomain=False):
-    with open(data_dir + "/static/svg-edit/images/svg_edit_icons.svg") as f:
-        return f.read()
+
+# This redirection should be done with a webserver or a static link.
+#@app.route('/svgicons.svg', subdomain="<subdomain>")
+#@app.route('/svgicons.svg')
+#def icons(subdomain=False):
+#    with open(data_dir + "/static/svg-edit/images/svg_edit_icons.svg") as f:
+#        return f.read()
 
 @app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
 @app.route("/upload/<page>", methods=("GET", "POST"))
@@ -135,7 +137,7 @@ def new(type_, page, subdomain=False):
         result = ""
         app.logger.error(err)
     return getattr(object_base, type_)(page, result)
-    
+
 @app.route('/delete/<id_>/<name>', methods=['DELETE'], subdomain="<subdomain>")
 @app.route('/delete/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
 def delete(id_, name=False, subdomain=False):
@@ -153,14 +155,14 @@ def delete(id_, name=False, subdomain=False):
     db_session.delete(object_)
     db_session.commit()
     return json.dumps("True")
-    
+
 @app.route('/get/<what>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def get(what, id_, subdomain=False):
     element = get_element_by_id(id_)
     if id_ == "undefined":
         abort(404)
     try:
-        return json.dumps(getattr(element, what)) 
+        return json.dumps(getattr(element, what))
     except Exception, error:
         app.logger.info(error)
         return "False"
@@ -171,7 +173,7 @@ def set_page(what, name_, id_, result, subdomain=False):
     try:
         setattr(element, what, result)
         db_session.commit()
-        return json.dumps(getattr(element, what)) 
+        return json.dumps(getattr(element, what))
     except Exception, error:
         app.logger.info(error)
         return "False"
@@ -184,7 +186,7 @@ def set(what, id_, result, subdomain=False):
     try:
         setattr(element, what, result)
         db_session.commit()
-        return json.dumps(getattr(element, what)) 
+        return json.dumps(getattr(element, what))
     except Exception, error:
         app.logger.info(error)
         return "False"

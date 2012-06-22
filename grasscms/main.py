@@ -5,10 +5,10 @@ from flask import Flask, render_template, request, g, session, flash, redirect, 
 from grasscms import data_dir
 import os, urlparse
 
-UPLOAD_FOLDER = data_dir + "/static/uploads"
+UPLOAD_FOLDER =  "/static/uploads"
 app = Flask(__name__)
 app.config.update(
-	DATABASE_URI = 'mysql://root:root@localhost/grasscms
+	DATABASE_URI = 'mysql://root:root@localhost/grasscms',
         SECRET_KEY = 'Foobar',
     	STATIC_ROOT =  'http://grasscms.com/static/',
 	    SERVER_NAME = "grasscms.com",
