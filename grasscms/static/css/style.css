@@ -19,7 +19,6 @@ iframe { border:0px!important; width:95%!important; height:90%!important; box-sh
     position:absolute;
     z-index:3010;
     display:none;
-    bottom:3px;
 }
 
 .cke_top{
