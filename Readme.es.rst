@@ -28,14 +28,14 @@ disponible según la vayas creando.
 -----------------------------------
 
 - Edición sencilla de páginas web 
-  - Páginas de eventos
-  - Páginas de empresa
-  - Páginas personales
+ * Páginas de eventos
+ * Páginas de empresa
+ * Páginas personales
 
 - ¿Eres diseñador web? ¡Pruebalo!
-  - Diseña tus páginas en vivo
-  - Discute el layout con tu cliente en minutos
-  - ¡Editor SVG integrado!
+ * Diseña tus páginas en vivo
+ * Discute el layout con tu cliente en minutos
+ * ¡Editor SVG integrado!
 
 Tecnologías usadas
 --------------------
