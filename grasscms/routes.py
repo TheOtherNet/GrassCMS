@@ -134,7 +134,7 @@ def new(type_, page, subdomain=False):
     try:
         result = request.form['result']
     except KeyError, err:
-        result = ""
+        result = type_
         app.logger.error(err)
     return getattr(object_base, type_)(page, result)
 
@@ -181,8 +181,17 @@ def set_page(what, name_, id_, result, subdomain=False):
 @app.route('/set/<what>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set(what, id_, result, subdomain=False):
     element = get_element_by_id(id_)
+    result=""
     if result == "in_post":
-        result ="<div class='handler'></div><textarea class='alsoResizable'>%s</textarea>" %(request.form['result'])
+        try:
+            result=unicode(request.form['result'])
+        except:
+            try:
+                result=request.form['result'].decode('latin-1')
+            except:
+                result=request.form['result'].decode('utf-8')
+        app.logger.info(result)
+        result ="<div class='handler'></div><textarea class='alsoResizable'>%s</textarea>" %(result_)
     try:
         setattr(element, what, result)
         db_session.commit()

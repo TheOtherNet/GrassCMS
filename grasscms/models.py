@@ -7,7 +7,7 @@ class BaseWidget(object):
     y = Column(Integer)
     width = Column(Integer)
     height = Column(Integer)
-    content = Column(String(60))
+    content = Column(Text)
     rotation = Column(String(60))
     opacity = Column(String(60))
     zindex = Column(String(60))
@@ -29,6 +29,10 @@ class BaseWidget(object):
         self.user = user.id
         self.page = page
         self.content = content
+        if x == "":
+            x=100
+        if y == "":
+            y=100
         self.x = x
         self.blog = blog
         self.y = y

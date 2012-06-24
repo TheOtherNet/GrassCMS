@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, ForeignKey, Column, Integer, String
+from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, Text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask, render_template, request, g, session, flash, redirect, url_for, abort
@@ -8,12 +8,12 @@ import os, urlparse
 UPLOAD_FOLDER =  "/var/www/grasscms.com/static/uploads"
 app = Flask(__name__)
 app.config.update(
-	DATABASE_URI = 'mysql://root:root@localhost/grasscms',
+	DATABASE_URI = 'sqlite:////home/grasscms/grasscms.db',
         SECRET_KEY = 'Foobar',
     	STATIC_ROOT =  'http://grasscms.com/static/',
 	    SERVER_NAME = "grasscms.com",
         UPLOAD_FOLDER = UPLOAD_FOLDER,
-        DEBUG = False )
+        DEBUG = True )
 
 engine = create_engine(app.config['DATABASE_URI'])
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
