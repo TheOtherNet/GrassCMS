@@ -5,6 +5,7 @@ from grasscms.objects import *
 from werkzeug import secure_filename
 import json, os
 app.jinja_env.filters['html'] = render_html
+object_base = Objects()
 
 def save_file(file_):
     file_secure_name = secure_filename(file_.filename)
@@ -45,6 +46,17 @@ def pageadmin(page=False, subdomain=False):
         main_url = "http://grasscms.com"
     return render_template('pages.html', main_url=main_url, page=user_page,
         blog=user_blog)
+
+@app.route('/page_set/<what>/<name_>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
+def set_page(what, name_, id_, result, subdomain=False):
+    element = get_page_by_id(name_, id_)
+    try:
+        setattr(element, what, result)
+        db_session.commit()
+        return json.dumps(getattr(element, what))
+    except Exception, error:
+        app.logger.info(error)
+        return "False"
 
 @app.route('/')
 def landing():
@@ -103,7 +115,6 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
             first_run=request.args.get('first_run'))
 
 @app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
-@app.route("/upload/<page>", methods=("GET", "POST"))
 def upload_(page, subdomain=False):
     object_base = Objects()
     for i in request.files.keys():
@@ -121,74 +132,62 @@ def upload_(page, subdomain=False):
         return result
     return render_template("upload.html", filedata="", page=page, blog=blog)
 
-@app.route('/new/<type_>/<page>', methods=['GET', 'POST'], subdomain="<subdomain>")
-def new(type_, page, subdomain=False):
-    object_base = Objects()
-    try:
-        result = request.form['result']
-    except KeyError, err:
-        result = type_
-        app.logger.error(err)
-    return getattr(object_base, type_)(page, result)
+@app.route('/object/<type_>/', methods=['PUT', 'DELETE', 'GET', 'POST'], subdomain="<subdomain>")
+def object_manager(type_, subdomain=False):
+    id = request.form['id']
 
-@app.route('/delete/<id_>/<name>', methods=['DELETE'], subdomain="<subdomain>")
-@app.route('/delete/<id_>/', methods=['DELETE'], subdomain="<subdomain>")
-def delete(id_, name=False, subdomain=False):
-    if name:
-        blog = Blog.query.filter_by(id=g.user.blog).first()
-        page = Page.query.filter_by(name=name, blog=blog.id).first()
-        if page:
-            db_session.delete(page)
-            db_session.commit()
-        else:
-            abort(404)
-        return "true"
-
-    object_ = Html.query.filter_by(id_=id_).first();
-    db_session.delete(object_)
-    db_session.commit()
-    return json.dumps("True")
-
-@app.route('/get/<what>/<id_>', methods=['GET', 'POST'], subdomain="<subdomain>")
-def get(what, id_, subdomain=False):
-    element = get_element_by_id(id_)
-    if id_ == "undefined":
+    if id == "undefined":
         abort(404)
-    try:
-        return json.dumps(getattr(element, what))
-    except Exception, error:
-        app.logger.info(error)
-        return "False"
 
-@app.route('/page_set/<what>/<name_>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
-def set_page(what, name_, id_, result, subdomain=False):
-    element = get_page_by_id(name_, id_)
-    try:
-        setattr(element, what, result)
-        db_session.commit()
-        return json.dumps(getattr(element, what))
-    except Exception, error:
-        app.logger.info(error)
-        return "False"
+    if method == "GET" or method == "PUT":
+        element = get_element_by_id(id)
 
-@app.route('/set/<what>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
-def set(what, id_, result, subdomain=False):
-    element = get_element_by_id(id_)
-    result=""
-    if result == "in_post":
+    if method == "POST":
         try:
-            result=unicode(request.form['result'])
-        except:
-            try:
-                result=request.form['result'].decode('latin-1')
-            except:
-                result=request.form['result'].decode('utf-8')
-        app.logger.info(result)
-        result ="<div class='handler'></div><textarea class='alsoResizable'>%s</textarea>" %(result_)
-    try:
-        setattr(element, what, result)
+            result = request.form['result']
+        except KeyError, err:
+            result = type_
+        try:
+            page = request.form['page']
+        except KeyError, err:
+            page = "index"
+        return getattr(object_base, type_)(page, result)
+
+    elif method == "DELETE":
+        if type_ == "page":
+            blog = Blog.query.filter_by(id=g.user.blog).first()
+            page = Page.query.filter_by(name=id, blog=blog.id).first()
+            if page:
+                db_session.delete(page)
+                db_session.commit()
+            else:
+                abort(404)
+            return "true"
+
+        object_ = Html.query.filter_by(id_=id_).first();
+        db_session.delete(object_)
         db_session.commit()
-        return json.dumps(getattr(element, what))
-    except Exception, error:
-        app.logger.info(error)
-        return "False"
+        return json.dumps("True")
+
+    elif method == "GET":
+        try:
+            attr=request.form['attr']
+            return json.dumps(getattr(element, attr))
+        except KeyError:
+            return json.dumps(element) # TODO: Nope.
+
+    elif method == "PUT":
+        try:
+            attr=request.form['attr']
+            data=request.form['result']
+        except KeyError:
+            return json.dumps("False")
+
+        try:
+            setattr(element, attr, result)
+            db_session.commit()
+            return json.dumps(getattr(element, what))
+        except Exception, error:
+            app.logger.info(error)
+            return "False"
+
