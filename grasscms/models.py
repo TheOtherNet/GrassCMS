@@ -12,6 +12,10 @@ class BaseWidget(object):
     opacity = Column(String(60))
     zindex = Column(String(60))
     field_name = Column(String(60))
+    __table_args__ = {
+                'mysql_engine': 'InnoDB',
+                'mysql_charset': 'utf8'
+                 }
 
     @declared_attr
     def blog(cls):
@@ -57,6 +61,10 @@ class Blog(Base):
         self.name = blog
         self.subdomain = subdomain
         self.description = description
+        __table_args__ = {
+            'mysql_engine': 'InnoDB',
+            'mysql_charset': 'utf8'
+        }
 
 class Page(Base):
     __tablename__ = "pages"
@@ -70,6 +78,10 @@ class Page(Base):
     def __init__(self, blog, name):
         self.name = name
         self.blog = blog
+        __table_args__ = {
+            'mysql_engine': 'InnoDB',
+            'mysql_charset': 'utf8'
+        }
 
 class User(Base):
     __tablename__ = 'users'
@@ -86,3 +98,8 @@ class User(Base):
         self.openid = openid
         self.blog = blog
         self.index = index
+        __table_args__ = {
+            'mysql_engine': 'InnoDB',
+            'mysql_charset': 'utf8'
+                          }
+
