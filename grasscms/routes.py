@@ -60,7 +60,7 @@ def landing():
 @app.route('/<page_>/<subpage>', subdomain='<blog_name>')
 @app.route('/', subdomain='<blog_name>')
 def page(blog_name=False, page_="index", subpage=0, main_url=False):
-    if subdomain == "www" and not g.user:
+    if blog_name == "www" and not g.user:
         return redirect('http://landing.' + app.config['SERVER_NAME'])
     blog_name = blog_name.lower()
     user_blog, user_page = check_user()
@@ -100,7 +100,7 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
     else:
         return render_template( 'admin.html', main_url=main_url, page=page,
             blog=user_blog, static_htmls=static_htmls, title=title,
-            first_run=request.ar gs.get('first_run'))
+            first_run=request.args.get('first_run'))
 
 
 # This redirection should be done with a webserver or a static link.
