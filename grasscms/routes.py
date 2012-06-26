@@ -53,14 +53,15 @@ def landing():
         main_url = "http://" + g.user.name.replace(' ','_') + "." +\
         app.config['SERVER_NAME']
     else:
-        main_url = "http://grasscms.com"
-    return render_template('landing.html', main_url=main_url, page=user_page,
-        blog=user_blog)
+        main_url = 'http://landing.' + app.config['SERVER_NAME']
+    return redirect(main_url)
 
 @app.route('/<page_>', subdomain='<blog_name>')
 @app.route('/<page_>/<subpage>', subdomain='<blog_name>')
 @app.route('/', subdomain='<blog_name>')
 def page(blog_name=False, page_="index", subpage=0, main_url=False):
+    if subdomain == "www" and not g.user:
+        return redirect('http://landing.' + app.config['SERVER_NAME'])
     blog_name = blog_name.lower()
     user_blog, user_page = check_user()
     try:
@@ -99,7 +100,7 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
     else:
         return render_template( 'admin.html', main_url=main_url, page=page,
             blog=user_blog, static_htmls=static_htmls, title=title,
-            first_run=request.args.get('first_run'))
+            first_run=request.ar gs.get('first_run'))
 
 
 # This redirection should be done with a webserver or a static link.
