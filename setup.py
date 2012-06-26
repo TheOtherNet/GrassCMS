@@ -17,7 +17,7 @@ for dirpath, dirnames, filenames in os.walk('grasscms'):
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
 setup(name='GrassCMS',
-      version='0.0.1',
+      version='1.0.0',
       description='GrassCMS',
       url='http://www.grasscms.com/',
       download_url='http://www.grasscms.com',
@@ -31,7 +31,7 @@ setup(name='GrassCMS',
       data_files=data_files,
       package_data={
         'grasscms' : [
-            'static/'
+#            'static/'
             'templates/'
             ]
       },

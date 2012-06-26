@@ -39,7 +39,7 @@ def svgedit(subdomain=False):
 def pageadmin(page=False, subdomain=False):
     user_page, user_blog = check_user()
     if g.user:
-        main_url = "http://" + g.user.name.replace(' ','_') + "." +\
+        main_url = "http://" + user_blog.subdomain + "." +\
          app.config['SERVER_NAME']
     else:
         main_url = "http://grasscms.com"
@@ -48,9 +48,9 @@ def pageadmin(page=False, subdomain=False):
 
 @app.route('/')
 def landing():
-    user_page, user_blog = check_user()
+    user_blog, user_page = check_user()
     if g.user:
-        main_url = "http://" + g.user.name.replace(' ','_') + "." +\
+        main_url = "http://" + user_blog.subdomain + "." +\
         app.config['SERVER_NAME']
     else:
         main_url = 'http://landing.' + app.config['SERVER_NAME']
