@@ -31,6 +31,24 @@ def check_user():
         user_blog = False
     return (user_blog, user_page)
 
+@app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
+def upload_(page, subdomain=False):
+    object_base = Objects()
+    for i in request.files.keys():
+        filename, path = save_file(request.files[i])
+        try:
+            field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
+            app.logger.info(content)
+            result = getattr(object_base, field_name)(page, content)
+        except Exception, error:
+            flash('Error file, unsupported format, reason: %s' %(error))
+            app.logger.info(error)
+            return ""
+        if not result:
+            result = ""
+        return result
+    return render_template("upload.html", filedata="", page=page, blog=blog)
+
 @app.route('/image/edit', subdomain="<subdomain>")
 def svgedit(subdomain=False):
     user_page, user_blog = check_user()
@@ -46,17 +64,6 @@ def pageadmin(page=False, subdomain=False):
         main_url = "http://grasscms.com"
     return render_template('pages.html', main_url=main_url, page=user_page,
         blog=user_blog)
-
-@app.route('/page_set/<what>/<name_>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
-def set_page(what, name_, id_, result, subdomain=False):
-    element = get_page_by_id(name_, id_)
-    try:
-        setattr(element, what, result)
-        db_session.commit()
-        return json.dumps(getattr(element, what))
-    except Exception, error:
-        app.logger.info(error)
-        return "False"
 
 @app.route('/')
 def landing():
@@ -114,24 +121,6 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
             blog=user_blog, static_htmls=static_htmls, title=title,
             first_run=request.args.get('first_run'))
 
-@app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
-def upload_(page, subdomain=False):
-    object_base = Objects()
-    for i in request.files.keys():
-        filename, path = save_file(request.files[i])
-        try:
-            field_name, content = do_conversion(filename, path, app.config['STATIC_ROOT'], g.user.id)
-            app.logger.info(content)
-            result = getattr(object_base, field_name)(page, content)
-        except Exception, error:
-            flash('Error file, unsupported format, reason: %s' %(error))
-            app.logger.info(error)
-            return ""
-        if not result:
-            result = ""
-        return result
-    return render_template("upload.html", filedata="", page=page, blog=blog)
-
 @app.route('/object/<type_>/', methods=['PUT', 'DELETE', 'GET', 'POST'], subdomain="<subdomain>")
 def object_manager(type_, subdomain=False):
     id = request.form['id']
@@ -140,7 +129,13 @@ def object_manager(type_, subdomain=False):
         abort(404)
 
     if method == "GET" or method == "PUT":
-        element = get_element_by_id(id)
+        try:
+            page, subpage = json.loads(request.form['page'])
+            if not subpage:
+                subpage = 0
+            element = get_page_by_id(name_, id_)
+        except KeyError:
+            element = get_element_by_id(id)
 
     if method == "POST":
         try:
@@ -184,10 +179,9 @@ def object_manager(type_, subdomain=False):
             return json.dumps("False")
 
         try:
-            setattr(element, attr, result)
+            setattr(element, attr, data)
             db_session.commit()
-            return json.dumps(getattr(element, what))
+            return json.dumps(getattr(element, data))
         except Exception, error:
             app.logger.info(error)
             return "False"
-
