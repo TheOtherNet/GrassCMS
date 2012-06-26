@@ -1,6 +1,6 @@
 {%extends "layout.html"%}
 {% block head %}
-    <script src="{{static('js/jquery-ui.min.js')}}"></script>
+    <script src="{{static('js/libs/jquery-ui.min.js')}}"></script>
     <style>
         .nosortable { list-style-type: none; margin: 0; padding: 0;}
         .nosortable li { margin: 3px 3px 3px 0;  padding: 1px; float: left; width: 120px; height: 170px; font-size: 4em; text-align: center; border:2px solid rgba(0,0,0,0.3);border-radius:7px; }
@@ -70,7 +70,7 @@
             <ul class="nosortable">
                 <li class="ui-state-disabled">
                     <a href="#" onclick="$('#main_pages').prepend($('#page_model').clone().css('display','inline-block'));">
-                        <img src="/static/img/add.png" style="margin-top:20px" />
+						<img src="{{static('img/add.png')}}" style="margin-top:20px" />
                     </a>
                 </li>
             </ul> 
@@ -93,7 +93,7 @@
             <ul class="nosortable" >
                 <li class="ui-state-disabled">
                     <a href="#" onclick="$('#main_pages').append($('#page_model').clone().css('display','inline-block'));">
-                        <img src="/static/img/add.png" style="margin-top:20px" />
+						<img src="{{static('img/add.png')}}" style="margin-top:20px" />
                     </a>
                 </li>
             </ul>

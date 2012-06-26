@@ -35,4 +35,3 @@ def static(path):
 @app.context_processor
 def inject_static():
     return dict(static=static)
-

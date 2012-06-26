@@ -2,8 +2,8 @@
 
 {%block head%}
 	<link type="text/css" rel="stylesheet" href="{{ static('css/openid.css') }}" />
-	<script type="text/javascript" src="{{ static('js/openid-jquery.js') }}"></script>
-	<script type="text/javascript" src="{{ static('js/openid-en.js') }}"></script> 
+	<script type="text/javascript" src="{{ static('js/libs/openid/openid-jquery.js') }}"></script>
+	<script type="text/javascript" src="{{ static('js/libs/openid/openid-en.js') }}"></script> 
     <script> $(document).ready(function() { openid.init('openid_identifier'); }); </script>
 {%endblock%}
 

@@ -3,15 +3,15 @@
 {% block title%} {{title}}{%endblock%}
 
 {% block head %}
-    <script src="{{static('js/jquery-ui.min.js')}}"></script>
-    <script src="{{static('js/jquery.rotate.js')}}"></script>
-    <script src="{{static('js/grasscms/jquery.persistence.js')}}"></script>
-    <script src="{{static('js/grasscms/jquery.guides.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery-ui.min.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.rotate.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.persistence.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.guides.js')}}"></script>
     <script src="{{static('js/grasscms/grasscms.js')}}"></script>
-    <script src="{{static('js/jquery.hoverIntent.minified.js')}}"></script>
-    <script src="{{static('js/wysihtml5.js')}}"></script>
-    <script src="{{static('js/bootstrap-wysihtml5.js')}}"> </script>
-    <script src="{{static('js/mediaelement-and-player.min.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.hoverIntent.minified.js')}}"></script>
+    <script src="{{static('js/libs/wysihtml5.js')}}"></script>
+    <script src="{{static('js/libs/bootstrap-wysihtml5.js')}}"> </script>
+    <script src="{{static('js/libs/mediaelement-and-player.min.js')}}"></script>
     <link rel="stylesheet" href="{{static('css/mediaelementplayer.css')}}" /></code>
     <link rel="stylesheet" href="{{static('css/bootstrap-wysihtml5.css')}}" /></code>
     {% if first_run == "true" %} <script src="{{static('js/grasscms/firstrun.js')}}"></script> {%endif%}
@@ -48,7 +48,7 @@
 				<li class="menu_button">
 				        <form id="newpage" action="#" onsubmit="create_page(); return false">
 	
-				            <img src="/static/images/page.png" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" id="addpage" data-original-title="Add new page">
+							<img src="{{static('images/page.png')}}" onclick="$('#new_page_div').toggle(100); $('#new_page_div').css('display','inline')" id="addpage" data-original-title="Add new page">
 
 			                <div id="new_page_div" style="display: none; ">
 			                    <input type="text" id="new_page" name="page" placeholder="Page name" required="">
@@ -151,10 +151,10 @@
         </div>
     </div>
 
-    <script src="{{static('js/jquery.ui.widget.js')}}"></script>
-    <script src="{{static('js/jquery.iframe-transport.js')}}"></script>
-    <script src="{{static('js/jquery.fileupload.js')}}"></script>
-    <script src="{{static('js/jquery.fileupload-ui.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.ui.widget.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.iframe-transport.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.fileupload.js')}}"></script>
+    <script src="{{static('js/libs/jquery/jquery.fileupload-ui.js')}}"></script>
     <script src="{{static('js/application.js')}}"></script>
     <!--[if gte IE 8]><script src="cors/jquery.xdr-transport.js"></script><![endif]-->
 {% endblock %}
