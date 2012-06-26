@@ -7,7 +7,7 @@ import os, urlparse
 
 if os.environ.has_key('devel') and os.environ['devel'] == "True":
     app = Flask(__name__)
-    uploads_relative_dir="../static/uploads"
+    uploads_relative_dir="/../grasscms/static/uploads"
     app.config.from_object('grasscms.DevelopmentConfig')
 else:
     app = Flask(__name__, instance_path='/var/www/grasscms.com/', instance_relative_config=True)
