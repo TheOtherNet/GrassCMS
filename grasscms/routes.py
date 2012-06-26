@@ -102,14 +102,6 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
             blog=user_blog, static_htmls=static_htmls, title=title,
             first_run=request.args.get('first_run'))
 
-
-# This redirection should be done with a webserver or a static link.
-#@app.route('/svgicons.svg', subdomain="<subdomain>")
-#@app.route('/svgicons.svg')
-#def icons(subdomain=False):
-#    with open(data_dir + "/static/svg-edit/images/svg_edit_icons.svg") as f:
-#        return f.read()
-
 @app.route("/upload/<page>", methods=("GET", "POST"), subdomain="<subdomain>")
 @app.route("/upload/<page>", methods=("GET", "POST"))
 def upload_(page, subdomain=False):

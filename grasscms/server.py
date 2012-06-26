@@ -14,13 +14,6 @@ gravatar = Gravatar(app, # Gravatar module, 100px wide.
                 force_default=False,
                 force_lower=False)
 
-"""
-    TODO LIST:
-        - All images can be accesible (and overwritten) by other users
-        - Delete stuff
-        - AJAXIZE stuff
-"""
-
 def server():
     """ Main server, will allow us to make it wsgi'able """
     app.run(host='0.0.0.0', port=80) # Running on port 80 in all interfaces.
