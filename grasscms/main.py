@@ -2,18 +2,23 @@ from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, Text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask, render_template, request, g, session, flash, redirect, url_for, abort
-from grasscms import data_dir
+from grasscms import ProductionConfig, DevelopmentConfig
 import os, urlparse
 
-UPLOAD_FOLDER =  "/var/www/grasscms.com/static/uploads"
-app = Flask(__name__)
-app.config.update(
-	DATABASE_URI = 'sqlite:////home/grasscms/grasscms.db',
-        SECRET_KEY = 'Foobar',
-    	STATIC_ROOT =  'http://grasscms.com/static/',
-	    SERVER_NAME = "grasscms.com",
-        UPLOAD_FOLDER = UPLOAD_FOLDER,
-        DEBUG = True )
+if os.environ.has_key('devel') and os.environ['devel'] == "True":
+    app = Flask(__name__)
+    uploads_relative_dir="../static/uploads"
+    app.config.from_object('grasscms.DevelopmentConfig')
+else:
+    app = Flask(__name__, instance_path='/var/www/grasscms.com/', instance_relative_config=True)
+    uploads_relative_dir="/static/uploads"
+    app.config.from_object('grasscms.ProductionConfig')
+
+if os.environ.has_key('grasscms_config'):
+    app.config.from_envvar('grasscms_config')
+
+app.config.update(STATIC_ROOT =  'http://' + app.config['SERVER_NAME'] + '/static/',
+    UPLOAD_FOLDER=app.instance_path + uploads_relative_dir)
 
 engine = create_engine(app.config['DATABASE_URI'])
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,

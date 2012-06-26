@@ -1,16 +1,34 @@
-rm -rf /tmp/grasscms-update
-mkdir /tmp/grasscms-update
+#!/bin/bash
 
-for i in /usr/local/lib/python2.7/dist-packages/GrassCMS-*; do 
-    cp -r $i/grasscms/static/uploads/* /tmp/grasscms-update
-done
+# Example deploy script for grasscms w/lighttpd. Crappy, but I dont ha
+# ve time for more now.
+# This probably works only on debian with git-core and lighttpd installed.
+# Oh, and python-setuptools python-pip
+
+setup_lighty(){
+	mkdir /var/www/grasscms.com/
+	cp doc/examples/grasscms.fcgi /var/www/grasscms.com
+	cp doc/examples/lighttpd_grasscms.conf /etc/lighttpd/conf-enabled/
+	echo "create database grasscms"| mysql -uroot -proot  
+	git clone https://github.com/XayOn/GrassCMS/grasscms/static
+	cp -r grasscms/static /var/www/grasscms.com/
+	chown -R www-data:www-data /var/www/grasscms.com
+	invoke-lighttpd restart
+}
+
+apt-get install git-core lighttpd python-pip python-setuptools
+
+git remote -v show |grep GrassCMS && {
+	git pull origin master # Github based deploy
+	[[ $1 == "init_lighttpd" ]] && setup_lighty
+	cd /var/www/grasscms.com/static
+	git pull origin master
+	cd -
+} || {
+	git clone https://github.com/XayOn/GrassCMS 
+	cd GrassCMS
+	pip install -r deps
+	[[ $1 == "init_lighttpd" ]] && setup_lighty
+}
 
 python setup.py install
-
-for i in /usr/local/lib/python2.7/dist-packages/GrassCMS-*; do 
-    cp -r /tmp/grasscms-update/* $i/grasscms/static/uploads/
-done
-
-chown -R grasscms:grasscms /usr/local/lib/python2.7/dist-packages/GrassCMS-*/grasscms/static/uploads/
-invoke-rc.d apache2 restart
-
