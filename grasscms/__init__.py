@@ -10,7 +10,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     DATABASE_URI = 'sqlite:////tmp/grasscms.db'
-    SERVER_NAME = "http://grasscms.com"
+    SERVER_NAME = "grasscms.com"
     SECRET_KEY="goodscretkyehere"
 
 class ProductionConfig(Config):
