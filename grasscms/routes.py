@@ -109,12 +109,14 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
 
     # In a future, each page must have a full title.
     title = page.name
+    paid_user = blog.paid_this.month
+
     if title == "index":
         title = blog.name
 
     if not g.user_is_admin:
         return render_template( 'index.html', main_url=main_url, page=page,
-            blog=user_blog, static_htmls=static_htmls,
+            blog=user_blog, paid_user=paid_user static_htmls=static_htmls,
             description=blog.description, title=title)
     else:
         return render_template( 'admin.html', main_url=main_url, page=page,
