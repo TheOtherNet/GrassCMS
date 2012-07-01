@@ -14,7 +14,7 @@ class Config(object):
     SECRET_KEY="goodscretkyehere"
 
 class ProductionConfig(Config):
-    DATABASE_URI = "mysql://root:root@localhost/grasscms"
+    DATABASE_URI = "sqlite:////home/grasscms/grasscms.db"
 
 class DevelopmentConfig(Config):
     DEBUG = True
