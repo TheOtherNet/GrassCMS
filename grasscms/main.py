@@ -7,7 +7,6 @@ import os, urlparse
 
 if os.environ.has_key('devel') and os.environ['devel'] == "True":
     app = Flask(__name__)
-    uploads_relative_dir="/../grasscms/static/uploads"
     app.config.from_object('grasscms.DevelopmentConfig')
 else:
     app = Flask(__name__, instance_path='/var/www/grasscms.com/', instance_relative_config=True)
@@ -17,8 +16,9 @@ else:
 if os.environ.has_key('grasscms_config'):
     app.config.from_envvar('grasscms_config')
 
-app.config.update(STATIC_ROOT =  'http://' + app.config['SERVER_NAME'] + '/static/',
-    UPLOAD_FOLDER=app.instance_path + uploads_relative_dir)
+app.config.update(STATIC_ROOT =  'http://' + app.config['SERVER_NAME'] + '/static/')
+app.config.update(UPLOAD_FOLDER="/var/www/grasscms.com/static/uploads/")
+
 
 engine = create_engine(app.config['DATABASE_URI'])
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False,
