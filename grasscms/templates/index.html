@@ -2,7 +2,8 @@
 {% block title%} {{title}}{%endblock%}
 
 {% block body_start %}
-	{%if blog.paid_this_month %}
+	<meta name="paid_user" value="{{paid_user}}" />
+	{%if paid_user %}
 		<body style="position:relative; padding-top:0px">
 	{%else%}
 <body style="padding-top:40px; position:relative;" >
