@@ -92,11 +92,12 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
     title = page.name
     if title == "index":
         title = blog.name
+    paid_user = blog.paid_this_month
 
     if not g.user_is_admin:
         return render_template( 'index.html', main_url=main_url, page=page,
             blog=user_blog, static_htmls=static_htmls,
-            description=blog.description, title=title)
+            description=blog.description, title=title, paid_user = paid_user)
     else:
         return render_template( 'admin.html', main_url=main_url, page=page,
             blog=user_blog, static_htmls=static_htmls, title=title,
@@ -174,17 +175,9 @@ def set_page(what, name_, id_, result, subdomain=False):
 @app.route('/set/<what>/<id_>/<result>', methods=['GET', 'POST'], subdomain="<subdomain>")
 def set(what, id_, result, subdomain=False):
     element = get_element_by_id(id_)
-    result=""
     if result == "in_post":
-        try:
-            result=unicode(request.form['result'])
-        except:
-            try:
-                result=request.form['result'].decode('latin-1')
-            except:
-                result=request.form['result'].decode('utf-8')
-        app.logger.info(result)
-        result ="<div class='handler'></div><textarea class='alsoResizable'>%s</textarea>" %(result_)
+        result="<div class='handler'></div>\
+           <textarea class='alsoResizable'>%s</textarea>" %(request.form['result'])
     try:
         setattr(element, what, result)
         db_session.commit()
