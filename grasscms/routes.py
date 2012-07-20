@@ -109,7 +109,7 @@ def page(blog_name=False, page_="index", subpage=0, main_url=False):
 
     # In a future, each page must have a full title.
     title = page.name
-    paid_user = blog.paid_this.month
+    paid_user = blog.paid_this_month
 
     if title == "index":
         title = blog.name

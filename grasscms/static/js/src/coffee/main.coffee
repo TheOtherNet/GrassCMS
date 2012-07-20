@@ -18,25 +18,33 @@
       @init()
 
     init: ->
+      @do_resizable()
       @element.on 'mouseenter', (ev) ->
         this.style.border = '1px dotted grey'
       @element.on 'mouseleave', (ev) ->
-        this.style.border = '0px'
+        @mouseleave(this)
+
       @element.on 'dragstart', @dragstart
       @element.on 'drag', @drag
       @element.on 'dragend', @dragend
       @element.on 'changed', @changed
-      @element.on 'click', @toggleResize
 
-    toggleResize: (ev) ->
-      return if $(ev.target).data 'dragging'
-      res=if $(this).data('resizing') == 1 then 0 else 1
-      $(this).data('resizing', res)
-      @enable_resizables if res == 1
-      @disable_resizables if res == 0
+    mouseleave: (that) ->
+      that.style.border = '0px'
+      if that.css('height') != $(that).data('height')
+        $(that).trigger 'changed', 'height', that.style.height
+        $(that).data 'height', $(that).css('height')
+      if that.css('width') != $(that).data('width')
+        $(that).trigger 'changed', 'width', that.style.width
+        $(that).data 'width', $(that).css('width')
+
+    do_resizable: ->
+      @element = @element.wrap('<div class="resizable">').parent()
+      @element.data "width", @element.css('width')
+      @element.data "height", @element.css('height')
+      console.log($(this))
 
     dragstart: (ev) ->
-      $(this).data('dragging', true)
       $(this).data 'opacity', this.style.opacity
       this.style.border = '1px dotted grey'
       this.style.opacity = 0.4
@@ -48,7 +56,6 @@
       this.style.position = "absolute"
 
     dragend: (ev) ->
-      $(this).data('dragging', false)
       this.style.opacity = if $(this).data('opacity') > 0 then $(this).data('opacity') else 1
       $(this).trigger 'changed', 'top', ev.y
       $(this).trigger 'changed', 'left', ev.x
