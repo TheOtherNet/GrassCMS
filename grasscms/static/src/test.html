@@ -1,13 +1,35 @@
 <html>
 	<head>
-		<title>fo</title>
-		<script src="libs/jquery/jquery-1.7.1.min.js"> </script>
+		<title>Test title</title>
+		<script src="libs/jquery-1.7.1.min.js" ></script>
 		<script src="grasscms.js"> </script>
-		<link href="main.css" rel="stylesheet" >
-
+		<link href="grasscms.css" rel="stylesheet" >
 	</head>
 	<body>
-		<img src="/usr/local/share/pixmaps/airoscript-ng.png" class="persistentGrassy">
+		<ul id="menu">
+			<li> <a href="#"> Send to front </a> </li>
+			<li> <a href="#"> Send to back  </a></li>
+			<li> <a href="#"> Send one back  </a></li>
+			<li> <a href="#"> Send one front  </a></li>
+			<li> <a href="#"> Delete  </a></li>
+		</ul>
+		<div id="panel_left">
+			<div class="panel_section">
+				<h2 id="current_element_name">GrassCMS</h2>
+			</div>
+			<div class="panel_section">
+				<h4> Background </h4><input id="colorpicker" type="color" />
+			</div>
+			<div class="panel_section">
+				<h4> Opacity </h4><input id="opacitypicker" type="range" min=0 value=1 max=1.01 step=0.1 />
+			</div>
+		</div>
+		<img id="1" src="/usr/local/share/pixmaps/airoscript-ng.png" class="persistentGrassy">
+		<img id="2" src="/usr/local/share/pixmaps/airoscript-ng.png" class="persistentGrassy">
+		<img id="3" src="/usr/local/share/pixmaps/airoscript-ng.png" class="persistentGrassy">
+		<img id="4" src="/usr/local/share/pixmaps/airoscript-ng.png" class="persistentGrassy">
+		<img id="5" src="/usr/local/share/pixmaps/airoscript-ng.png" class="persistentGrassy">
+		<div class="rect-x"></div><div class="rect-y"></div>
 		<script> $('.persistentGrassy').PersistentGrass(); </script>
 	</body>
 </html>

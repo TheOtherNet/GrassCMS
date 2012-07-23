@@ -1,0 +1,65 @@
+img.persistentGrassy {
+  width: 100%;
+  height: 100%;
+}
+div.persistentGrassy {
+  width: 100%;
+  height: 100%;
+}
+.resizable {
+  width: 100px;
+  height: 100px;
+  resize: both;
+  overflow: auto;
+}
+.persistentGrassy {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#menu {
+  list-style: none;
+  line-height: 23px;
+  position: absolute;
+  display: none;
+  padding: 4px;
+  min-width: 120px;
+  background: #e2efef;
+  z-index: 90000;
+}
+#menu li {
+  line-height: 1.5em;
+  padding: 5px 5px 5px 25px;
+  font-size: 11px;
+  border-bottom: 1px solid #fff;
+}
+#current_element_name {
+  text-align: center;
+}
+#panel_left {
+  width: 250px;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 100%;
+  background: #9fccca;
+  border-right: 3px solid #ffffff;
+}
+.panel_section {
+  border-bottom: 1px solid #c0dedc;
+}
+.rect-x {
+  height: 1px solid #9fccca;
+  width: 100%;
+  position: absolute;
+  top: 1px;
+}
+.panel_section > h4 {
+  display: inline;
+}
+body {
+  position: absolute;
+  left: 250px;
+}
